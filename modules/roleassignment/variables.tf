@@ -1,24 +1,3 @@
-variable "role_assignment_condition" {
-  type        = string
-  description = <<DESCRIPTION
-(Optional) The condition that limits the resources that the role can be assigned to.
-DESCRIPTION
-  default     = null
-}
-
-variable "role_assignment_condition_version" {
-  type        = string
-  description = <<DESCRIPTION
-The version of the condition. Possible values are `null`, 1.0 or 2.0. If `null` then `role_assignment_condition` will also be null.
-DESCRIPTION
-
-  validation {
-    condition     = var.role_assignment_condition_version != null ? contains(["1.0", "2.0"], var.role_assignment_condition_version) : true
-    error_message = "Must be version 1.0 or 2.0."
-  }
-  default = null
-}
-
 variable "role_assignment_definition" {
   type        = string
   description = <<DESCRIPTION
@@ -56,6 +35,41 @@ DESCRIPTION
   }
 }
 
+variable "enable_telemetry" {
+  type     = bool
+  default  = true
+  nullable = false
+}
+
+variable "retry" {
+  type = object({
+    error_message_regex = list(string)
+    interval_seconds    = optional(number, 30)
+  })
+  default = null
+}
+
+variable "role_assignment_condition" {
+  type        = string
+  default     = null
+  description = <<DESCRIPTION
+(Optional) The condition that limits the resources that the role can be assigned to.
+DESCRIPTION
+}
+
+variable "role_assignment_condition_version" {
+  type        = string
+  default     = null
+  description = <<DESCRIPTION
+The version of the condition. Possible values are `null`, 1.0 or 2.0. If `null` then `role_assignment_condition` will also be null.
+DESCRIPTION
+
+  validation {
+    condition     = var.role_assignment_condition_version != null ? contains(["1.0", "2.0"], var.role_assignment_condition_version) : true
+    error_message = "Must be version 1.0 or 2.0."
+  }
+}
+
 variable "role_assignment_definition_lookup_enabled" {
   type        = bool
   default     = true
@@ -89,18 +103,4 @@ Whether to use a random UUID for the role assignment name.
 > NOTE: Use this option to prevent unknown values causing role assignments to be recreated on every plan/apply. However make sure to use a new module call (UUID) if you change the properties of a role assignment.
 DESCRIPTION
   nullable    = false
-}
-
-variable "enable_telemetry" {
-  type     = bool
-  default  = true
-  nullable = false
-}
-
-variable "retry" {
-  type = object({
-    error_message_regex = list(string)
-    interval_seconds    = optional(number, 30)
-  })
-  default = null
 }

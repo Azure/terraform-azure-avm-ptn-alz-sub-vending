@@ -1,5 +1,6 @@
 terraform {
   required_version = "~> 1.12"
+
   required_providers {
     azapi = {
       source  = "Azure/azapi"
@@ -19,9 +20,16 @@ provider "azurerm" {
 data "azapi_client_config" "current" {}
 
 module "lz-vending" {
-  source                  = "../../"
-  subscription_id         = data.azapi_client_config.current.subscription_id
-  location                = "swedencentral"
+  source = "../../"
+
+  location                        = "swedencentral"
+  disable_telemetry               = true
+  resource_group_creation_enabled = true
+  resource_groups = {
+    rg1 = {
+      name = "rg-vending-002"
+    }
+  }
   role_assignment_enabled = true
   role_assignments = {
     ra1 = {
@@ -36,14 +44,8 @@ module "lz-vending" {
       principal_id             = data.azapi_client_config.current.object_id
     }
   }
-  disable_telemetry               = true
-  resource_group_creation_enabled = true
-  resource_groups = {
-    rg1 = {
-      name = "rg-vending-002"
-    }
-  }
-  umi_enabled = true
+  subscription_id = data.azapi_client_config.current.subscription_id
+  umi_enabled     = true
   user_managed_identities = {
     umi1 = {
       name               = "umi-vending-001"
