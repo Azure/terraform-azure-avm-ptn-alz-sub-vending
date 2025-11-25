@@ -135,7 +135,7 @@ The following input variables are required:
 
 ### <a name="input_subscription_billing_scope"></a> [subscription\_billing\_scope](#input\_subscription\_billing\_scope)
 
-Description: n/a
+Description: The billing scope for the subscription.
 
 Type: `string`
 
@@ -149,7 +149,7 @@ The following outputs are exported:
 
 ### <a name="output_test"></a> [test](#output\_test)
 
-Description: n/a
+Description: The output from the subscription vending module.
 
 ## Modules
 

@@ -1,3 +1,4 @@
 output "test" {
-  value = module.sub_vending
+  description = "The output from the subscription vending module."
+  value       = module.sub_vending
 }

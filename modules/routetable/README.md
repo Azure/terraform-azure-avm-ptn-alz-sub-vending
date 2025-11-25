@@ -123,6 +123,10 @@ Default: `{}`
 
 The following outputs are exported:
 
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The created route table ID.
+
 ### <a name="output_route_table_resource_id"></a> [route\_table\_resource\_id](#output\_route\_table\_resource\_id)
 
 Description: The created route table ID.

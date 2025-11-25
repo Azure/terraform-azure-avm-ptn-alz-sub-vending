@@ -64,6 +64,13 @@ The following resources are used by this module:
 
 The following input variables are required:
 
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The default location of resources created by this module.  
+Virtual networks will be created in this location unless overridden by the `location` attribute.
+
+Type: `string`
+
 ### <a name="input_subscription_id"></a> [subscription\_id](#input\_subscription\_id)
 
 Description: The subscription ID of the subscription to create the virtual network in.
@@ -285,18 +292,13 @@ Type: `bool`
 
 Default: `true`
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The default location of resources created by this module.  
-Virtual networks will be created in this location unless overridden by the `location` attribute.
-
-Type: `string`
-
-Default: `""`
-
 ## Outputs
 
 The following outputs are exported:
+
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The created virtual network resource IDs, expressed as a map.
 
 ### <a name="output_virtual_network_resource_ids"></a> [virtual\_network\_resource\_ids](#output\_virtual\_network\_resource\_ids)
 

@@ -76,7 +76,7 @@ The following input variables are optional (have default values):
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
-Description: n/a
+Description: This variable controls whether or not telemetry is enabled for the module.
 
 Type: `bool`
 
@@ -144,6 +144,10 @@ Default: `false`
 ## Outputs
 
 The following outputs are exported:
+
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The Azure resource id of the created role assignment.
 
 ### <a name="output_role_assignment_name"></a> [role\_assignment\_name](#output\_role\_assignment\_name)
 

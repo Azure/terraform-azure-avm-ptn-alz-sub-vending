@@ -156,6 +156,10 @@ The following outputs are exported:
 
 Description: The created network security group resource ID.
 
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The created network security group resource ID.
+
 ## Modules
 
 No modules.

@@ -118,6 +118,10 @@ The following outputs are exported:
 
 Description: The Azure resource id of the created budget.
 
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The Azure resource id of the created budget.
+
 ## Modules
 
 No modules.

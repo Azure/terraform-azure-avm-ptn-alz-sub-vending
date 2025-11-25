@@ -98,11 +98,19 @@ Default: `{}`
 
 The following outputs are exported:
 
+### <a name="output_name"></a> [name](#output\_name)
+
+Description: The created resource group name.
+
 ### <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name)
 
 Description: The created resource group name.
 
 ### <a name="output_resource_group_resource_id"></a> [resource\_group\_resource\_id](#output\_resource\_group\_resource\_id)
+
+Description: The created resource group resource ID.
+
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The created resource group resource ID.
 
