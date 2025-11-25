@@ -17,6 +17,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5"
+    }
   }
 }
 
@@ -34,7 +38,7 @@ resource "random_string" "suffix" {
   upper   = false
 }
 
-module "sub-vending" {
+module "sub_vending" {
   source = "../../"
 
   location                        = "swedencentral"
@@ -91,6 +95,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
 
+- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
+
 ## Resources
 
 The following resources are used by this module:
@@ -109,13 +115,17 @@ No optional inputs.
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_test"></a> [test](#output\_test)
+
+Description: The output from the subscription vending module.
 
 ## Modules
 
 The following Modules are called:
 
-### <a name="module_sub-vending"></a> [sub-vending](#module\_sub-vending)
+### <a name="module_sub_vending"></a> [sub\_vending](#module\_sub\_vending)
 
 Source: ../../
 

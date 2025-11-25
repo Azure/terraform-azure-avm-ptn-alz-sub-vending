@@ -113,11 +113,11 @@ Default: `[]`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
-Description: A map of tags to assign to the route table.
+Description: (Optional) Tags of the resource.
 
 Type: `map(string)`
 
-Default: `{}`
+Default: `null`
 
 ## Outputs
 

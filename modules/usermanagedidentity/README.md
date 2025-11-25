@@ -195,11 +195,11 @@ Default: `{}`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
-Description: The tags to apply to the user-assigned managed identity
+Description: (Optional) Tags of the resource.
 
 Type: `map(string)`
 
-Default: `{}`
+Default: `null`
 
 ## Outputs
 

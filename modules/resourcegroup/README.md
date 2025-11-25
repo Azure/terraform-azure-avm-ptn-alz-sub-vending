@@ -88,11 +88,11 @@ Default: `null`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
-Description: Map of tags to be applied to the resource group
+Description: (Optional) Tags of the resource.
 
 Type: `map(string)`
 
-Default: `{}`
+Default: `null`
 
 ## Outputs
 

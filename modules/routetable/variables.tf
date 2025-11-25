@@ -66,9 +66,6 @@ DESCRIPTION
 
 variable "tags" {
   type        = map(string)
-  default     = {}
-  description = <<DESCRIPTION
-A map of tags to assign to the route table.
-DESCRIPTION
-  nullable    = false
+  default     = null
+  description = "(Optional) Tags of the resource."
 }

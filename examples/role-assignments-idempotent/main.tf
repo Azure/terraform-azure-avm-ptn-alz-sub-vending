@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5"
+    }
   }
 }
 
@@ -27,7 +31,7 @@ resource "random_string" "suffix" {
   upper   = false
 }
 
-module "sub-vending" {
+module "sub_vending" {
   source = "../../"
 
   location                        = "swedencentral"

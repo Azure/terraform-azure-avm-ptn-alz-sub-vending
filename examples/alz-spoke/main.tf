@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5"
+    }
   }
 }
 
@@ -68,7 +72,7 @@ locals {
   }
 }
 
-module "sub-vending" {
+module "sub_vending" {
   source = "../../"
 
   location = azurerm_resource_group.hub.location

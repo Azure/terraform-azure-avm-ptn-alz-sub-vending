@@ -40,6 +40,6 @@ variable "lock_name" {
 
 variable "tags" {
   type        = map(string)
-  default     = {}
-  description = "Map of tags to be applied to the resource group"
+  default     = null
+  description = "(Optional) Tags of the resource."
 }

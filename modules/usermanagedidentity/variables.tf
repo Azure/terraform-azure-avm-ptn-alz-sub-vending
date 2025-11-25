@@ -1,6 +1,7 @@
 variable "location" {
   type        = string
   description = "The location of the user-assigned managed identity"
+  nullable    = false
 }
 
 variable "name" {
@@ -121,6 +122,6 @@ DESCRIPTION
 
 variable "tags" {
   type        = map(string)
-  default     = {}
-  description = "The tags to apply to the user-assigned managed identity"
+  default     = null
+  description = "(Optional) Tags of the resource."
 }
