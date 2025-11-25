@@ -69,7 +69,11 @@ Default: `[]`
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The created resource group name.
 
 ## Modules
 
