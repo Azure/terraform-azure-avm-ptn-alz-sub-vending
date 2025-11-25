@@ -1,3 +1,3 @@
-output "subscription_id" {
-  value = module.lz_vending.subscription_id
+output "test" {
+  value = module.sub_vending
 }

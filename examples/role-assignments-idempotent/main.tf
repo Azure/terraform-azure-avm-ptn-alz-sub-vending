@@ -19,7 +19,15 @@ provider "azurerm" {
 
 data "azapi_client_config" "current" {}
 
-module "lz-vending" {
+resource "random_string" "suffix" {
+  length  = 6
+  lower   = true
+  numeric = true
+  special = false
+  upper   = false
+}
+
+module "sub-vending" {
   source = "../../"
 
   location                        = "swedencentral"
@@ -27,7 +35,7 @@ module "lz-vending" {
   resource_group_creation_enabled = true
   resource_groups = {
     rg1 = {
-      name = "rg-vending-002"
+      name = "rg-vending-${random_string.suffix.result}"
     }
   }
   role_assignment_enabled = true
@@ -48,7 +56,7 @@ module "lz-vending" {
   umi_enabled     = true
   user_managed_identities = {
     umi1 = {
-      name               = "umi-vending-001"
+      name               = "umi-vending-${random_string.suffix.result}"
       resource_group_key = "rg1"
       role_assignments = {
         stg_blob_rg = {

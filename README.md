@@ -1114,6 +1114,10 @@ Value will be null if `var.subscription_management_group_association_enabled` is
 
 Description: The created resource group IDs, expressed as a map.
 
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The resource\_id is the Azure resource id of the subscription that resources have been deployed into.
+
 ### <a name="output_route_table_resource_ids"></a> [route\_table\_resource\_ids](#output\_route\_table\_resource\_ids)
 
 Description: The created route table resource IDs, expressed as a map.

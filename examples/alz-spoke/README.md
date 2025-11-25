@@ -5,40 +5,85 @@
 Single region with some options turned off and custom naming conventions.
 
 ```hcl
-data "azurerm_client_config" "current" {}
+terraform {
+  required_version = "~> 1.8"
 
-resource "azurerm_resource_group" "hub" {
-  location = var.location
-  #ts:skip=AC_AZURE_0389 skip resource lock check
-  name = "${var.virtual_networks["primary"].name}-hub"
-}
-
-resource "azurerm_virtual_network" "hub" {
-  location = azurerm_resource_group.hub.location
-  #ts:skip=AC_AZURE_0356 skip NSG subnet check
-  name                = "${var.virtual_networks["primary"].name}-hub"
-  resource_group_name = azurerm_resource_group.hub.name
-  address_space       = ["192.168.10.0/23"]
-}
-
-locals {
-  virtual_network_primary_merged = merge(var.virtual_networks["primary"], {
-    hub_network_resource_id = azurerm_virtual_network.hub.id
-  })
-  virtual_networks_merged = {
-    primary = local.virtual_network_primary_merged
+  required_providers {
+    azapi = {
+      source  = "Azure/azapi"
+      version = "~> 2.4"
+    }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 4.0"
+    }
   }
 }
 
-module "lz_vending" {
+provider "azurerm" {
+  features {}
+}
+
+
+data "azurerm_client_config" "current" {}
+
+resource "random_string" "suffix" {
+  length  = 6
+  lower   = true
+  numeric = true
+  special = false
+  upper   = false
+}
+
+resource "azurerm_resource_group" "hub" {
+  location = "uksouth"
+  name     = "rg-hub-${random_string.suffix.result}"
+}
+
+resource "azurerm_virtual_network" "hub" {
+  location            = azurerm_resource_group.hub.location
+  name                = "vnet-hub-${random_string.suffix.result}"
+  resource_group_name = azurerm_resource_group.hub.name
+  address_space       = ["10.0.0.0/16"]
+}
+
+locals {
+  resource_groups = {
+    rg1 = {
+      name     = "rg-spoke1-${random_string.suffix.result}"
+      location = azurerm_resource_group.hub.location
+    }
+    rg2 = {
+      name     = "rg-spoke2-${random_string.suffix.result}"
+      location = azurerm_resource_group.hub.location
+    }
+  }
+  subscription_name = "alz-spoke-sub-vending-${random_string.suffix.result}"
+  virtual_networks = {
+    vnet1 = {
+      name                    = "vnet-spoke1-${random_string.suffix.result}"
+      resource_group_key      = "rg1"
+      address_space           = ["10.1.0.0/16"]
+      hub_network_resource_id = azurerm_virtual_network.hub.id
+    }
+    vnet2 = {
+      name                    = "vnet-spoke2-${random_string.suffix.result}"
+      resource_group_key      = "rg2"
+      address_space           = ["10.2.0.0/16"]
+      hub_network_resource_id = azurerm_virtual_network.hub.id
+    }
+  }
+}
+
+module "sub-vending" {
   source = "../../"
 
-  location = var.location
+  location = azurerm_resource_group.hub.location
   # resource groups
-  resource_group_creation_enabled = var.resource_group_creation_enabled
-  resource_groups                 = var.resource_groups
+  resource_group_creation_enabled = true
+  resource_groups                 = local.resource_groups
   # role assignment
-  role_assignment_enabled = var.role_assignment_enabled
+  role_assignment_enabled = true
   role_assignments = {
     test = {
       principal_id   = data.azurerm_client_config.current.object_id
@@ -47,16 +92,20 @@ module "lz_vending" {
     }
   }
   # subscription variables
-  subscription_alias_enabled                       = var.subscription_alias_enabled
-  subscription_alias_name                          = var.subscription_alias_name
+  subscription_alias_enabled                       = true
+  subscription_alias_name                          = local.subscription_name
   subscription_billing_scope                       = var.subscription_billing_scope
-  subscription_display_name                        = var.subscription_display_name
-  subscription_register_resource_providers_enabled = var.subscription_register_resource_providers_enabled
-  subscription_workload                            = var.subscription_workload
+  subscription_display_name                        = local.subscription_name
+  subscription_register_resource_providers_enabled = true
+  subscription_tags = {
+    created_by = "avm-ptn-alz-sub-vending"
+  }
+  subscription_workload = "Production"
   # virtual network variables
-  virtual_network_enabled = var.virtual_network_enabled
-  virtual_networks        = local.virtual_networks_merged
+  virtual_network_enabled = true
+  virtual_networks        = local.virtual_networks
 }
+
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -76,6 +125,7 @@ The following resources are used by this module:
 
 - [azurerm_resource_group.hub](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
 - [azurerm_virtual_network.hub](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) (resource)
+- [random_string.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) (resource)
 - [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -83,77 +133,11 @@ The following resources are used by this module:
 
 The following input variables are required:
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: n/a
-
-Type: `string`
-
-### <a name="input_resource_group_creation_enabled"></a> [resource\_group\_creation\_enabled](#input\_resource\_group\_creation\_enabled)
-
-Description: n/a
-
-Type: `bool`
-
-### <a name="input_resource_groups"></a> [resource\_groups](#input\_resource\_groups)
-
-Description: n/a
-
-Type: `any`
-
-### <a name="input_role_assignment_enabled"></a> [role\_assignment\_enabled](#input\_role\_assignment\_enabled)
-
-Description: n/a
-
-Type: `bool`
-
-### <a name="input_subscription_alias_enabled"></a> [subscription\_alias\_enabled](#input\_subscription\_alias\_enabled)
-
-Description: n/a
-
-Type: `bool`
-
-### <a name="input_subscription_alias_name"></a> [subscription\_alias\_name](#input\_subscription\_alias\_name)
-
-Description: n/a
-
-Type: `string`
-
 ### <a name="input_subscription_billing_scope"></a> [subscription\_billing\_scope](#input\_subscription\_billing\_scope)
 
 Description: n/a
 
 Type: `string`
-
-### <a name="input_subscription_display_name"></a> [subscription\_display\_name](#input\_subscription\_display\_name)
-
-Description: n/a
-
-Type: `string`
-
-### <a name="input_subscription_register_resource_providers_enabled"></a> [subscription\_register\_resource\_providers\_enabled](#input\_subscription\_register\_resource\_providers\_enabled)
-
-Description: n/a
-
-Type: `bool`
-
-### <a name="input_subscription_workload"></a> [subscription\_workload](#input\_subscription\_workload)
-
-Description: n/a
-
-Type: `string`
-
-### <a name="input_virtual_network_enabled"></a> [virtual\_network\_enabled](#input\_virtual\_network\_enabled)
-
-Description: n/a
-
-Type: `string`
-
-### <a name="input_virtual_networks"></a> [virtual\_networks](#input\_virtual\_networks)
-
-Description: n/a
-
-Type: `any`
 
 ## Optional Inputs
 
@@ -163,7 +147,7 @@ No optional inputs.
 
 The following outputs are exported:
 
-### <a name="output_subscription_id"></a> [subscription\_id](#output\_subscription\_id)
+### <a name="output_test"></a> [test](#output\_test)
 
 Description: n/a
 
@@ -171,7 +155,7 @@ Description: n/a
 
 The following Modules are called:
 
-### <a name="module_lz_vending"></a> [lz\_vending](#module\_lz\_vending)
+### <a name="module_sub-vending"></a> [sub-vending](#module\_sub-vending)
 
 Source: ../../
 
