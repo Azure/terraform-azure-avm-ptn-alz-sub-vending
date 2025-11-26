@@ -1,5 +1,5 @@
 module "resourceproviders" {
-  source   = "./modules/resourceprovider"
+  source   = "./modules/resource-provider"
   for_each = { for k, v in var.subscription_register_resource_providers_and_features : k => v if var.subscription_register_resource_providers_enabled }
 
   resource_provider = each.key

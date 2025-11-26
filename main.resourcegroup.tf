@@ -1,6 +1,6 @@
 # Resource groups module
 module "resourcegroup" {
-  source   = "./modules/resourcegroup"
+  source   = "./modules/resource-group"
   for_each = var.resource_group_creation_enabled ? var.resource_groups : {}
 
   location            = coalesce(each.value.location, var.location)

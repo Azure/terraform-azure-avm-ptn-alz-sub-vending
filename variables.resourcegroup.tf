@@ -16,9 +16,11 @@ variable "resource_groups" {
   description = <<DESCRIPTION
 A map of the resource groups to create. The value is an object with the following attributes:
 
-- `name` - the name of the resource group
-- `location` - the location of the resource group
-- `tags` - (optional) a map of type string
+- `name` - The name of the resource group.
+- `location` - (Optional) The location of the resource group.
+- `tags` - (Optional) A map of tags to assign to the resource group. Defaults to empty map.
+- `lock_enabled` - (Optional) Whether to enable a resource lock on the resource group. Defaults to `false`.
+- `lock_name` - (Optional) The name of the resource lock. Defaults to empty string.
 
 We recommend that you include an entry to create the NetworkWatcherRG resource group so that this is managed by Terraform.
 DESCRIPTION

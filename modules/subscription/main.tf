@@ -99,6 +99,12 @@ resource "azapi_resource_action" "subscription_cancel" {
   resource_id = "/subscriptions/${local.subscription_id}"
   type        = "Microsoft.Resources/subscriptions@2021-10-01"
   when        = "destroy"
+  retry = {
+    error_message_regex = ["ResourcesExistingOnSubscription"]
+  }
+  timeouts {
+    delete = "30m"
+  }
 
   depends_on = [
     time_sleep.wait_for_subscription_before_subscription_operations

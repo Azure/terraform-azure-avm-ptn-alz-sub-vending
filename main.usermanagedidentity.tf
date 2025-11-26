@@ -1,5 +1,5 @@
 module "usermanagedidentity" {
-  source   = "./modules/usermanagedidentity"
+  source   = "./modules/user-assigned-managed-identity"
   for_each = { for umi_k, umi_v in var.user_managed_identities : umi_k => umi_v if var.umi_enabled }
 
   location = coalesce(each.value.location, var.location)

@@ -151,12 +151,10 @@ A map of the virtual networks to create. The map key must be known at the plan s
   - `service_endpoints` - (Optional) The list of Service endpoints to associate with the subnet.
   - `service_endpoint_policies` - (Optional) The list of Service Endpoint Policy objects with the resource id to associate with the subnet.
     - `id` - The ID of the endpoint policy that should be associated with the subnet.
-  - `service_endpoint_policy_assignment_enabled` - (Optional) Should the Service Endpoint Policy be assigned to the subnet? Default `true`.
-  - `delegation` - (Optional) An object with the following fields:
+  - `delegations` - (Optional) A list of delegation objects with the following fields:
     - `name` - The name of the delegation.
     - `service_delegation` - An object with the following fields:
       - `name` - The name of the service delegation.
-      - `actions` - A list of actions that should be delegated, the list is specific to the service being delegated.
 
 
 ### Hub network peering values

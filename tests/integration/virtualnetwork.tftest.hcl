@@ -2,8 +2,8 @@
 # Tests basic VNet creation without deploying
 
 variables {
-  location        = "uksouth"
-  subscription_id = "00000000-0000-0000-0000-000000000000"
+  location         = "uksouth"
+  subscription_id  = "00000000-0000-0000-0000-000000000000"
   enable_telemetry = false
 }
 
@@ -14,15 +14,15 @@ run "valid_two_vnets" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                = "primary-vnet"
-        address_space       = ["192.168.0.0/24"]
-        location            = "westeurope"
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
         resource_group_name_existing = "primary-rg"
       }
       secondary = {
-        name                = "secondary-vnet"
-        address_space       = ["192.168.1.0/24"]
-        location            = "northeurope"
+        name                         = "secondary-vnet"
+        address_space                = ["192.168.1.0/24"]
+        location                     = "northeurope"
         resource_group_name_existing = "secondary-rg"
       }
     }
@@ -41,18 +41,18 @@ run "vnets_with_custom_dns" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                = "primary-vnet"
-        address_space       = ["192.168.0.0/24"]
-        location            = "westeurope"
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
         resource_group_name_existing = "primary-rg"
-        dns_servers         = ["1.2.3.4", "4.3.2.1"]
+        dns_servers                  = ["1.2.3.4", "4.3.2.1"]
       }
       secondary = {
-        name                = "secondary-vnet"
-        address_space       = ["192.168.1.0/24"]
-        location            = "northeurope"
+        name                         = "secondary-vnet"
+        address_space                = ["192.168.1.0/24"]
+        location                     = "northeurope"
         resource_group_name_existing = "secondary-rg"
-        dns_servers         = ["8.8.8.8"]
+        dns_servers                  = ["8.8.8.8"]
       }
     }
   }
@@ -70,9 +70,9 @@ run "vnets_with_tags" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                = "primary-vnet"
-        address_space       = ["192.168.0.0/24"]
-        location            = "westeurope"
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
         resource_group_name_existing = "primary-rg"
         tags = {
           tag1 = "value1"
@@ -80,9 +80,9 @@ run "vnets_with_tags" {
         }
       }
       secondary = {
-        name                = "secondary-vnet"
-        address_space       = ["192.168.1.0/24"]
-        location            = "northeurope"
+        name                         = "secondary-vnet"
+        address_space                = ["192.168.1.0/24"]
+        location                     = "northeurope"
         resource_group_name_existing = "secondary-rg"
       }
     }
@@ -101,30 +101,30 @@ run "vnets_with_subnets" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                = "primary-vnet"
-        address_space       = ["192.168.0.0/24"]
-        location            = "westeurope"
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
         resource_group_name_existing = "primary-rg"
         subnets = {
           default = {
-            name              = "snet-default"
-            address_prefixes  = ["192.168.0.0/26"]
+            name             = "snet-default"
+            address_prefixes = ["192.168.0.0/26"]
           }
           privateendpoint = {
-            name              = "snet-privateendpoint"
-            address_prefixes  = ["192.168.0.64/26"]
+            name             = "snet-privateendpoint"
+            address_prefixes = ["192.168.0.64/26"]
           }
         }
       }
       secondary = {
-        name                = "secondary-vnet"
-        address_space       = ["192.168.1.0/24"]
-        location            = "northeurope"
+        name                         = "secondary-vnet"
+        address_space                = ["192.168.1.0/24"]
+        location                     = "northeurope"
         resource_group_name_existing = "secondary-rg"
         subnets = {
           default = {
-            name              = "snet-default"
-            address_prefixes  = ["192.168.1.0/26"]
+            name             = "snet-default"
+            address_prefixes = ["192.168.1.0/26"]
           }
         }
       }
@@ -144,19 +144,19 @@ run "vnet_with_mesh_peering" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                  = "primary-vnet"
-        address_space         = ["192.168.0.0/24"]
-        location              = "westeurope"
-        resource_group_name_existing   = "primary-rg"
-        mesh_peering_enabled  = true
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
+        resource_group_name_existing = "primary-rg"
+        mesh_peering_enabled         = true
       }
       secondary = {
-        name                                      = "secondary-vnet"
-        address_space                             = ["192.168.1.0/24"]
-        location                                  = "northeurope"
-        resource_group_name_existing                       = "secondary-rg"
-        mesh_peering_enabled                      = true
-        mesh_peering_allow_forwarded_traffic      = true
+        name                                 = "secondary-vnet"
+        address_space                        = ["192.168.1.0/24"]
+        location                             = "northeurope"
+        resource_group_name_existing         = "secondary-rg"
+        mesh_peering_enabled                 = true
+        mesh_peering_allow_forwarded_traffic = true
       }
     }
   }
@@ -174,17 +174,17 @@ run "vnet_with_hub_peering" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                      = "primary-vnet"
-        address_space             = ["192.168.0.0/24"]
-        location                  = "westeurope"
-        resource_group_name_existing       = "primary-rg"
-        hub_network_resource_id   = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/testvnet2"
-        hub_peering_enabled       = true
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
+        resource_group_name_existing = "primary-rg"
+        hub_network_resource_id      = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/testvnet2"
+        hub_peering_enabled          = true
       }
       secondary = {
-        name                = "secondary-vnet"
-        address_space       = ["192.168.1.0/24"]
-        location            = "northeurope"
+        name                         = "secondary-vnet"
+        address_space                = ["192.168.1.0/24"]
+        location                     = "northeurope"
         resource_group_name_existing = "secondary-rg"
       }
     }
@@ -203,17 +203,17 @@ run "vnet_with_ddos_protection" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                      = "primary-vnet"
-        address_space             = ["192.168.0.0/24"]
-        location                  = "westeurope"
-        resource_group_name_existing       = "primary-rg"
-        ddos_protection_enabled   = true
-        ddos_protection_plan_id   = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_rg/providers/Microsoft.Network/ddosProtectionPlans/test-ddos-plan"
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
+        resource_group_name_existing = "primary-rg"
+        ddos_protection_enabled      = true
+        ddos_protection_plan_id      = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_rg/providers/Microsoft.Network/ddosProtectionPlans/test-ddos-plan"
       }
       secondary = {
-        name                = "secondary-vnet"
-        address_space       = ["192.168.1.0/24"]
-        location            = "northeurope"
+        name                         = "secondary-vnet"
+        address_space                = ["192.168.1.0/24"]
+        location                     = "northeurope"
         resource_group_name_existing = "secondary-rg"
       }
     }

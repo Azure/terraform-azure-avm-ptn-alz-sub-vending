@@ -5,12 +5,12 @@ run "integration_hub_and_spoke" {
   command = plan
 
   variables {
-    location                        = "northeurope"
-    subscription_alias_enabled      = true
-    subscription_display_name       = "test-subscription-alias"
-    subscription_alias_name         = "test-subscription-alias"
-    subscription_workload           = "Production"
-    subscription_billing_scope      = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
+    location                   = "northeurope"
+    subscription_alias_enabled = true
+    subscription_display_name  = "test-subscription-alias"
+    subscription_alias_name    = "test-subscription-alias"
+    subscription_workload      = "Production"
+    subscription_billing_scope = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
     subscription_tags = {
       test-tag   = "test-value"
       test-tag-2 = "test-value-2"
@@ -29,12 +29,12 @@ run "integration_hub_and_spoke" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                      = "primary-vnet"
-        address_space             = ["192.168.0.0/24"]
-        location                  = "westeurope"
-        resource_group_key        = "primary"
-        hub_peering_enabled       = true
-        hub_network_resource_id   = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/testvnet"
+        name                    = "primary-vnet"
+        address_space           = ["192.168.0.0/24"]
+        location                = "westeurope"
+        resource_group_key      = "primary"
+        hub_peering_enabled     = true
+        hub_network_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/testvnet"
       }
     }
   }
@@ -54,12 +54,12 @@ run "integration_vwan" {
   command = plan
 
   variables {
-    location                        = "northeurope"
-    subscription_alias_enabled      = true
-    subscription_display_name       = "test-subscription-alias"
-    subscription_alias_name         = "test-subscription-alias"
-    subscription_workload           = "Production"
-    subscription_billing_scope      = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
+    location                   = "northeurope"
+    subscription_alias_enabled = true
+    subscription_display_name  = "test-subscription-alias"
+    subscription_alias_name    = "test-subscription-alias"
+    subscription_workload      = "Production"
+    subscription_billing_scope = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
     subscription_tags = {
       test-tag = "test-value"
     }
@@ -77,11 +77,11 @@ run "integration_vwan" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                   = "primary-vnet"
-        address_space          = ["192.168.0.0/24"]
-        location               = "westeurope"
-        resource_group_key     = "primary"
-        vwan_hub_resource_id   = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Network/virtualHubs/testhub"
+        name                    = "primary-vnet"
+        address_space           = ["192.168.0.0/24"]
+        location                = "westeurope"
+        resource_group_key      = "primary"
+        vwan_hub_resource_id    = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Network/virtualHubs/testhub"
         vwan_connection_enabled = true
       }
     }
@@ -102,14 +102,14 @@ run "integration_subscription_and_roleassignment_only" {
   command = plan
 
   variables {
-    location                        = "northeurope"
-    subscription_alias_enabled      = true
-    subscription_display_name       = "test-subscription-alias"
-    subscription_alias_name         = "test-subscription-alias"
-    subscription_workload           = "Production"
-    subscription_billing_scope      = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
-    virtual_network_enabled         = false
-    role_assignment_enabled         = true
+    location                   = "northeurope"
+    subscription_alias_enabled = true
+    subscription_display_name  = "test-subscription-alias"
+    subscription_alias_name    = "test-subscription-alias"
+    subscription_workload      = "Production"
+    subscription_billing_scope = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
+    virtual_network_enabled    = false
+    role_assignment_enabled    = true
     role_assignments = {
       ra = {
         principal_id   = "00000000-0000-0000-0000-000000000000"
@@ -147,12 +147,12 @@ run "integration_existing_subscription_hub_and_spoke" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                      = "primary-vnet"
-        address_space             = ["192.168.0.0/24"]
-        location                  = "westeurope"
-        resource_group_key        = "primary"
-        hub_network_resource_id   = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/testvnet"
-        hub_peering_enabled       = true
+        name                    = "primary-vnet"
+        address_space           = ["192.168.0.0/24"]
+        location                = "westeurope"
+        resource_group_key      = "primary"
+        hub_network_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/testvnet"
+        hub_peering_enabled     = true
       }
     }
   }
@@ -192,12 +192,12 @@ run "integration_vnet_with_route_table" {
   command = plan
 
   variables {
-    location                        = "northeurope"
-    subscription_alias_enabled      = true
-    subscription_display_name       = "test-subscription-alias"
-    subscription_alias_name         = "test-subscription-alias"
-    subscription_workload           = "Production"
-    subscription_billing_scope      = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
+    location                   = "northeurope"
+    subscription_alias_enabled = true
+    subscription_display_name  = "test-subscription-alias"
+    subscription_alias_name    = "test-subscription-alias"
+    subscription_workload      = "Production"
+    subscription_billing_scope = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
     subscription_tags = {
       test-tag   = "test-value"
       test-tag-2 = "test-value-2"

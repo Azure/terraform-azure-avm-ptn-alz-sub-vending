@@ -2,7 +2,7 @@
 # as many network security groups as is required by the var.network_security_groups input variable
 # and any nested security rules within the network security group.
 module "networksecuritygroup" {
-  source   = "./modules/networksecuritygroup"
+  source   = "./modules/network-security-group"
   for_each = { for nsg_k, nsg_v in var.network_security_groups : nsg_k => nsg_v if var.network_security_group_enabled }
 
   location = coalesce(each.value.location, var.location)

@@ -2,7 +2,7 @@
 # as many virtual networks as is required by the var.virtual_networks input variable
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.14.1"
+  version  = "0.16.0"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)

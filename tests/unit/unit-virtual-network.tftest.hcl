@@ -7,8 +7,8 @@ mock_provider "modtem" {}
 mock_provider "time" {}
 
 variables {
-  location        = "uksouth"
-  subscription_id = "00000000-0000-0000-0000-000000000000"
+  location         = "uksouth"
+  subscription_id  = "00000000-0000-0000-0000-000000000000"
   enable_telemetry = false
 }
 
@@ -19,15 +19,15 @@ run "valid_two_vnets" {
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
-        name                = "primary-vnet"
-        address_space       = ["192.168.0.0/24"]
-        location            = "westeurope"
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
         resource_group_name_existing = "primary-rg"
       }
       secondary = {
-        name                = "secondary-vnet"
-        address_space       = ["192.168.1.0/24"]
-        location            = "northeurope"
+        name                         = "secondary-vnet"
+        address_space                = ["192.168.1.0/24"]
+        location                     = "northeurope"
         resource_group_name_existing = "secondary-rg"
       }
     }
