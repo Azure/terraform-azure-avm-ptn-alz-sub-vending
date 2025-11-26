@@ -45,7 +45,6 @@ variable "subscription_register_resource_providers_and_features" {
     "Microsoft.Management"              = [],
     "Microsoft.Maps"                    = [],
     "Microsoft.MarketplaceOrdering"     = [],
-    "Microsoft.MixedReality"            = [],
     "Microsoft.Network"                 = [],
     "Microsoft.NotificationHubs"        = [],
     "Microsoft.OperationalInsights"     = [],
