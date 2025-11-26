@@ -98,10 +98,11 @@ resource "azapi_resource_action" "subscription_cancel" {
   method      = "POST"
   resource_id = "/subscriptions/${local.subscription_id}"
   type        = "Microsoft.Resources/subscriptions@2021-10-01"
-  when        = "destroy"
   retry = {
     error_message_regex = ["ResourcesExistingOnSubscription"]
   }
+  when = "destroy"
+
   timeouts {
     delete = "30m"
   }

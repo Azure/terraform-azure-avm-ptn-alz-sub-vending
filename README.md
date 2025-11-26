@@ -372,9 +372,11 @@ Default: `false`
 
 Description: A map of the resource groups to create. The value is an object with the following attributes:
 
-- `name` - the name of the resource group
-- `location` - the location of the resource group
-- `tags` - (optional) a map of type string
+- `name` - The name of the resource group.
+- `location` - (Optional) The location of the resource group.
+- `tags` - (Optional) A map of tags to assign to the resource group. Defaults to empty map.
+- `lock_enabled` - (Optional) Whether to enable a resource lock on the resource group. Defaults to `false`.
+- `lock_name` - (Optional) The name of the resource lock. Defaults to empty string.
 
 We recommend that you include an entry to create the NetworkWatcherRG resource group so that this is managed by Terraform.
 
@@ -919,12 +921,10 @@ Description: A map of the virtual networks to create. The map key must be known 
   - `service_endpoints` - (Optional) The list of Service endpoints to associate with the subnet.
   - `service_endpoint_policies` - (Optional) The list of Service Endpoint Policy objects with the resource id to associate with the subnet.
     - `id` - The ID of the endpoint policy that should be associated with the subnet.
-  - `service_endpoint_policy_assignment_enabled` - (Optional) Should the Service Endpoint Policy be assigned to the subnet? Default `true`.
-  - `delegation` - (Optional) An object with the following fields:
+  - `delegations` - (Optional) A list of delegation objects with the following fields:
     - `name` - The name of the delegation.
     - `service_delegation` - An object with the following fields:
       - `name` - The name of the service delegation.
-      - `actions` - A list of actions that should be delegated, the list is specific to the service being delegated.
 
 ### Hub network peering values
 
@@ -1166,37 +1166,37 @@ Version:
 
 ### <a name="module_networksecuritygroup"></a> [networksecuritygroup](#module\_networksecuritygroup)
 
-Source: ./modules/networksecuritygroup
+Source: ./modules/network-security-group
 
 Version:
 
 ### <a name="module_resourcegroup"></a> [resourcegroup](#module\_resourcegroup)
 
-Source: ./modules/resourcegroup
+Source: ./modules/resource-group
 
 Version:
 
 ### <a name="module_resourceproviders"></a> [resourceproviders](#module\_resourceproviders)
 
-Source: ./modules/resourceprovider
+Source: ./modules/resource-provider
 
 Version:
 
 ### <a name="module_roleassignment"></a> [roleassignment](#module\_roleassignment)
 
-Source: ./modules/roleassignment
+Source: ./modules/role-assignment
 
 Version:
 
 ### <a name="module_roleassignment_umi"></a> [roleassignment\_umi](#module\_roleassignment\_umi)
 
-Source: ./modules/roleassignment
+Source: ./modules/role-assignment
 
 Version:
 
 ### <a name="module_routetable"></a> [routetable](#module\_routetable)
 
-Source: ./modules/routetable
+Source: ./modules/route-table
 
 Version:
 
@@ -1208,13 +1208,13 @@ Version:
 
 ### <a name="module_usermanagedidentity"></a> [usermanagedidentity](#module\_usermanagedidentity)
 
-Source: ./modules/usermanagedidentity
+Source: ./modules/user-assigned-managed-identity
 
 Version:
 
 ### <a name="module_virtualnetwork"></a> [virtualnetwork](#module\_virtualnetwork)
 
-Source: ./modules/virtualnetwork
+Source: ./modules/virtual-network
 
 Version:
 
