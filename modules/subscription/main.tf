@@ -17,6 +17,9 @@ resource "azapi_resource" "subscription" {
     }
   }
   response_export_values = ["properties.subscriptionId"]
+  retry = {
+    error_message_regex = ["AuthorizationFailed"]
+  }
 
   lifecycle {
     ignore_changes = [
@@ -104,7 +107,10 @@ resource "azapi_resource_action" "subscription_cancel" {
   when = "destroy"
 
   timeouts {
+    create = "30m"
     delete = "30m"
+    read   = "30m"
+    update = "30m"
   }
 
   depends_on = [
