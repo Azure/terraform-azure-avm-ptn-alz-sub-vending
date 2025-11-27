@@ -18,7 +18,7 @@ output "resource_group_resource_ids" {
 
 output "resource_id" {
   description = "The resource_id is the Azure resource id of the subscription that resources have been deployed into."
-  value       = local.subscription_id
+  value       = local.subscription_resource_id
 }
 
 output "route_table_resource_ids" {
