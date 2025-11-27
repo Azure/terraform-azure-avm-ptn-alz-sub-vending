@@ -1,0 +1,11 @@
+# Virtual networking submodule, disabled by default
+# Will create a vnet, and optionally peerings and a virtual hub connection
+module "virtualnetwork" {
+  source = "./modules/virtual-network"
+  count  = var.virtual_network_enabled ? 1 : 0
+
+  location         = var.location
+  subscription_id  = local.subscription_id
+  virtual_networks = local.virtual_networks
+  enable_telemetry = !var.disable_telemetry
+}

@@ -16,6 +16,11 @@ output "resource_group_resource_ids" {
   value       = { for k, v in module.resourcegroup : k => v.resource_group_resource_id }
 }
 
+output "resource_id" {
+  description = "The resource_id is the Azure resource id of the subscription that resources have been deployed into."
+  value       = local.subscription_resource_id
+}
+
 output "route_table_resource_ids" {
   description = "The created route table resource IDs, expressed as a map."
   value       = { for k, v in module.routetable : k => v.route_table_resource_id }

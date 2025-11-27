@@ -1,5 +1,6 @@
 terraform {
   required_version = "~> 1.12"
+
   required_providers {
     azapi = {
       source  = "Azure/azapi"
@@ -8,6 +9,10 @@ terraform {
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.5"
     }
   }
 }
@@ -18,10 +23,25 @@ provider "azurerm" {
 
 data "azapi_client_config" "current" {}
 
-module "lz-vending" {
-  source                  = "../../"
-  subscription_id         = data.azapi_client_config.current.subscription_id
-  location                = "swedencentral"
+resource "random_string" "suffix" {
+  length  = 6
+  lower   = true
+  numeric = true
+  special = false
+  upper   = false
+}
+
+module "sub_vending" {
+  source = "../../"
+
+  location                        = "swedencentral"
+  disable_telemetry               = true
+  resource_group_creation_enabled = true
+  resource_groups = {
+    rg1 = {
+      name = "rg-vending-${random_string.suffix.result}"
+    }
+  }
   role_assignment_enabled = true
   role_assignments = {
     ra1 = {
@@ -36,17 +56,11 @@ module "lz-vending" {
       principal_id             = data.azapi_client_config.current.object_id
     }
   }
-  disable_telemetry               = true
-  resource_group_creation_enabled = true
-  resource_groups = {
-    rg1 = {
-      name = "rg-vending-002"
-    }
-  }
-  umi_enabled = true
+  subscription_id = data.azapi_client_config.current.subscription_id
+  umi_enabled     = true
   user_managed_identities = {
     umi1 = {
-      name               = "umi-vending-001"
+      name               = "umi-vending-${random_string.suffix.result}"
       resource_group_key = "rg1"
       role_assignments = {
         stg_blob_rg = {
