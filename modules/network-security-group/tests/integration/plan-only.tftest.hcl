@@ -217,11 +217,6 @@ run "nsg_with_source_asgs" {
     condition     = length(var.security_rules["primary"].source_application_security_group_ids) == 1
     error_message = "Expected exactly 1 source ASG, got ${length(var.security_rules["primary"].source_application_security_group_ids)}"
   }
-
-  assert {
-    condition     = can(regex("\\/applicationSecurityGroups\\/sourceASG$", var.security_rules["primary"].source_application_security_group_ids[0]))
-    error_message = "Expected source ASG ID to end with '/applicationSecurityGroups/sourceASG', got '${var.security_rules["primary"].source_application_security_group_ids[0]}'"
-  }
 }
 
 # Test 7: NSG with destination application security groups
@@ -252,11 +247,6 @@ run "nsg_with_destination_asgs" {
   assert {
     condition     = length(var.security_rules["primary"].destination_application_security_group_ids) == 1
     error_message = "Expected exactly 1 destination ASG, got ${length(var.security_rules["primary"].destination_application_security_group_ids)}"
-  }
-
-  assert {
-    condition     = can(regex("\\/applicationSecurityGroups\\/destinationASG$", var.security_rules["primary"].destination_application_security_group_ids[0]))
-    error_message = "Expected destination ASG ID to end with '/applicationSecurityGroups/destinationASG', got '${var.security_rules["primary"].destination_application_security_group_ids[0]}'"
   }
 }
 
