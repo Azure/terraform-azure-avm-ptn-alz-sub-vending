@@ -93,8 +93,23 @@ run "integration_vwan" {
   }
 
   assert {
-    condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) >= 1
-    error_message = "At least one virtual network should be planned"
+    condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 1
+    error_message = "Expected exactly 1 virtual network to be planned, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "primary")
+    error_message = "Expected 'primary' virtual network with vWAN connection"
+  }
+
+  assert {
+    condition     = length(keys(module.resourcegroup)) == 2
+    error_message = "Expected exactly 2 resource groups for vWAN scenario, got ${length(keys(module.resourcegroup))}"
+  }
+
+  assert {
+    condition     = length(keys(var.subscription_tags)) == 1
+    error_message = "Expected exactly 1 subscription tag, got ${length(keys(var.subscription_tags))}"
   }
 }
 
@@ -123,6 +138,26 @@ run "integration_subscription_and_roleassignment_only" {
   assert {
     condition     = module.subscription[0].subscription_resource_id != null
     error_message = "Subscription should be created"
+  }
+
+  assert {
+    condition     = var.virtual_network_enabled == false
+    error_message = "Virtual network should be disabled"
+  }
+
+  assert {
+    condition     = var.role_assignment_enabled == true
+    error_message = "Role assignment should be enabled"
+  }
+
+  assert {
+    condition     = length(keys(var.role_assignments)) == 1
+    error_message = "Expected exactly 1 role assignment, got ${length(keys(var.role_assignments))}"
+  }
+
+  assert {
+    condition     = var.role_assignments["ra"].definition == "Owner"
+    error_message = "Expected role assignment definition to be 'Owner'"
   }
 }
 
@@ -158,8 +193,23 @@ run "integration_existing_subscription_hub_and_spoke" {
   }
 
   assert {
-    condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) >= 1
-    error_message = "At least one virtual network should be planned"
+    condition     = var.subscription_alias_enabled == false
+    error_message = "Subscription alias should be disabled for existing subscription"
+  }
+
+  assert {
+    condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 1
+    error_message = "Expected exactly 1 virtual network, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = length(keys(var.resource_groups)) == 2
+    error_message = "Expected exactly 2 resource groups, got ${length(keys(var.resource_groups))}"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].hub_peering_enabled == true
+    error_message = "Expected hub peering to be enabled for primary VNet"
   }
 }
 
@@ -184,7 +234,27 @@ run "integration_resource_groups_only" {
 
   assert {
     condition     = length(keys(var.resource_groups)) == 2
-    error_message = "Expected 2 resource groups to be defined"
+    error_message = "Expected exactly 2 resource groups to be defined, got ${length(keys(var.resource_groups))}"
+  }
+
+  assert {
+    condition     = contains(keys(var.resource_groups), "NetworkWatcherRG")
+    error_message = "Expected 'NetworkWatcherRG' to be present"
+  }
+
+  assert {
+    condition     = contains(keys(var.resource_groups), "rg1")
+    error_message = "Expected 'rg1' to be present"
+  }
+
+  assert {
+    condition     = var.resource_groups["NetworkWatcherRG"].name == "NetworkWatcherRG"
+    error_message = "Expected NetworkWatcherRG name to be 'NetworkWatcherRG'"
+  }
+
+  assert {
+    condition     = var.resource_groups["rg1"].location == "westeurope"
+    error_message = "Expected rg1 location to be 'westeurope'"
   }
 }
 
@@ -259,7 +329,27 @@ run "integration_vnet_with_route_table" {
   }
 
   assert {
-    condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) >= 1
-    error_message = "At least one virtual network should be planned"
+    condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 1
+    error_message = "Expected exactly 1 virtual network with route table, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = length(keys(var.virtual_networks["primary"].subnets)) == 2
+    error_message = "Expected exactly 2 subnets in primary VNet, got ${length(keys(var.virtual_networks["primary"].subnets))}"
+  }
+
+  assert {
+    condition     = length(keys(var.route_tables)) == 2
+    error_message = "Expected exactly 2 route tables to be defined, got ${length(keys(var.route_tables))}"
+  }
+
+  assert {
+    condition     = contains(keys(var.route_tables), "primary") && contains(keys(var.route_tables), "default")
+    error_message = "Expected 'primary' and 'default' route tables to be present"
+  }
+
+  assert {
+    condition     = var.route_tables["primary"].name == "primary-route-table"
+    error_message = "Expected primary route table name to be 'primary-route-table'"
   }
 }

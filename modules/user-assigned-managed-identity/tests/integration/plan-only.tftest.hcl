@@ -12,12 +12,22 @@ run "basic_user_managed_identity" {
 
   assert {
     condition     = var.name == "test"
-    error_message = "UMI name should be test"
+    error_message = "UMI name should be 'test', got '${var.name}'"
   }
 
   assert {
     condition     = var.location == "westeurope"
-    error_message = "UMI location should be westeurope"
+    error_message = "UMI location should be 'westeurope', got '${var.location}'"
+  }
+
+  assert {
+    condition     = length(keys(var.federated_credentials_github)) == 0
+    error_message = "Expected 0 GitHub federated credentials for basic UMI, got ${length(keys(var.federated_credentials_github))}"
+  }
+
+  assert {
+    condition     = length(keys(var.federated_credentials_terraform_cloud)) == 0
+    error_message = "Expected 0 Terraform Cloud federated credentials for basic UMI, got ${length(keys(var.federated_credentials_terraform_cloud))}"
   }
 }
 
@@ -46,17 +56,27 @@ run "umi_with_github_credentials" {
 
   assert {
     condition     = length(var.federated_credentials_github) == 2
-    error_message = "Should have 2 GitHub federated credentials"
+    error_message = "Expected exactly 2 GitHub federated credentials, got ${length(var.federated_credentials_github)}"
+  }
+
+  assert {
+    condition     = contains(keys(var.federated_credentials_github), "gh1") && contains(keys(var.federated_credentials_github), "gh2")
+    error_message = "Expected both 'gh1' and 'gh2' GitHub credentials to be present"
   }
 
   assert {
     condition     = var.federated_credentials_github["gh1"].entity == "branch"
-    error_message = "First credential should be for branch"
+    error_message = "First credential should be for 'branch' entity, got '${var.federated_credentials_github["gh1"].entity}'"
   }
 
   assert {
     condition     = var.federated_credentials_github["gh2"].entity == "pull_request"
-    error_message = "Second credential should be for pull_request"
+    error_message = "Second credential should be for 'pull_request' entity, got '${var.federated_credentials_github["gh2"].entity}'"
+  }
+
+  assert {
+    condition     = var.federated_credentials_github["gh1"].organization == "my-organization"
+    error_message = "Expected gh1 organization to be 'my-organization'"
   }
 }
 
@@ -86,17 +106,27 @@ run "umi_with_terraform_cloud_credentials" {
 
   assert {
     condition     = length(var.federated_credentials_terraform_cloud) == 2
-    error_message = "Should have 2 Terraform Cloud federated credentials"
+    error_message = "Expected exactly 2 Terraform Cloud federated credentials, got ${length(var.federated_credentials_terraform_cloud)}"
+  }
+
+  assert {
+    condition     = contains(keys(var.federated_credentials_terraform_cloud), "tfc1") && contains(keys(var.federated_credentials_terraform_cloud), "tfc2")
+    error_message = "Expected both 'tfc1' and 'tfc2' Terraform Cloud credentials to be present"
   }
 
   assert {
     condition     = var.federated_credentials_terraform_cloud["tfc1"].run_phase == "plan"
-    error_message = "First credential should be for plan phase"
+    error_message = "First credential should be for 'plan' phase, got '${var.federated_credentials_terraform_cloud["tfc1"].run_phase}'"
   }
 
   assert {
     condition     = var.federated_credentials_terraform_cloud["tfc2"].run_phase == "apply"
-    error_message = "Second credential should be for apply phase"
+    error_message = "Second credential should be for 'apply' phase, got '${var.federated_credentials_terraform_cloud["tfc2"].run_phase}'"
+  }
+
+  assert {
+    condition     = var.federated_credentials_terraform_cloud["tfc1"].workspace == "my-workspace"
+    error_message = "Expected tfc1 workspace to be 'my-workspace'"
   }
 }
 
@@ -124,12 +154,22 @@ run "umi_with_advanced_credentials" {
 
   assert {
     condition     = length(var.federated_credentials_advanced) == 2
-    error_message = "Should have 2 advanced federated credentials"
+    error_message = "Expected exactly 2 advanced federated credentials, got ${length(var.federated_credentials_advanced)}"
+  }
+
+  assert {
+    condition     = contains(keys(var.federated_credentials_advanced), "adv1") && contains(keys(var.federated_credentials_advanced), "adv2")
+    error_message = "Expected both 'adv1' and 'adv2' advanced credentials to be present"
   }
 
   assert {
     condition     = var.federated_credentials_advanced["adv1"].issuer_url == "https://test"
-    error_message = "Advanced credential should have correct issuer URL"
+    error_message = "Advanced credential should have issuer URL 'https://test', got '${var.federated_credentials_advanced["adv1"].issuer_url}'"
+  }
+
+  assert {
+    condition     = var.federated_credentials_advanced["adv1"].name == "myadvancedcred1" && var.federated_credentials_advanced["adv2"].name == "myadvancedcred2"
+    error_message = "Advanced credentials should have correct names"
   }
 }
 

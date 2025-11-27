@@ -3,7 +3,7 @@
 
 mock_provider "azurerm" {}
 mock_provider "azapi" {}
-mock_provider "modtem" {}
+mock_provider "modtm" {}
 mock_provider "time" {}
 
 variables {
@@ -35,6 +35,16 @@ run "valid_two_vnets" {
 
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 2
-    error_message = "Expected 2 virtual networks to be created"
+    error_message = "Expected exactly 2 virtual networks to be created, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "primary")
+    error_message = "Expected 'primary' virtual network to be present in output"
+  }
+
+  assert {
+    condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "secondary")
+    error_message = "Expected 'secondary' virtual network to be present in output"
   }
 }

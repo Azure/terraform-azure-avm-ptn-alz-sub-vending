@@ -36,6 +36,15 @@ run "valid_subscription_with_management_group" {
     subscription_management_group_association_enabled = true
   }
 
+  override_data {
+    target = data.azapi_resource_list.subscription_management_group_association[0]
+    values = {
+      output = {
+        value = []
+      }
+    }
+  }
+
   assert {
     condition     = var.subscription_alias_enabled == true
     error_message = "Subscription alias should be enabled"
@@ -130,7 +139,7 @@ run "invalid_tag_value" {
     subscription_display_name  = "Test Subscription"
     subscription_workload      = "Production"
     subscription_tags = {
-      test-tag = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" # >256 chars
+      test-tag = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" # >256 chars
     }
   }
 

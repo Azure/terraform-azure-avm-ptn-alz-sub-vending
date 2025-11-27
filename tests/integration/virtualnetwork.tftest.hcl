@@ -30,7 +30,17 @@ run "valid_two_vnets" {
 
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 2
-    error_message = "Expected 2 virtual networks to be created"
+    error_message = "Expected exactly 2 virtual networks to be created, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "primary")
+    error_message = "Expected 'primary' virtual network to be present"
+  }
+
+  assert {
+    condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "secondary")
+    error_message = "Expected 'secondary' virtual network to be present"
   }
 }
 
@@ -59,7 +69,17 @@ run "vnets_with_custom_dns" {
 
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 2
-    error_message = "Expected 2 virtual networks"
+    error_message = "Expected exactly 2 virtual networks, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = length(var.virtual_networks["primary"].dns_servers) == 2
+    error_message = "Expected primary VNet to have exactly 2 DNS servers, got ${length(var.virtual_networks["primary"].dns_servers)}"
+  }
+
+  assert {
+    condition     = length(var.virtual_networks["secondary"].dns_servers) == 1
+    error_message = "Expected secondary VNet to have exactly 1 DNS server, got ${length(var.virtual_networks["secondary"].dns_servers)}"
   }
 }
 
@@ -90,7 +110,17 @@ run "vnets_with_tags" {
 
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 2
-    error_message = "Expected 2 virtual networks with tags"
+    error_message = "Expected exactly 2 virtual networks, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = length(keys(var.virtual_networks["primary"].tags)) == 2
+    error_message = "Expected exactly 2 tags on primary VNet, got ${length(keys(var.virtual_networks["primary"].tags))}"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].tags["tag1"] == "value1"
+    error_message = "Expected tag1 value to be 'value1'"
   }
 }
 
@@ -133,7 +163,17 @@ run "vnets_with_subnets" {
 
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 2
-    error_message = "Expected 2 virtual networks with subnets"
+    error_message = "Expected exactly 2 virtual networks, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = length(keys(var.virtual_networks["primary"].subnets)) == 2
+    error_message = "Expected exactly 2 subnets in primary VNet, got ${length(keys(var.virtual_networks["primary"].subnets))}"
+  }
+
+  assert {
+    condition     = length(keys(var.virtual_networks["secondary"].subnets)) == 1
+    error_message = "Expected exactly 1 subnet in secondary VNet, got ${length(keys(var.virtual_networks["secondary"].subnets))}"
   }
 }
 
@@ -163,7 +203,22 @@ run "vnet_with_mesh_peering" {
 
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 2
-    error_message = "Expected 2 virtual networks with mesh peering"
+    error_message = "Expected exactly 2 virtual networks, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].mesh_peering_enabled == true
+    error_message = "Expected mesh peering to be enabled on primary VNet"
+  }
+
+  assert {
+    condition     = var.virtual_networks["secondary"].mesh_peering_enabled == true
+    error_message = "Expected mesh peering to be enabled on secondary VNet"
+  }
+
+  assert {
+    condition     = var.virtual_networks["secondary"].mesh_peering_allow_forwarded_traffic == true
+    error_message = "Expected secondary VNet to allow forwarded traffic"
   }
 }
 
@@ -192,7 +247,17 @@ run "vnet_with_hub_peering" {
 
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 2
-    error_message = "Expected 2 virtual networks, one with hub peering"
+    error_message = "Expected exactly 2 virtual networks, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].hub_peering_enabled == true
+    error_message = "Expected hub peering to be enabled on primary VNet"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].hub_network_resource_id != null && var.virtual_networks["primary"].hub_network_resource_id != ""
+    error_message = "Expected primary VNet to have a hub network resource ID"
   }
 }
 
@@ -221,6 +286,16 @@ run "vnet_with_ddos_protection" {
 
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 2
-    error_message = "Expected 2 virtual networks, one with DDoS protection"
+    error_message = "Expected exactly 2 virtual networks, got ${length(keys(module.virtualnetwork[0].virtual_network_resource_ids))}"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].ddos_protection_enabled == true
+    error_message = "Expected DDoS protection to be enabled on primary VNet"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].ddos_protection_plan_id != null && var.virtual_networks["primary"].ddos_protection_plan_id != ""
+    error_message = "Expected primary VNet to have a DDoS protection plan ID"
   }
 }

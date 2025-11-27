@@ -3,14 +3,20 @@ mock_provider "azapi" {
     target = data.azapi_resource_list.role_definitions
     values = {
       output = {
-        results = [
+        values = [
           {
             "id" : "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635",
-            "role_name" : "Owner"
+            "name" : "Owner"
+            "properties" : {
+              "roleName" : "Owner"
+            }
           },
           {
             "id" : "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7",
-            "role_name" : "Reader"
+            "name" : "Reader"
+            "properties" : {
+              "roleName" : "Reader"
+            }
           },
         ]
       }
