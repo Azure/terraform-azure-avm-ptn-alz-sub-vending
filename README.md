@@ -34,7 +34,7 @@ The virtual networks are peered with the supplied hub network resource ids, they
 
 ```terraform
 module "lz_vending" {
-  source  = "Azure/avm-ptn-alz-sub-vending/azurerm"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   # Set the default location for resources
