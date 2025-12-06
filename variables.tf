@@ -51,6 +51,6 @@ variable "timeouts" {
     update = optional(string, "30m")
     delete = optional(string, "30m")
   })
-  default     = null
+  default     = {}
   description = "Timeouts for the resource operations"
 }
