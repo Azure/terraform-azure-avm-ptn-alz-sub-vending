@@ -12,4 +12,5 @@ module "usermanagedidentity" {
   federated_credentials_github          = each.value.federated_credentials_github
   federated_credentials_terraform_cloud = each.value.federated_credentials_terraform_cloud
   tags                                  = each.value.tags
+  timeouts                              = var.timeouts
 }

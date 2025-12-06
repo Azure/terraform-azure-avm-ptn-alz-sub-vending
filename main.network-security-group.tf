@@ -13,4 +13,5 @@ module "networksecuritygroup" {
   )
   security_rules = each.value.security_rules
   tags           = each.value.tags
+  timeouts       = var.timeouts
 }

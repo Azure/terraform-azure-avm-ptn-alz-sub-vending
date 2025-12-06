@@ -54,7 +54,7 @@ A map of the network security groups to create. The map key must be known at the
 
 ### Security Rules
 
-- `security_rules` - (Optional) A map of security rules to create within the network network security group. The value is an object with the following fields: 
+- `security_rules` - (Optional) A map of security rules to create within the network network security group. The value is an object with the following fields:
   - `access` - (Required) Specifies whether network traffic is allowed or denied. Possible values are `Allow` and `Deny`.
   - `description` - (Optional) A description for this rule. Restricted to 140 characters.
   - `destination_address_prefix` - (Optional) CIDR or destination IP range or * to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. Besides, it also supports all available Service Tags like ‘Sql.WestEurope‘, ‘Storage.EastUS‘, etc. You can list the available service tags with the CLI: ```shell az network list-service-tags --location westcentralus```. For further information please see [Azure CLI

@@ -27,6 +27,12 @@ resource "azapi_resource" "subscription" {
       name
     ]
   }
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 resource "terraform_data" "replacement" {
@@ -60,6 +66,12 @@ resource "azapi_resource_action" "subscription_association" {
   lifecycle {
     replace_triggered_by = [terraform_data.replacement]
   }
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 resource "azapi_update_resource" "subscription_tags" {
@@ -76,6 +88,12 @@ resource "azapi_update_resource" "subscription_tags" {
   depends_on = [
     time_sleep.wait_for_subscription_before_subscription_operations
   ]
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 resource "azapi_resource_action" "subscription_rename" {
@@ -92,6 +110,12 @@ resource "azapi_resource_action" "subscription_rename" {
   depends_on = [
     time_sleep.wait_for_subscription_before_subscription_operations
   ]
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 resource "azapi_resource_action" "subscription_cancel" {
@@ -116,4 +140,10 @@ resource "azapi_resource_action" "subscription_cancel" {
   depends_on = [
     time_sleep.wait_for_subscription_before_subscription_operations
   ]
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }

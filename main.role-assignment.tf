@@ -13,6 +13,7 @@ module "roleassignment" {
   role_assignment_definition_lookup_enabled = each.value.definition_lookup_enabled
   role_assignment_principal_type            = each.value.principal_type
   role_assignment_use_random_uuid           = each.value.use_random_uuid
+  timeouts                                  = var.timeouts
 }
 
 # The roleassignments_umi module creates role assignments from the data
@@ -35,4 +36,5 @@ module "roleassignment_umi" {
   role_assignment_definition_lookup_enabled = each.value.definition_lookup_enabled
   role_assignment_principal_type            = each.value.principal_type
   role_assignment_use_random_uuid           = each.value.use_random_uuid
+  timeouts                                  = var.timeouts
 }

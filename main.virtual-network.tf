@@ -8,4 +8,5 @@ module "virtualnetwork" {
   subscription_id  = local.subscription_id
   virtual_networks = local.virtual_networks
   enable_telemetry = !var.disable_telemetry
+  timeouts         = var.timeouts
 }
