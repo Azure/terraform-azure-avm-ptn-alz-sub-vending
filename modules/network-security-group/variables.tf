@@ -86,7 +86,7 @@ variable "tags" {
 variable "timeouts" {
   type = object({
     create = optional(string, "30m")
-    read   = optional(string, "5m")
+    read   = optional(string, "15m")
     update = optional(string, "30m")
     delete = optional(string, "30m")
   })
