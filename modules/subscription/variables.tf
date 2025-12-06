@@ -236,7 +236,7 @@ DESCRIPTION
 variable "timeouts" {
   type = object({
     create = optional(string, "30m")
-    read   = optional(string, "5m")
+    read   = optional(string, "30m")
     update = optional(string, "30m")
     delete = optional(string, "30m")
   })
