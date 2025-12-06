@@ -20,6 +20,12 @@ module "virtual_networks" {
   name                    = each.value.name
   subnets                 = each.value.subnets
   tags                    = each.value.tags
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 # module.peering_hub_outbound uses the peering submodule from theAzure Verified Module
@@ -39,6 +45,12 @@ module "peering_hub_outbound" {
   use_remote_gateways          = each.value.outbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 # module.peering_hub_inbound uses the peering submodule from theAzure Verified Module
@@ -58,6 +70,12 @@ module "peering_hub_inbound" {
   use_remote_gateways          = each.value.inbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 # module.peering_mesh uses the peering submodule from theAzure Verified Module
@@ -77,6 +95,12 @@ module "peering_mesh" {
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 # azapi_resource.vhubconnection creates a virtual wan hub connection between the spoke and the supplied vwan hub.
@@ -91,6 +115,12 @@ resource "azapi_resource" "vhubconnection" {
   }
 
   depends_on = [module.virtual_networks]
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 # azapi_resource.vhubconnection creates a virtual wan hub connection between the spoke and the supplied vwan hub.
@@ -112,5 +142,11 @@ resource "azapi_resource" "vhubconnection_routing_intent" {
     ignore_changes = [
       body.properties.routingConfiguration,
     ]
+  }
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
   }
 }

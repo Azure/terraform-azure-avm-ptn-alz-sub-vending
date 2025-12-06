@@ -232,3 +232,14 @@ variable "wait_for_subscription_before_subscription_operations" {
 The duration to wait after vending a subscription before performing subscription operations.
 DESCRIPTION
 }
+
+variable "timeouts" {
+  type = object({
+    create = optional(string, "30m")
+    read   = optional(string, "5m")
+    update = optional(string, "30m")
+    delete = optional(string, "30m")
+  })
+  default     = {}
+  description = "Timeouts for the resource operations"
+}

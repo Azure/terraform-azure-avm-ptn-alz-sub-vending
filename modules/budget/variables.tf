@@ -97,3 +97,13 @@ variable "budget_notifications" {
     error_message = "At least one of contact_emails, contact_roles, or contact_groups must be supplied."
   }
 }
+variable "timeouts" {
+  type = object({
+    create = optional(string, "30m")
+    read   = optional(string, "5m")
+    update = optional(string, "30m")
+    delete = optional(string, "30m")
+  })
+  default     = {}
+  description = "Timeouts for the resource operations"
+}

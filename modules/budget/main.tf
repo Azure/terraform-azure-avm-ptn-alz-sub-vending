@@ -14,4 +14,10 @@ resource "azapi_resource" "budget" {
       }
     }
   }
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
