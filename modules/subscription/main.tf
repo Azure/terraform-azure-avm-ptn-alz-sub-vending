@@ -130,13 +130,6 @@ resource "azapi_resource_action" "subscription_cancel" {
   }
   when = "destroy"
 
-  timeouts {
-    create = "30m"
-    delete = "30m"
-    read   = "30m"
-    update = "30m"
-  }
-
   depends_on = [
     time_sleep.wait_for_subscription_before_subscription_operations
   ]

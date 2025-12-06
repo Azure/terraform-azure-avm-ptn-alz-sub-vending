@@ -20,12 +20,7 @@ module "virtual_networks" {
   name                    = each.value.name
   subnets                 = each.value.subnets
   tags                    = each.value.tags
-  timeouts {
-    create = var.timeouts.create
-    delete = var.timeouts.delete
-    read   = var.timeouts.read
-    update = var.timeouts.update
-  }
+  timeouts = var.timeouts
 }
 
 # module.peering_hub_outbound uses the peering submodule from theAzure Verified Module
@@ -43,14 +38,9 @@ module "peering_hub_outbound" {
   name                         = each.value.outbound.name
   remote_virtual_network_id    = each.value["outbound"].remote_resource_id
   use_remote_gateways          = each.value.outbound.options.use_remote_gateways
+  timeouts = var.timeouts
 
   depends_on = [module.virtual_networks]
-  timeouts {
-    create = var.timeouts.create
-    delete = var.timeouts.delete
-    read   = var.timeouts.read
-    update = var.timeouts.update
-  }
 }
 
 # module.peering_hub_inbound uses the peering submodule from theAzure Verified Module
@@ -68,14 +58,9 @@ module "peering_hub_inbound" {
   name                         = each.value.inbound.name
   remote_virtual_network_id    = each.value["inbound"].remote_resource_id
   use_remote_gateways          = each.value.inbound.options.use_remote_gateways
+  timeouts = var.timeouts
 
   depends_on = [module.virtual_networks]
-  timeouts {
-    create = var.timeouts.create
-    delete = var.timeouts.delete
-    read   = var.timeouts.read
-    update = var.timeouts.update
-  }
 }
 
 # module.peering_mesh uses the peering submodule from theAzure Verified Module
@@ -93,14 +78,9 @@ module "peering_mesh" {
   name                         = each.value.name
   remote_virtual_network_id    = each.value.remote_resource_id
   use_remote_gateways          = false
+  timeouts = var.timeouts
 
   depends_on = [module.virtual_networks]
-  timeouts {
-    create = var.timeouts.create
-    delete = var.timeouts.delete
-    read   = var.timeouts.read
-    update = var.timeouts.update
-  }
 }
 
 # azapi_resource.vhubconnection creates a virtual wan hub connection between the spoke and the supplied vwan hub.
@@ -115,12 +95,6 @@ resource "azapi_resource" "vhubconnection" {
   }
 
   depends_on = [module.virtual_networks]
-  timeouts {
-    create = var.timeouts.create
-    delete = var.timeouts.delete
-    read   = var.timeouts.read
-    update = var.timeouts.update
-  }
 }
 
 # azapi_resource.vhubconnection creates a virtual wan hub connection between the spoke and the supplied vwan hub.
