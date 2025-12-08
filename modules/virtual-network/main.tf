@@ -7,7 +7,8 @@ module "virtual_networks" {
 
   location      = coalesce(each.value.location, var.location)
   parent_id     = "/subscriptions/${var.subscription_id}/resourceGroups/${each.value.resource_group_name}"
-  address_space = each.value.address_space
+  address_space = each.value.ipam_pools == null ? each.value.address_space : null
+  ipam_pools    = each.value.ipam_pools
   ddos_protection_plan = each.value.ddos_protection_plan_id == null ? null : {
     id     = each.value.ddos_protection_plan_id
     enable = true
