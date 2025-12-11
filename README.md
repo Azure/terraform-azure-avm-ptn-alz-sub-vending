@@ -880,11 +880,21 @@ Description: A map of the virtual networks to create. The map key must be known 
 ### Required fields
 
 - `name`: The name of the virtual network. [required]
-- `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. [required]
+- `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. [optional - required if ipam\_pools is not specified]
 - `resource_group_key`: The resource group key from the resource groups map to create the virtual network in. [optional]
 - `resource_group_name_existing`: The name of an existing resource group to use for the virtual network. [optional]
 
 **One of `resource_group_key` or `resource_group_name_existing` must be specified.**
+
+**Either `address_space` or `ipam_pools` must be specified, but not both.**
+
+### IPAM Pools
+
+- `ipam_pools`: A list of IPAM pool configurations for automatic address space allocation from Azure Virtual Network Manager IPAM pools. Each pool object contains:
+  - `id`: The resource ID of the IPAM pool in the format `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkManagers/{networkManagerName}/ipamPools/{ipamPoolName}`. [required]
+  - `prefix_length`: The length of the /XX CIDR range to request (e.g., 24 for a /24 network). Must be between 2-29 for IPv4 and 48-64 for IPv6. [required]
+
+Only one IPv4 and one IPv6 pool can be specified per virtual network. [optional - required if address\_space is not specified]
 
 ### DNS servers
 
@@ -906,7 +916,10 @@ Description: A map of the virtual networks to create. The map key must be known 
 
 - `subnets` - (Optional) A map of subnets to create in the virtual network. The value is an object with the following fields:
   - `name` - The name of the subnet.
-  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format.
+  - `address_prefixes` - (Optional) The IPv4 address prefixes to use for the subnet in CIDR format. Either `address_prefixes` or `ipam_pools` must be specified, but not both.
+  - `ipam_pools` - (Optional) A list of IPAM pool configurations for automatic address space allocation. Each pool object contains:
+    - `pool_id` - The resource ID of the IPAM pool.
+    - `prefix_length` - The length of the /XX CIDR range to request (e.g., 28 for a /28 subnet).
   - `nat_gateway` - (Optional) An object with the following fields:
     - `id` - The ID of the NAT Gateway which should be associated with the Subnet. Changing this forces a new resource to be created.
   - `network_security_group` - (Optional) An object with the following fields:
@@ -982,11 +995,16 @@ Type:
 ```hcl
 map(object({
     name                         = string
-    address_space                = list(string)
+    address_space                = optional(list(string))
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
 
     location = optional(string)
+
+    ipam_pools = optional(list(object({
+      id            = string
+      prefix_length = number
+    })))
 
     dns_servers             = optional(list(string), [])
     flow_timeout_in_minutes = optional(number)
@@ -997,7 +1015,11 @@ map(object({
     subnets = optional(map(object(
       {
         name             = string
-        address_prefixes = list(string)
+        address_prefixes = optional(list(string), null)
+        ipam_pools = optional(list(object({
+          pool_id       = string
+          prefix_length = number
+        })), null)
         nat_gateway = optional(object({
           id = string
         }))

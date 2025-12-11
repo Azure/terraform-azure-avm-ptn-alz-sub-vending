@@ -257,7 +257,7 @@ DESCRIPTION
     condition = alltrue([
       for k, v in var.virtual_networks :
       (v.address_space != null && v.ipam_pools == null) || (v.address_space == null && v.ipam_pools != null)
-      ])
+    ])
     error_message = "Each virtual network must specify either 'address_space' or 'ipam_pools', but not both."
   }
   # validate resource group name is not empty
@@ -265,7 +265,7 @@ DESCRIPTION
     condition = alltrue([
       for k, v in var.virtual_networks :
       trimspace(v.resource_group_name) != ""
-      ])
+    ])
     error_message = "The resource_group_name must not be empty for each virtual network."
   }
   # validate address space CIDR blocks are valid (skip if using IPAM)
@@ -273,10 +273,10 @@ DESCRIPTION
     condition = alltrue(flatten([
       for k, v in var.virtual_networks :
       v.address_space != null ? [
-      for cidr in v.address_space :
-      can(cidrhost(cidr, 0))
-    ] : [true]
-      ]))
+        for cidr in v.address_space :
+        can(cidrhost(cidr, 0))
+      ] : [true]
+    ]))
     error_message = "Address space entries must be specified in IPv4 or IPv6 CIDR notation, e.g. 192.168.0.0/24, or 2001:db8::/32."
   }
   # validate virtual network subnet names
@@ -295,10 +295,10 @@ DESCRIPTION
     condition = alltrue(flatten([
       for k, v in var.virtual_networks :
       try(length(v.subnets), 0) > 0 ? [
-      for subnet in v.subnets :
-      (subnet.address_prefixes != null && subnet.ipam_pools == null) || (subnet.address_prefixes == null && subnet.ipam_pools != null)
+        for subnet in v.subnets :
+        (subnet.address_prefixes != null && subnet.ipam_pools == null) || (subnet.address_prefixes == null && subnet.ipam_pools != null)
       ] : [true]
-      ]))
+    ]))
     error_message = "Each subnet must have either address_prefixes or ipam_pools specified, but not both."
   }
   # validate subnet nat gateway id is valid
@@ -352,7 +352,7 @@ DESCRIPTION
     condition = alltrue([
       for k, v in var.virtual_networks :
       v.vwan_associated_routetable_resource_id != null ? can(regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}/resourceGroups/[\\w-._]{1,89}[^\\s.]/providers/Microsoft.Network/virtualHubs/[\\w-_.]{1,80}/hubRouteTables/[\\w-_.]{1,80}$", v.vwan_associated_routetable_resource_id)) : true if v.vwan_connection_enabled
-      ])
+    ])
     error_message = "The vWAN associated routetable resource id must be an Azure vwan hub routetable resource id, e.g. /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-rg/providers/Microsoft.Network/virtualHubs/my-vhub/hubRouteTables/defaultRouteTable."
   }
   # validate vwan propagated routetable resource ids for networks with vwan connection enabled
@@ -363,7 +363,7 @@ DESCRIPTION
         for i in v.vwan_propagated_routetables_resource_ids :
         i != null ? can(regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}/resourceGroups/[\\w-._]{1,89}[^\\s.]/providers/Microsoft.Network/virtualHubs/[\\w-_.]{1,80}/hubRouteTables/[\\w-_.]{1,80}$", i)) : true
       ] if v.vwan_connection_enabled
-      ]))
+    ]))
     error_message = "The vWAN propagated routetables resource id must be an Azure vwan hub routetable resource id, e.g. /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-rg/providers/Microsoft.Network/virtualHubs/my-vhub/hubRouteTables/defaultRouteTable."
   }
 }
