@@ -156,28 +156,6 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
-### <a name="timeouts"></a> [timeouts](#input\_timeout)
-
-Description: Timeouts for the resource operations
-
-- `timeouts`- (Optional) Timeouts for the resource operations.
-    - `create` - (Optional) create timeout
-    - `read` - (Optional) read timeout
-    - `update` - (Optional) update timeout
-    - `delete` - (Optional) delete timeout
-
-Type:
-
-```hcl
-object({
-    create = optional(string, "30m")
-    read   = optional(string, "30m")
-    update = optional(string, "30m")
-    delete = optional(string, "30m")
-  })
-```
-Default: `{}`
-
 ### <a name="input_budget_enabled"></a> [budget\_enabled](#input\_budget\_enabled)
 
 Description: Whether to create budgets.  
