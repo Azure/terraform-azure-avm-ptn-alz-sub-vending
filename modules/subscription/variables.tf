@@ -222,17 +222,6 @@ DESCRIPTION
   }
 }
 
-variable "wait_for_subscription_before_subscription_operations" {
-  type = object({
-    create  = optional(string, "30s")
-    destroy = optional(string, "0s")
-  })
-  default     = {}
-  description = <<DESCRIPTION
-The duration to wait after vending a subscription before performing subscription operations.
-DESCRIPTION
-}
-
 variable "timeouts" {
   type = object({
     create = optional(string, "30m")
@@ -242,4 +231,15 @@ variable "timeouts" {
   })
   default     = {}
   description = "Timeouts for the resource operations"
+}
+
+variable "wait_for_subscription_before_subscription_operations" {
+  type = object({
+    create  = optional(string, "30s")
+    destroy = optional(string, "0s")
+  })
+  default     = {}
+  description = <<DESCRIPTION
+The duration to wait after vending a subscription before performing subscription operations.
+DESCRIPTION
 }

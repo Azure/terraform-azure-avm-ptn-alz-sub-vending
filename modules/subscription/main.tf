@@ -21,17 +21,18 @@ resource "azapi_resource" "subscription" {
     error_message_regex = ["AuthorizationFailed"]
   }
 
-  lifecycle {
-    ignore_changes = [
-      body,
-      name
-    ]
-  }
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
     read   = var.timeouts.read
     update = var.timeouts.update
+  }
+
+  lifecycle {
+    ignore_changes = [
+      body,
+      name
+    ]
   }
 }
 
@@ -59,18 +60,19 @@ resource "azapi_resource_action" "subscription_association" {
   resource_id = "/providers/Microsoft.Management/managementGroups/${var.subscription_management_group_id}/subscriptions/${local.subscription_id}"
   type        = "Microsoft.Management/managementGroups/subscriptions@2021-04-01"
 
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
+
   depends_on = [
     time_sleep.wait_for_subscription_before_subscription_operations
   ]
 
   lifecycle {
     replace_triggered_by = [terraform_data.replacement]
-  }
-  timeouts {
-    create = var.timeouts.create
-    delete = var.timeouts.delete
-    read   = var.timeouts.read
-    update = var.timeouts.update
   }
 }
 
@@ -85,15 +87,16 @@ resource "azapi_update_resource" "subscription_tags" {
     }
   }
 
-  depends_on = [
-    time_sleep.wait_for_subscription_before_subscription_operations
-  ]
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
     read   = var.timeouts.read
     update = var.timeouts.update
   }
+
+  depends_on = [
+    time_sleep.wait_for_subscription_before_subscription_operations
+  ]
 }
 
 resource "azapi_resource_action" "subscription_rename" {
@@ -107,15 +110,16 @@ resource "azapi_resource_action" "subscription_rename" {
     subscriptionName = var.subscription_display_name
   }
 
-  depends_on = [
-    time_sleep.wait_for_subscription_before_subscription_operations
-  ]
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
     read   = var.timeouts.read
     update = var.timeouts.update
   }
+
+  depends_on = [
+    time_sleep.wait_for_subscription_before_subscription_operations
+  ]
 }
 
 resource "azapi_resource_action" "subscription_cancel" {
@@ -130,13 +134,14 @@ resource "azapi_resource_action" "subscription_cancel" {
   }
   when = "destroy"
 
-  depends_on = [
-    time_sleep.wait_for_subscription_before_subscription_operations
-  ]
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
     read   = var.timeouts.read
     update = var.timeouts.update
   }
+
+  depends_on = [
+    time_sleep.wait_for_subscription_before_subscription_operations
+  ]
 }

@@ -4,6 +4,7 @@ resource "azapi_resource" "rg" {
   parent_id = "/subscriptions/${var.subscription_id}"
   type      = "Microsoft.Resources/resourceGroups@2021-04-01"
   tags      = var.tags
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete

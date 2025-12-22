@@ -10,6 +10,7 @@ resource "azapi_resource" "umi" {
     "properties.tenantId"
   ]
   tags = var.tags
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
@@ -32,6 +33,7 @@ resource "azapi_resource" "umi_federated_credential_github_branch" {
     }
   }
   locks = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
@@ -54,6 +56,7 @@ resource "azapi_resource" "umi_federated_credential_github_tag" {
     }
   }
   locks = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
@@ -76,6 +79,7 @@ resource "azapi_resource" "umi_federated_credential_github_environment" {
     }
   }
   locks = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
@@ -98,6 +102,7 @@ resource "azapi_resource" "umi_federated_credential_github_pull_request" {
     }
   }
   locks = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
@@ -120,6 +125,7 @@ resource "azapi_resource" "umi_federated_credential_terraform_cloud" {
     }
   }
   locks = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete
@@ -142,6 +148,7 @@ resource "azapi_resource" "umi_federated_credential_advanced" {
     }
   }
   locks = [azapi_resource.umi.id] # Concurrent Federated Identity Credentials writes under the same managed identity are not supported
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete

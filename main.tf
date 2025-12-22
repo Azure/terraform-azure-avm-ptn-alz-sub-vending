@@ -15,6 +15,6 @@ module "subscription" {
   subscription_tags                                    = var.subscription_tags
   subscription_update_existing                         = var.subscription_update_existing
   subscription_workload                                = var.subscription_workload
-  wait_for_subscription_before_subscription_operations = var.wait_for_subscription_before_subscription_operations
   timeouts                                             = var.timeouts
+  wait_for_subscription_before_subscription_operations = var.wait_for_subscription_before_subscription_operations
 }

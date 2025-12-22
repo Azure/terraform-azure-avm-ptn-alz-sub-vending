@@ -757,6 +757,23 @@ Type: `string`
 
 Default: `null`
 
+### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
+
+Description: Timeouts for the resource operations
+
+Type:
+
+```hcl
+object({
+    create = optional(string, "30m")
+    read   = optional(string, "30m")
+    update = optional(string, "30m")
+    delete = optional(string, "30m")
+  })
+```
+
+Default: `{}`
+
 ### <a name="input_umi_enabled"></a> [umi\_enabled](#input\_umi\_enabled)
 
 Description: Whether to enable the creation of a user-assigned managed identity.

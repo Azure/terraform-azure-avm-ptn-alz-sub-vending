@@ -19,6 +19,7 @@ resource "azapi_resource" "route_table" {
     }
   }
   tags = var.tags
+
   timeouts {
     create = var.timeouts.create
     delete = var.timeouts.delete

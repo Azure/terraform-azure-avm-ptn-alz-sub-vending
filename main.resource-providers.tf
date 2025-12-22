@@ -6,6 +6,7 @@ module "resourceproviders" {
   subscription_id   = local.subscription_id
   features          = each.value
   timeouts          = var.timeouts
+
   depends_on = [
     module.resourcegroup,
     module.roleassignment,
@@ -14,5 +15,4 @@ module "resourceproviders" {
     module.usermanagedidentity,
     module.virtualnetwork,
   ]
-
 }
