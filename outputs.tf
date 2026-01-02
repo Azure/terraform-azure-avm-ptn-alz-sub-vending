@@ -11,14 +11,14 @@ DESCRIPTION
   value       = var.subscription_management_group_association_enabled ? module.subscription[0].management_group_subscription_association_id : null
 }
 
-output "resource_group_resource_ids" {
-  description = "The created resource group IDs, expressed as a map."
-  value       = { for k, v in module.resourcegroup : k => v.resource_group_resource_id }
-}
-
 output "resource_group_names" {
   description = "The created resource group names, expressed as a map."
   value       = { for k, v in module.resourcegroup : k => v.resource_group_name }
+}
+
+output "resource_group_resource_ids" {
+  description = "The created resource group IDs, expressed as a map."
+  value       = { for k, v in module.resourcegroup : k => v.resource_group_resource_id }
 }
 
 output "resource_id" {
