@@ -1110,6 +1110,10 @@ Description: The created budget resource IDs, expressed as a map.
 Description: The management\_group\_subscription\_association\_id output is the ID of the management group subscription association.  
 Value will be null if `var.subscription_management_group_association_enabled` is false.
 
+### <a name="output_resource_group_names"></a> [resource\_group\_names](#output\_resource\_group\_names)
+
+Description: The created resource group names, expressed as a map.
+
 ### <a name="output_resource_group_resource_ids"></a> [resource\_group\_resource\_ids](#output\_resource\_group\_resource\_ids)
 
 Description: The created resource group IDs, expressed as a map.
