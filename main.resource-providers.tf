@@ -5,6 +5,7 @@ module "resourceproviders" {
   resource_provider = each.key
   subscription_id   = local.subscription_id
   features          = each.value
+  timeouts          = var.timeouts
 
   depends_on = [
     module.resourcegroup,

@@ -105,3 +105,14 @@ Whether to use a random UUID for the role assignment name.
 DESCRIPTION
   nullable    = false
 }
+
+variable "timeouts" {
+  type = object({
+    create = optional(string, "30m")
+    read   = optional(string, "5m")
+    update = optional(string, "30m")
+    delete = optional(string, "30m")
+  })
+  default     = {}
+  description = "Timeouts for the resource operations"
+}

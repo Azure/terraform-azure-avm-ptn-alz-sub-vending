@@ -21,6 +21,13 @@ resource "azapi_resource" "subscription" {
     error_message_regex = ["AuthorizationFailed"]
   }
 
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
+
   lifecycle {
     ignore_changes = [
       body,
@@ -53,6 +60,13 @@ resource "azapi_resource_action" "subscription_association" {
   resource_id = "/providers/Microsoft.Management/managementGroups/${var.subscription_management_group_id}/subscriptions/${local.subscription_id}"
   type        = "Microsoft.Management/managementGroups/subscriptions@2021-04-01"
 
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
+
   depends_on = [
     time_sleep.wait_for_subscription_before_subscription_operations
   ]
@@ -73,6 +87,13 @@ resource "azapi_update_resource" "subscription_tags" {
     }
   }
 
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
+
   depends_on = [
     time_sleep.wait_for_subscription_before_subscription_operations
   ]
@@ -87,6 +108,13 @@ resource "azapi_resource_action" "subscription_rename" {
   type        = "Microsoft.Resources/subscriptions@2021-10-01"
   body = {
     subscriptionName = var.subscription_display_name
+  }
+
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
   }
 
   depends_on = [
@@ -107,10 +135,10 @@ resource "azapi_resource_action" "subscription_cancel" {
   when = "destroy"
 
   timeouts {
-    create = "30m"
-    delete = "30m"
-    read   = "30m"
-    update = "30m"
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
   }
 
   depends_on = [

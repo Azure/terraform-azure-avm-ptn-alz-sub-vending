@@ -27,6 +27,13 @@ resource "azapi_resource" "this" {
   ignore_null_property = true
   retry                = var.retry
 
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
+
   lifecycle {
     precondition {
       condition     = local.role_definition_id != null

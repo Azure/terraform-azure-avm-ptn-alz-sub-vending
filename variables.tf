@@ -43,3 +43,14 @@ If it is set to false, then no telemetry will be collected.
 DESCRIPTION
   nullable    = false
 }
+
+variable "timeouts" {
+  type = object({
+    create = optional(string, "30m")
+    read   = optional(string, "30m")
+    update = optional(string, "30m")
+    delete = optional(string, "30m")
+  })
+  default     = {}
+  description = "Timeouts for the resource operations"
+}

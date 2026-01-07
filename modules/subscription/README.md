@@ -205,6 +205,23 @@ Type: `string`
 
 Default: `null`
 
+### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
+
+Description: Timeouts for the resource operations
+
+Type:
+
+```hcl
+object({
+    create = optional(string, "30m")
+    read   = optional(string, "30m")
+    update = optional(string, "30m")
+    delete = optional(string, "30m")
+  })
+```
+
+Default: `{}`
+
 ### <a name="input_wait_for_subscription_before_subscription_operations"></a> [wait\_for\_subscription\_before\_subscription\_operations](#input\_wait\_for\_subscription\_before\_subscription\_operations)
 
 Description: The duration to wait after vending a subscription before performing subscription operations.

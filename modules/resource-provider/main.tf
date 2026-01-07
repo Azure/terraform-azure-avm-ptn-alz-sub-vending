@@ -4,6 +4,13 @@ resource "azapi_resource_action" "resource_provider_registration" {
   method      = "POST"
   resource_id = "/subscriptions/${var.subscription_id}"
   type        = "Microsoft.Resources/subscriptions@2021-04-01"
+
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }
 
 resource "azapi_resource_action" "resource_provider_feature_registration" {
@@ -13,4 +20,11 @@ resource "azapi_resource_action" "resource_provider_feature_registration" {
   method      = "POST"
   resource_id = "/subscriptions/${var.subscription_id}/providers/Microsoft.Features/providers/${var.resource_provider}/features/${each.value}"
   type        = "${var.resource_provider}/features@2021-07-01"
+
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
+  }
 }

@@ -222,6 +222,17 @@ DESCRIPTION
   }
 }
 
+variable "timeouts" {
+  type = object({
+    create = optional(string, "30m")
+    read   = optional(string, "30m")
+    update = optional(string, "30m")
+    delete = optional(string, "30m")
+  })
+  default     = {}
+  description = "Timeouts for the resource operations"
+}
+
 variable "wait_for_subscription_before_subscription_operations" {
   type = object({
     create  = optional(string, "30s")

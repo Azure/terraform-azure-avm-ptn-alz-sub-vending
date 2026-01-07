@@ -20,6 +20,7 @@ module "virtual_networks" {
   name                    = each.value.name
   subnets                 = each.value.subnets
   tags                    = each.value.tags
+  timeouts                = var.timeouts
 }
 
 # module.peering_hub_outbound uses the peering submodule from theAzure Verified Module
@@ -36,6 +37,7 @@ module "peering_hub_outbound" {
   create_reverse_peering       = false
   name                         = each.value.outbound.name
   remote_virtual_network_id    = each.value["outbound"].remote_resource_id
+  timeouts                     = var.timeouts
   use_remote_gateways          = each.value.outbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -55,6 +57,7 @@ module "peering_hub_inbound" {
   create_reverse_peering       = false
   name                         = each.value.inbound.name
   remote_virtual_network_id    = each.value["inbound"].remote_resource_id
+  timeouts                     = var.timeouts
   use_remote_gateways          = each.value.inbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -74,6 +77,7 @@ module "peering_mesh" {
   create_reverse_peering       = false
   name                         = each.value.name
   remote_virtual_network_id    = each.value.remote_resource_id
+  timeouts                     = var.timeouts
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]
@@ -104,6 +108,13 @@ resource "azapi_resource" "vhubconnection_routing_intent" {
   type      = "Microsoft.Network/virtualHubs/hubVirtualNetworkConnections@2022-07-01"
   body = {
     properties = local.vhubconnection_body_properties[each.key]
+  }
+
+  timeouts {
+    create = var.timeouts.create
+    delete = var.timeouts.delete
+    read   = var.timeouts.read
+    update = var.timeouts.update
   }
 
   depends_on = [module.virtual_networks]
