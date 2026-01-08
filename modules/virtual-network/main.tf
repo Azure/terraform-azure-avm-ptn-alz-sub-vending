@@ -17,6 +17,7 @@ module "virtual_networks" {
   }
   enable_telemetry        = var.enable_telemetry
   flow_timeout_in_minutes = each.value.flow_timeout_in_minutes
+  ipam_pools              = each.value.ipam_pools
   name                    = each.value.name
   subnets                 = each.value.subnets
   tags                    = each.value.tags

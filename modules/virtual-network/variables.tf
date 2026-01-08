@@ -23,10 +23,15 @@ DESCRIPTION
 variable "virtual_networks" {
   type = map(object({
     name                = string
-    address_space       = list(string)
+    address_space       = optional(list(string))
     resource_group_name = string
 
     location = optional(string)
+
+    ipam_pools = optional(list(object({
+      id            = string
+      prefix_length = number
+    })))
 
     dns_servers             = optional(list(string), [])
     flow_timeout_in_minutes = optional(number)
@@ -37,7 +42,11 @@ variable "virtual_networks" {
     subnets = optional(map(object(
       {
         name             = string
-        address_prefixes = list(string)
+        address_prefixes = optional(list(string))
+        ipam_pools = optional(list(object({
+          pool_id       = string
+          prefix_length = number
+        })))
         nat_gateway = optional(object({
           id = string
         }))
@@ -122,8 +131,18 @@ A map of the virtual networks to create. The map key must be known at the plan s
 ### Required fields
 
 - `name`: The name of the virtual network. [required]
-- `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. [required]
+- `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. [optional - required if ipam_pools is not specified]
 - `resource_group_name`: The name of the resource group to create the virtual network in. The default is that the resource group will be created by this module. [required]
+
+**Either `address_space` or `ipam_pools` must be specified, but not both.**
+
+### IPAM Pools
+
+- `ipam_pools`: A list of IPAM pool configurations for automatic address space allocation. Each pool object contains:
+  - `id`: The resource ID of the IPAM pool. [required]
+  - `prefix_length`: The length of the /XX CIDR range to request (e.g., 24 for a /24). Must be between 2-29 for IPv4 and 48-64 for IPv6. [required]
+
+Only one IPv4 and one IPv6 pool can be specified. [optional - required if address_space is not specified]
 
 ### DNS servers
 
@@ -146,7 +165,10 @@ DNS. [optional - default empty list]
 
 - `subnets` - (Optional) A map of subnets to create in the virtual network. The value is an object with the following fields:
   - `name` - The name of the subnet.
-  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format.
+  - `address_prefixes` - (Optional) The IPv4 address prefixes to use for the subnet in CIDR format. Either `address_prefixes` or `ipam_pools` must be specified, but not both.
+  - `ipam_pools` - (Optional) A list of IPAM pool configurations for automatic address space allocation. Each pool object contains:
+    - `pool_id` - The resource ID of the IPAM pool.
+    - `prefix_length` - The length of the /XX CIDR range to request (e.g., 28 for a /28).
   - `nat_gateway` - (Optional) An object with the following fields:
     - `id` - The ID of the NAT Gateway which should be associated with the Subnet. Changing this forces a new resource to be created.
   - `network_security_group` - (Optional) An object with the following fields:
@@ -230,13 +252,13 @@ DESCRIPTION
     ])
     error_message = "Virtual network name must consist of a-z, A-Z, 0-9, -, _, and . (period) and be between 2 and 64 characters in length."
   }
-  # validate address space is not zero length
+  # validate either address_space or ipam_pools is specified
   validation {
     condition = alltrue([
       for k, v in var.virtual_networks :
-      length(v.address_space) > 0
+      (v.address_space != null && v.ipam_pools == null) || (v.address_space == null && v.ipam_pools != null)
     ])
-    error_message = "At least 1 address space must be specified."
+    error_message = "Each virtual network must specify either 'address_space' or 'ipam_pools', but not both."
   }
   # validate resource group name is not empty
   validation {
@@ -246,14 +268,14 @@ DESCRIPTION
     ])
     error_message = "The resource_group_name must not be empty for each virtual network."
   }
-  # validate address space CIDR blocks are valid
+  # validate address space CIDR blocks are valid (skip if using IPAM)
   validation {
     condition = alltrue(flatten([
       for k, v in var.virtual_networks :
-      [
+      v.address_space != null ? [
         for cidr in v.address_space :
         can(cidrhost(cidr, 0))
-      ]
+      ] : [true]
     ]))
     error_message = "Address space entries must be specified in IPv4 or IPv6 CIDR notation, e.g. 192.168.0.0/24, or 2001:db8::/32."
   }
@@ -268,16 +290,16 @@ DESCRIPTION
     ]))
     error_message = "Virtual network subnet name must consist of a-z, A-Z, 0-9, -, _, and . (period) and be between 2 and 64 characters in length."
   }
-  # validate subnet address prefixes is not zero length
+  # validate subnet has either address_prefixes or ipam_pools
   validation {
     condition = alltrue(flatten([
       for k, v in var.virtual_networks :
-      [
+      try(length(v.subnets), 0) > 0 ? [
         for subnet in v.subnets :
-        length(subnet.address_prefixes) > 0
-      ]
+        (subnet.address_prefixes != null && subnet.ipam_pools == null) || (subnet.address_prefixes == null && subnet.ipam_pools != null)
+      ] : [true]
     ]))
-    error_message = "At least 1 subnet address prefix must be specified."
+    error_message = "Each subnet must have either address_prefixes or ipam_pools specified, but not both."
   }
   # validate subnet nat gateway id is valid
   validation {
