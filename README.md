@@ -1154,6 +1154,10 @@ Value will be null if `var.umi_enabled` is false.
 
 Description: A map of virtual network resource ids, keyed by the var.virtual\_networks input map. Only populated if the virtualnetwork submodule is enabled.
 
+### <a name="output_virtual_network_subnet_resource_ids"></a> [virtual\_network\_subnet\_resource\_ids](#output\_virtual\_network\_subnet\_resource\_ids)
+
+Description: A map of subnet resource ids per virtual network, keyed by the var.virtual\_networks input map. Only populated if the virtualnetwork submodule is enabled.
+
 ## Modules
 
 The following Modules are called:

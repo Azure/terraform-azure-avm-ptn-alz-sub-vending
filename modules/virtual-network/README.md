@@ -300,6 +300,10 @@ The following outputs are exported:
 
 Description: The created virtual network resource IDs, expressed as a map.
 
+### <a name="output_subnet_resource_ids"></a> [subnet\_resource\_ids](#output\_subnet\_resource\_ids)
+
+Description: Subnet resource IDs per VNet key, expressed as a map.
+
 ### <a name="output_virtual_network_resource_ids"></a> [virtual\_network\_resource\_ids](#output\_virtual\_network\_resource\_ids)
 
 Description: The created virtual network resource IDs, expressed as a map.
