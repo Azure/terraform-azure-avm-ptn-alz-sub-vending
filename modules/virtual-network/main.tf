@@ -36,8 +36,8 @@ module "peering_hub_outbound" {
   create_reverse_peering        = false
   do_not_verify_remote_gateways = each.value.outbound.options.do_not_verify_remote_gateways
   enable_only_ipv6_peering      = each.value.outbound.options.enable_only_ipv6_peering
-  local_peered_address_spaces   = each.value.outbound.options.local_peered_address_spaces
-  local_peered_subnets          = each.value.outbound.options.local_peered_subnets
+  local_peered_address_spaces   = [for address_prefix in each.value.outbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
+  local_peered_subnets          = [for subnet_name in each.value.outbound.options.local_peered_subnets : { subnet_name = subnet_name }]
   peer_complete_vnets           = each.value.outbound.options.peer_complete_vnets
   name                          = each.value.outbound.name
   remote_virtual_network_id     = each.value["outbound"].remote_resource_id
@@ -60,8 +60,8 @@ module "peering_hub_inbound" {
   create_reverse_peering        = false
   do_not_verify_remote_gateways = each.value.outbound.options.do_not_verify_remote_gateways
   enable_only_ipv6_peering      = each.value.outbound.options.enable_only_ipv6_peering
-  local_peered_address_spaces   = each.value.outbound.options.local_peered_address_spaces
-  local_peered_subnets          = each.value.outbound.options.local_peered_subnets
+  local_peered_address_spaces   = [for address_prefix in each.value.outbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
+  local_peered_subnets          = [for subnet_name in each.value.outbound.options.local_peered_subnets : { subnet_name = subnet_name }]
   peer_complete_vnets           = each.value.outbound.options.peer_complete_vnets
   name                          = each.value.inbound.name
   remote_virtual_network_id     = each.value["inbound"].remote_resource_id
