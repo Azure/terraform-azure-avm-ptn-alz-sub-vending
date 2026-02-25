@@ -23,7 +23,7 @@ This is currently split logically into the following capabilities:
 > When creating virtual network peerings, be aware of the [limit of peerings per virtual network](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits?toc=%2Fazure%2Fvirtual-network%2Ftoc.json#azure-resource-manager-virtual-networking-limits).
 
 We would like feedback on what's missing in the module.
-Please raise an [issue](https://github.com/Azure/Azure-Landing-Zones/issues) if you have any suggestions.
+Please raise an [issue](https://github.com/Azure/terraform-azurerm-lz-vending/issues) if you have any suggestions.
 
 ## Example
 
@@ -33,7 +33,7 @@ One virtual network is in the default location of the subscription, the other is
 The virtual networks are peered with the supplied hub network resource ids, they are also peered with each other using the mesh peering option.
 
 ```terraform
-module "avm_ptn_alz_sub_vending" {
+module "lz_vending" {
   source  = "Azure/avm-ptn-alz-sub-vending/azure"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
@@ -249,13 +249,13 @@ Description: To disable tracking, we have included this variable with a simple b
 The default value is `false` which does not disable the telemetry.  
 If you would like to disable this tracking, then simply set this value to true and this module will not create the telemetry tracking resources and therefore telemetry tracking will be disabled.
 
-For more information, see the [wiki](https://aka.ms/avm-ptn-alz-sub-vending/tf/telemetry)
+For more information, see the [wiki](https://aka.ms/lz-vending/tf/telemetry)
 
 E.g.
 
 ```terraform
-module "avm_ptn_alz_sub_vending" {
-  source  = "Azure/avm-ptn-alz-sub-vending/azurerm"
+module "lz_vending" {
+  source  = "Azure/lz-vending/azurerm"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   # ... other module variables
@@ -797,8 +797,8 @@ The following fields are used to configure federated identity credentials, using
 
 - `federated_credentials_github`: A map of federated credentials to create for the user-assigned managed identity. [optional]
   - `name` - the name of the federated credential resource, the last segment of the Azure resource id.
-  - `organization` - the name of the GitHub organization, e.g. `Azure` in `https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending`.
-  - `repository` - the name of the GitHub respository, e.g. `terraform-azure-avm-ptn-alz-sub-vending` in `https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending`.
+  - `organization` - the name of the GitHub organization, e.g. `Azure` in `https://github.com/Azure/terraform-azurerm-lz-vending`.
+  - `repository` - the name of the GitHub respository, e.g. `terraform-azurerm-lz-vending` in `https://github.com/Azure/terraform-azurerm-lz-vending`.
   - `entity` - one of 'environment', 'pull\_request', 'tag', or 'branch'
   - `enterprise_slug` - the name of the GitHub Enterprise, e.g. `my-enterprise`. This is optional and only valid when using an enterprise.
   - `value` - identifies the `entity` type, e.g. `main` when using entity is `branch`. Should be blank when `entity` is `pull_request`.
