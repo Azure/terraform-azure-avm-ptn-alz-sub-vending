@@ -23,7 +23,7 @@ This is currently split logically into the following capabilities:
 > When creating virtual network peerings, be aware of the [limit of peerings per virtual network](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits?toc=%2Fazure%2Fvirtual-network%2Ftoc.json#azure-resource-manager-virtual-networking-limits).
 
 We would like feedback on what's missing in the module.
-Please raise an [issue](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending/issues) if you have any suggestions.
+Please raise an [issue](https://github.com/Azure/Azure-Landing-Zones/issues) if you have any suggestions.
 
 ## Example
 
