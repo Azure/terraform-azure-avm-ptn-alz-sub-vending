@@ -12,13 +12,13 @@ Outputs useful values for use in other modules, e.g. assigning the identity to a
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
 ```terraform
 module "umi" {
-  source  = "Azure/lz-vending/azurerm/modules/usermanagedidentity"
+  source  = "Azure/avm-ptn-alz-sub-vending/azurerm/modules/usermanagedidentity"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   location            = "eastus"
@@ -31,7 +31,7 @@ module "umi" {
   federated_credentials_github = {
     gh1 = {
       organization = "Azure"
-      repository   = "terraform-azurerm-lz-vending"
+      repository   = "terraform-azure-avm-ptn-alz-sub-vending"
       entity       = "branch"
       value        = "main"
     }
@@ -144,8 +144,8 @@ The may key is arbitrary and only used for the `for_each` in the resource declar
 The map value is an object with the following attributes:
 
 - `name` - the name of the federated credential resource, the last segment of the Azure resource id.
-- `organization` - the name of the GitHub organization, e.g. `Azure` in `https://github.com/Azure/terraform-azurerm-lz-vending`.
-- `repository` - the name of the GitHub respository, e.g. `terraform-azurerm-lz-vending` in `https://github.com/Azure/terraform-azurerm-lz-vending`.
+- `organization` - the name of the GitHub organization, e.g. `Azure` in `https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending`.
+- `repository` - the name of the GitHub respository, e.g. `terraform-azure-avm-ptn-alz-sub-vending` in `https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending`.
 - `entity` - one of 'environment', 'pull\_request', 'tag', or 'branch'
 - `enterprise_slug` - the name of the GitHub Enterprise, e.g. `my-enterprise`. This is optional and only valid when using an enterprise.
 - `value` - identifies the `entity` type, e.g. `main` when using entity is `branch`. Should be blank when `entity` is `pull_request`.

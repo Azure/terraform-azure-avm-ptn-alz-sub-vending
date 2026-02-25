@@ -8,13 +8,13 @@ Creates a subscription alias, and optionally manages management group associatio
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
 ```terraform
 module "subscription" {
-  source  = "Azure/lz-vending/azurerm/modules/subscription"
+  source  = "Azure/avm-ptn-alz-sub-vending/azurerm/modules/subscription"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   subscription_alias_billing_scope       = "/providers/Microsoft.Billing/billingAccounts/1234567/enrollmentAccounts/123456"

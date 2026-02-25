@@ -6,13 +6,13 @@ Creates a budget in Azure. Designed to be instantiated multiple times to create 
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
 ```terraform
 module "budget" {
-  source  = "Azure/lz-vending/azurerm/modules/roleassignment"
+  source  = "Azure/avm-ptn-alz-sub-vending/azurerm/modules/roleassignment"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   budget_name       = "budget1"
