@@ -16,7 +16,7 @@ See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending
 
 ```terraform
 module "umi" {
-  source  = "Azure/avm-ptn-alz-sub-vending/azurerm/modules/usermanagedidentity"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure/modules/usermanagedidentity"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   location            = "eastus"

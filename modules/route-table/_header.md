@@ -17,7 +17,7 @@ See documentation for optional parameters.
 
 ```terraform
 module "routetable" {
-  source  = "Azure/avm-ptn-alz-sub-vending/azurerm/modules/routetable"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure/modules/routetable"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   subscription_id = "00000000-0000-0000-0000-000000000000"

@@ -12,7 +12,7 @@ See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending
 
 ```terraform
 module "budget" {
-  source  = "Azure/avm-ptn-alz-sub-vending/azurerm/modules/roleassignment"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure/modules/roleassignment"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   budget_name       = "budget1"

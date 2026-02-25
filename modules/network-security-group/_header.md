@@ -17,7 +17,7 @@ See documentation for optional parameters.
 
 ```terraform
 module "networksecuritygroup" {
-  source = "./"
+  source = "Azure/avm-ptn-alz-sub-vending/azure/modules/networksecuritygroup"
 
   subscription_id     = "00000000-0000-0000-0000-000000000000"
   resource_group_name = "test-rg"

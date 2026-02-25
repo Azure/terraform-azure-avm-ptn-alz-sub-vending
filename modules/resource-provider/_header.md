@@ -12,7 +12,7 @@ See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending
 
 ```terraform
 module "resourceproviders" {
-  source  = "Azure/avm-ptn-alz-sub-vending/azurerm/modules/resourceprovider"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure/modules/resourceprovider"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   resource_provider = "Microsoft.PowerBI"
