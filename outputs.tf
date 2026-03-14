@@ -68,6 +68,11 @@ DESCRIPTION
   value       = local.umi_tenant_ids
 }
 
+output "storage_account_resource_ids" {
+  description = "The created storage account resource IDs, expressed as a map. Only populated if the storageaccount submodule is enabled."
+  value       = local.storage_account_resource_ids
+}
+
 output "virtual_network_resource_ids" {
   description = "A map of virtual network resource ids, keyed by the var.virtual_networks input map. Only populated if the virtualnetwork submodule is enabled."
   value       = local.virtual_network_resource_ids

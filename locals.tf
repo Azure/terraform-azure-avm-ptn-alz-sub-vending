@@ -72,6 +72,9 @@ locals {
       ]
     ) : "${item.umi_key}/${item.role_key}" => item.role_assignment
   } : {}
+  # storage_account_resource_ids is a map of storage account resource ids created, if the module has been enabled.
+  # This is used in the outputs.tf file to return the storage account resource ids.
+  storage_account_resource_ids = var.storage_account_enabled ? { for k, v in module.storageaccount : k => v.resource_id } : {}
   # virtual_networks_merged is a map of virtual networks created, if the module has been enabled.
   # This is used in the outputs.tf file to return the virtual network resource ids.
   virtual_network_resource_ids                                         = var.virtual_network_enabled ? module.virtualnetwork[0].virtual_network_resource_ids : {}
