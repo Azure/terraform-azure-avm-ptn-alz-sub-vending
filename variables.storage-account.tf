@@ -223,6 +223,11 @@ A map of storage accounts to create. The map key must be known at the plan stage
 DESCRIPTION
 
   validation {
+    condition     = var.storage_account_enabled ? length(var.storage_accounts) > 0 : true
+    error_message = "When storage_account_enabled is true, provide at least one entry in var.storage_accounts."
+  }
+
+  validation {
     condition = var.storage_account_enabled ? alltrue([
       for k, v in var.storage_accounts : (
         (try(v.resource_group_key, null) != null) != (try(v.resource_group_name_existing, null) != null)
