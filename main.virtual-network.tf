@@ -7,5 +7,5 @@ module "virtualnetwork" {
   location         = var.location
   subscription_id  = local.subscription_id
   virtual_networks = local.virtual_networks
-  enable_telemetry = !var.disable_telemetry
+  enable_telemetry = var.enable_telemetry
 }

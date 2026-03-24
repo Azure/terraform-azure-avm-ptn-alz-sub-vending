@@ -84,7 +84,10 @@ Description: A map of the virtual networks to create. The map key must be known 
 ### Required fields
 
 - `name`: The name of the virtual network. [required]
-- `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. [required]
+- `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
+- `ipam_pools`: A list of IPAM pool objects for dynamic address space allocation from Azure Virtual Network Manager IPAM. Mutually exclusive with `address_space`. [optional - required if `address_space` is not set]
+  - `id`: The resource ID of the IPAM pool. [required]
+  - `prefix_length`: The prefix length to allocate from the pool (2-29 for IPv4, 48-64 for IPv6). [required]
 - `resource_group_name`: The name of the resource group to create the virtual network in. The default is that the resource group will be created by this module. [required]
 
 ### DNS servers
@@ -108,7 +111,10 @@ DNS. [optional - default empty list]
 
 - `subnets` - (Optional) A map of subnets to create in the virtual network. The value is an object with the following fields:
   - `name` - The name of the subnet.
-  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format.
+  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
+  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefixes`.
+    - `pool_id` - The resource ID of the IPAM pool.
+    - `prefix_length` - (Optional) The prefix length to allocate from the pool.
   - `nat_gateway` - (Optional) An object with the following fields:
     - `id` - The ID of the NAT Gateway which should be associated with the Subnet. Changing this forces a new resource to be created.
   - `network_security_group` - (Optional) An object with the following fields:
@@ -183,8 +189,13 @@ Type:
 ```hcl
 map(object({
     name                = string
-    address_space       = list(string)
+    address_space       = optional(list(string))
     resource_group_name = string
+
+    ipam_pools = optional(list(object({
+      id            = string
+      prefix_length = number
+    })))
 
     location = optional(string)
 
@@ -197,7 +208,11 @@ map(object({
     subnets = optional(map(object(
       {
         name             = string
-        address_prefixes = list(string)
+        address_prefixes = optional(list(string))
+        ipam_pools = optional(list(object({
+          pool_id       = string
+          prefix_length = optional(number)
+        })))
         nat_gateway = optional(object({
           id = string
         }))
@@ -330,7 +345,7 @@ Version: 0.14.1
 
 Source: Azure/avm-res-network-virtualnetwork/azurerm
 
-Version: 0.16.0
+Version: 0.17.1
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

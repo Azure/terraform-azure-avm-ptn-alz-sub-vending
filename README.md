@@ -14,6 +14,7 @@ This is currently split logically into the following capabilities:
   - Hub & spoke connectivity (peering to a hub network)
   - vWAN connectivity
   - Mesh peering (peering between spokes)
+  - IPAM pool allocation (dynamic address space from Azure Virtual Network Manager IPAM)
 - Role assignments
 - Resource provider (and feature) registration
 - Resource group creation
@@ -114,6 +115,51 @@ module "lz_vending" {
       definition     = "Owner"
       relative_scope = "/resourceGroups/MyRg"
     },
+  }
+}
+```
+
+## IPAM Pool Allocation
+
+Instead of specifying static CIDR ranges, you can allocate address space dynamically from Azure Virtual Network Manager IPAM pools.
+This eliminates manual IP address planning and prevents overlapping address spaces across landing zones.
+
+Use `ipam_pools` instead of `address_space` at the VNet level, and instead of `address_prefixes` at the subnet level.
+These are mutually exclusive — you must use one or the other for each VNet and each subnet.
+
+```terraform
+module "lz_vending" {
+  source  = "Azure/avm-ptn-alz-sub-vending/azure"
+  version = "<version>"
+
+  location = "westeurope"
+
+  subscription_alias_enabled = true
+  subscription_billing_scope = "/providers/Microsoft.Billing/billingAccounts/1234567/enrollmentAccounts/123456"
+  subscription_display_name  = "my-ipam-subscription"
+  subscription_alias_name    = "my-ipam-subscription"
+  subscription_workload      = "Production"
+
+  virtual_network_enabled = true
+  virtual_networks = {
+    spoke = {
+      name               = "vnet-spoke"
+      resource_group_key = "rg1"
+      # Dynamic address space from IPAM pool
+      ipam_pools = [{
+        id            = "/subscriptions/.../providers/Microsoft.Network/networkManagers/my-nm/ipamPools/my-pool"
+        prefix_length = 24
+      }]
+      subnets = {
+        workload = {
+          name = "subnet-workload"
+          ipam_pools = [{
+            pool_id       = "/subscriptions/.../providers/Microsoft.Network/networkManagers/my-nm/ipamPools/my-pool"
+            prefix_length = 26
+          }]
+        }
+      }
+    }
   }
 }
 ```
@@ -242,31 +288,6 @@ map(object({
 ```
 
 Default: `{}`
-
-### <a name="input_disable_telemetry"></a> [disable\_telemetry](#input\_disable\_telemetry)
-
-Description: To disable tracking, we have included this variable with a simple boolean flag.  
-The default value is `false` which does not disable the telemetry.  
-If you would like to disable this tracking, then simply set this value to true and this module will not create the telemetry tracking resources and therefore telemetry tracking will be disabled.
-
-For more information, see the [wiki](https://aka.ms/lz-vending/tf/telemetry)
-
-E.g.
-
-```terraform
-module "lz_vending" {
-  source  = "Azure/lz-vending/azurerm"
-  version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
-
-  # ... other module variables
-
-  disable_telemetry = true
-}
-```
-
-Type: `bool`
-
-Default: `false`
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
@@ -880,7 +901,10 @@ Description: A map of the virtual networks to create. The map key must be known 
 ### Required fields
 
 - `name`: The name of the virtual network. [required]
-- `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. [required]
+- `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
+- `ipam_pools`: A list of IPAM pool objects for dynamic address space allocation from Azure Virtual Network Manager IPAM. Mutually exclusive with `address_space`. [optional - required if `address_space` is not set]
+  - `id`: The resource ID of the IPAM pool. [required]
+  - `prefix_length`: The prefix length to allocate from the pool (2-29 for IPv4, 48-64 for IPv6). [required]
 - `resource_group_key`: The resource group key from the resource groups map to create the virtual network in. [optional]
 - `resource_group_name_existing`: The name of an existing resource group to use for the virtual network. [optional]
 
@@ -906,7 +930,10 @@ Description: A map of the virtual networks to create. The map key must be known 
 
 - `subnets` - (Optional) A map of subnets to create in the virtual network. The value is an object with the following fields:
   - `name` - The name of the subnet.
-  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format.
+  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
+  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefixes`.
+    - `pool_id` - The resource ID of the IPAM pool.
+    - `prefix_length` - (Optional) The prefix length to allocate from the pool.
   - `nat_gateway` - (Optional) An object with the following fields:
     - `id` - The ID of the NAT Gateway which should be associated with the Subnet. Changing this forces a new resource to be created.
   - `network_security_group` - (Optional) An object with the following fields:
@@ -982,9 +1009,14 @@ Type:
 ```hcl
 map(object({
     name                         = string
-    address_space                = list(string)
+    address_space                = optional(list(string))
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
+
+    ipam_pools = optional(list(object({
+      id            = string
+      prefix_length = number
+    })))
 
     location = optional(string)
 
@@ -997,7 +1029,11 @@ map(object({
     subnets = optional(map(object(
       {
         name             = string
-        address_prefixes = list(string)
+        address_prefixes = optional(list(string))
+        ipam_pools = optional(list(object({
+          pool_id       = string
+          prefix_length = optional(number)
+        })))
         nat_gateway = optional(object({
           id = string
         }))
