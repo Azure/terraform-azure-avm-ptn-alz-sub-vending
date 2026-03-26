@@ -2,7 +2,7 @@
 # as many virtual networks as is required by the var.virtual_networks input variable
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.16.0"
+  version  = "0.17.1"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
@@ -17,6 +17,7 @@ module "virtual_networks" {
   }
   enable_telemetry        = var.enable_telemetry
   flow_timeout_in_minutes = each.value.flow_timeout_in_minutes
+  ipam_pools              = each.value.ipam_pools
   name                    = each.value.name
   subnets                 = each.value.subnets
   tags                    = each.value.tags

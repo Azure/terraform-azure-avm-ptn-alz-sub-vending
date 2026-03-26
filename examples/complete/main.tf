@@ -31,7 +31,7 @@ module "sub_vending" {
   source = "../../"
 
   location                        = "westeurope"
-  disable_telemetry               = true
+  enable_telemetry                = false
   resource_group_creation_enabled = true
   resource_groups = {
     rg1 = {
@@ -67,7 +67,7 @@ module "sub_vending_rg_existing" {
   source = "../../"
 
   location                                         = "westeurope"
-  disable_telemetry                                = true
+  enable_telemetry                                 = false
   resource_group_creation_enabled                  = false
   subscription_id                                  = data.azurerm_client_config.current.subscription_id
   subscription_register_resource_providers_enabled = true
