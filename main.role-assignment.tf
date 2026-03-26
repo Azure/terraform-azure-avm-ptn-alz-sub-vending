@@ -7,7 +7,7 @@ module "roleassignment" {
   role_assignment_definition                = local.role_assignments_definitions[each.key]
   role_assignment_principal_id              = each.value.principal_id
   role_assignment_scope                     = each.value.resource_group_scope_key != null ? module.resourcegroup[each.value.resource_group_scope_key].resource_group_resource_id : "${local.subscription_resource_id}${each.value.relative_scope}"
-  enable_telemetry                          = !var.disable_telemetry
+  enable_telemetry                          = var.enable_telemetry
   role_assignment_condition                 = each.value.condition
   role_assignment_condition_version         = each.value.condition_version
   role_assignment_definition_lookup_enabled = each.value.definition_lookup_enabled
@@ -24,7 +24,7 @@ module "roleassignment_umi" {
   role_assignment_definition   = each.value.definition
   role_assignment_principal_id = each.value.principal_id
   role_assignment_scope        = each.value.scope
-  enable_telemetry             = !var.disable_telemetry
+  enable_telemetry             = var.enable_telemetry
   retry = {
     error_message_regex = [
       "PrincipalNotFound",
