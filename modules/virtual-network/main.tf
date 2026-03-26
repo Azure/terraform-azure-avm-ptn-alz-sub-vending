@@ -58,12 +58,12 @@ module "peering_hub_inbound" {
   allow_gateway_transit         = each.value.inbound.options.allow_gateway_transit
   allow_virtual_network_access  = each.value.inbound.options.allow_virtual_network_access
   create_reverse_peering        = false
-  do_not_verify_remote_gateways = each.value.outbound.options.do_not_verify_remote_gateways
-  enable_only_ipv6_peering      = each.value.outbound.options.enable_only_ipv6_peering
-  local_peered_address_spaces   = [for address_prefix in each.value.outbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
-  local_peered_subnets          = [for subnet_name in each.value.outbound.options.local_peered_subnets : { subnet_name = subnet_name }]
+  do_not_verify_remote_gateways = each.value.inbound.options.do_not_verify_remote_gateways
+  enable_only_ipv6_peering      = each.value.inbound.options.enable_only_ipv6_peering
+  local_peered_address_spaces   = [for address_prefix in each.value.inbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
+  local_peered_subnets          = [for subnet_name in each.value.inbound.options.local_peered_subnets : { subnet_name = subnet_name }]
   name                          = each.value.inbound.name
-  peer_complete_vnets           = each.value.outbound.options.peer_complete_vnets
+  peer_complete_vnets           = each.value.inbound.options.peer_complete_vnets
   remote_virtual_network_id     = each.value["inbound"].remote_resource_id
   use_remote_gateways           = each.value.inbound.options.use_remote_gateways
 
