@@ -45,9 +45,9 @@ resource "random_uuid" "custom_role" {}
 
 # Create a custom RBAC role definition at subscription scope
 resource "azapi_resource" "custom_role" {
-  type      = "Microsoft.Authorization/roleDefinitions@2022-04-01"
   name      = random_uuid.custom_role.result
   parent_id = "/subscriptions/${data.azapi_client_config.current.subscription_id}"
+  type      = "Microsoft.Authorization/roleDefinitions@2022-04-01"
   body = {
     properties = {
       roleName    = "Custom Vending Reader ${random_string.suffix.result}"
@@ -59,9 +59,9 @@ resource "azapi_resource" "custom_role" {
             "Microsoft.Resources/subscriptions/resourceGroups/read",
             "Microsoft.Resources/subscriptions/read"
           ]
-          notActions       = []
-          dataActions      = []
-          notDataActions   = []
+          notActions     = []
+          dataActions    = []
+          notDataActions = []
         }
       ]
       assignableScopes = [
@@ -74,14 +74,8 @@ resource "azapi_resource" "custom_role" {
 module "sub_vending" {
   source = "../../"
 
-  location                        = "swedencentral"
-  enable_telemetry                = false
-  resource_group_creation_enabled = true
-  resource_groups = {
-    rg1 = {
-      name = "rg-vending-custom-rbac-${random_string.suffix.result}"
-    }
-  }
+  location                = "swedencentral"
+  enable_telemetry        = false
   role_assignment_enabled = true
   role_assignments = {
     custom_role = {
@@ -111,7 +105,24 @@ The following requirements are needed by this module:
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
+## Resources
+
+The following resources are used by this module:
+
+- [azapi_resource.custom_role](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [random_string.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) (resource)
+- [random_uuid.custom_role](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
+- [azapi_client_config.current](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
+
 <!-- markdownlint-disable MD013 -->
+## Required Inputs
+
+No required inputs.
+
+## Optional Inputs
+
+No optional inputs.
+
 ## Outputs
 
 The following outputs are exported:
@@ -123,6 +134,16 @@ Description: The resource ID of the custom role definition.
 ### <a name="output_test"></a> [test](#output\_test)
 
 Description: The output from the subscription vending module.
+
+## Modules
+
+The following Modules are called:
+
+### <a name="module_sub_vending"></a> [sub\_vending](#module\_sub\_vending)
+
+Source: ../../
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

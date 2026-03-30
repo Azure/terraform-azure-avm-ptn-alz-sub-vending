@@ -479,6 +479,31 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_role_assignments_retry"></a> [role\_assignments\_retry](#input\_role\_assignments\_retry)
+
+Description:   Supply a list of regex patterns to match error messages for which to retry role assignment creation/deletion. This is to mitigate eventual consistency issues in the Azure API where a role assignment creation/deletion may  
+  fail with a transient error that can be resolved by retrying after some time.
+
+Type:
+
+```hcl
+object({
+    error_message_regex = list(string)
+    interval_seconds    = optional(number, 30)
+  })
+```
+
+Default:
+
+```json
+{
+  "error_message_regex": [
+    ".*PrincipalNotFound.*",
+    ".*Another operation is in progress.*"
+  ]
+}
+```
+
 ### <a name="input_route_table_enabled"></a> [route\_table\_enabled](#input\_route\_table\_enabled)
 
 Description: Whether to create route tables and routes in the target subscription. Requires `var.route_tables`.

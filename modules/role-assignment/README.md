@@ -11,6 +11,28 @@ Module is designed to be instantiated many times, once per role assignment.
 
 See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
 
+## Role Definition Lookup Retry Mechanism
+
+When using role definition names (e.g., `Contributor`) instead of resource IDs, the module performs a lookup to resolve the name to a resource ID. In some scenarios, such as when a subscription is newly placed under a management group with custom RBAC role definitions, there can be a race condition where the role definition is not immediately visible.
+
+To handle this, the module implements an automatic retry mechanism:
+
+1. **First lookup**: The module attempts to resolve the role definition name immediately
+2. **Retry on failure**: If the first lookup fails (`role_definition_id` is `null`) and `role_assignment_definition_lookup_enabled` is `true`:
+   - A 30-second delay is introduced via `time_sleep`
+   - A second lookup is performed
+3. **Final resolution**: The module uses the first successful lookup result
+
+### Behavior on Subsequent Runs
+
+On subsequent Terraform runs, if the role definition is now visible:
+
+- The first lookup will succeed
+- The retry resources (`time_sleep` and the retry lookup module) will be destroyed automatically
+- No 30-second delay will occur
+
+This ensures optimal performance on steady-state runs while handling the initial race condition gracefully.
+
 ## Example
 
 ```terraform
@@ -40,6 +62,7 @@ The following resources are used by this module:
 
 - [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [random_uuid.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
+- [time_sleep.wait_for_role_definition](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -162,6 +185,12 @@ Description: The Azure resource id of the created role assignment.
 The following Modules are called:
 
 ### <a name="module_role_definitions"></a> [role\_definitions](#module\_role\_definitions)
+
+Source: Azure/avm-utl-roledefinitions/azure
+
+Version: 0.1.0
+
+### <a name="module_role_definitions_retry"></a> [role\_definitions\_retry](#module\_role\_definitions\_retry)
 
 Source: Azure/avm-utl-roledefinitions/azure
 

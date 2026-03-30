@@ -12,20 +12,23 @@ module "role_definitions" {
 }
 
 resource "time_sleep" "wait_for_role_definition" {
-  count      = var.role_assignment_definition_lookup_enabled && local.role_definition_id == null ? 1 : 0
+  count = var.role_assignment_definition_lookup_enabled && local.role_definition_id == null ? 1 : 0
+
   create_duration = "30s"
+
   depends_on = [module.role_definitions]
 }
 
 module "role_definitions_retry" {
-  count = var.role_assignment_definition_lookup_enabled && local.role_definition_id == null ? 1 : 0
   source  = "Azure/avm-utl-roledefinitions/azure"
   version = "0.1.0"
+  count   = var.role_assignment_definition_lookup_enabled && local.role_definition_id == null ? 1 : 0
 
   enable_telemetry      = var.enable_telemetry
   role_definition_scope = var.role_assignment_scope
   use_cached_data       = !var.role_assignment_definition_lookup_enabled
-  depends_on = [ time_sleep.wait_for_role_definition ]
+
+  depends_on = [time_sleep.wait_for_role_definition]
 }
 
 resource "azapi_resource" "this" {

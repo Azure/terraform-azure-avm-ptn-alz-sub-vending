@@ -35,9 +35,9 @@ resource "random_uuid" "custom_role" {}
 
 # Create a custom RBAC role definition at subscription scope
 resource "azapi_resource" "custom_role" {
-  type      = "Microsoft.Authorization/roleDefinitions@2022-04-01"
   name      = random_uuid.custom_role.result
   parent_id = "/subscriptions/${data.azapi_client_config.current.subscription_id}"
+  type      = "Microsoft.Authorization/roleDefinitions@2022-04-01"
   body = {
     properties = {
       roleName    = "Custom Vending Reader ${random_string.suffix.result}"
@@ -49,9 +49,9 @@ resource "azapi_resource" "custom_role" {
             "Microsoft.Resources/subscriptions/resourceGroups/read",
             "Microsoft.Resources/subscriptions/read"
           ]
-          notActions       = []
-          dataActions      = []
-          notDataActions   = []
+          notActions     = []
+          dataActions    = []
+          notDataActions = []
         }
       ]
       assignableScopes = [
@@ -64,8 +64,8 @@ resource "azapi_resource" "custom_role" {
 module "sub_vending" {
   source = "../../"
 
-  location                        = "swedencentral"
-  enable_telemetry                = false
+  location                = "swedencentral"
+  enable_telemetry        = false
   role_assignment_enabled = true
   role_assignments = {
     custom_role = {
