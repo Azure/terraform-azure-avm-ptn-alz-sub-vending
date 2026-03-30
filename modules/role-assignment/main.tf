@@ -11,14 +11,31 @@ module "role_definitions" {
   use_cached_data       = !var.role_assignment_definition_lookup_enabled
 }
 
+resource "time_sleep" "wait_for_role_definition" {
+  count      = var.role_assignment_definition_lookup_enabled && local.role_definition_id == null ? 1 : 0
+  create_duration = "30s"
+  depends_on = [module.role_definitions]
+}
+
+module "role_definitions_retry" {
+  count = var.role_assignment_definition_lookup_enabled && local.role_definition_id == null ? 1 : 0
+  source  = "Azure/avm-utl-roledefinitions/azure"
+  version = "0.1.0"
+
+  enable_telemetry      = var.enable_telemetry
+  role_definition_scope = var.role_assignment_scope
+  use_cached_data       = !var.role_assignment_definition_lookup_enabled
+  depends_on = [ time_sleep.wait_for_role_definition ]
+}
+
 resource "azapi_resource" "this" {
-  name      = var.role_assignment_use_random_uuid ? random_uuid.this[0].result : uuidv5("url", "${var.role_assignment_scope}${var.role_assignment_principal_id}${local.role_definition_id}")
+  name      = var.role_assignment_use_random_uuid ? random_uuid.this[0].result : uuidv5("url", "${var.role_assignment_scope}${var.role_assignment_principal_id}${local.role_definition_id_final}")
   parent_id = var.role_assignment_scope
   type      = "Microsoft.Authorization/roleAssignments@2022-04-01"
   body = {
     properties = {
       principalId      = var.role_assignment_principal_id
-      roleDefinitionId = local.role_definition_id
+      roleDefinitionId = local.role_definition_id_final
       condition        = var.role_assignment_condition
       conditionVersion = var.role_assignment_condition_version
       principalType    = var.role_assignment_principal_type
@@ -29,7 +46,7 @@ resource "azapi_resource" "this" {
 
   lifecycle {
     precondition {
-      condition     = local.role_definition_id != null
+      condition     = local.role_definition_id_final != null
       error_message = "In `var.role_assignment_definition` - either supply the role assignment definition resource id or a valid role assignment definition name (and make sure that role definition lookup is enabled)."
     }
   }

@@ -6,4 +6,6 @@ locals {
   is_definition_resource_id           = can(regex("(?i)/providers/Microsoft.Authorization/roleDefinitions", var.role_assignment_definition))
   role_definition_id                  = local.is_definition_resource_id ? var.role_assignment_definition : local.role_definition_name_to_resource_id
   role_definition_name_to_resource_id = lookup(module.role_definitions.role_definition_rolename_to_resource_id, var.role_assignment_definition, null)
+  role_definition_name_to_resource_id_retry = try(lookup(module.role_definitions_retry[0].role_definition_rolename_to_resource_id, var.role_assignment_definition, null), null)
+  role_definition_id_final = local.role_definition_id != null ? local.role_definition_id : local.role_definition_name_to_resource_id_retry
 }
