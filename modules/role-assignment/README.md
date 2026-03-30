@@ -56,6 +56,8 @@ The following requirements are needed by this module:
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
+- <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
+
 ## Resources
 
 The following resources are used by this module:
@@ -107,7 +109,8 @@ Default: `true`
 
 ### <a name="input_retry"></a> [retry](#input\_retry)
 
-Description: n/a
+Description:   Supply a list of regex patterns to match error messages for which to retry role assignment creation/deletion. This is to mitigate eventual consistency issues in the Azure API where a role assignment creation/deletion may  
+  fail with a transient error that can be resolved by retrying after some time.
 
 Type:
 

@@ -47,7 +47,11 @@ variable "retry" {
     error_message_regex = list(string)
     interval_seconds    = optional(number, 30)
   })
-  default = null
+  default     = null
+  description = <<DESCRIPTION
+  Supply a list of regex patterns to match error messages for which to retry role assignment creation/deletion. This is to mitigate eventual consistency issues in the Azure API where a role assignment creation/deletion may
+  fail with a transient error that can be resolved by retrying after some time.
+  DESCRIPTION
 }
 
 variable "role_assignment_condition" {
