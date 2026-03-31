@@ -12,6 +12,7 @@ module "roleassignment" {
   role_assignment_condition                 = each.value.condition
   role_assignment_condition_version         = each.value.condition_version
   role_assignment_definition_lookup_enabled = each.value.definition_lookup_enabled
+  role_assignment_definition_retry_enabled  = each.value.definition_retry_enabled
   role_assignment_principal_type            = each.value.principal_type
   role_assignment_use_random_uuid           = each.value.use_random_uuid
 }
@@ -30,6 +31,7 @@ module "roleassignment_umi" {
   role_assignment_condition                 = each.value.condition
   role_assignment_condition_version         = each.value.condition_version
   role_assignment_definition_lookup_enabled = each.value.definition_lookup_enabled
+  role_assignment_definition_retry_enabled  = each.value.definition_retry_enabled
   role_assignment_principal_type            = each.value.principal_type
   role_assignment_use_random_uuid           = each.value.use_random_uuid
 }

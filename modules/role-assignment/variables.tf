@@ -85,6 +85,17 @@ DESCRIPTION
   nullable    = false
 }
 
+variable "role_assignment_definition_retry_enabled" {
+  type        = bool
+  default     = false
+  description = <<DESCRIPTION
+Whether to enable the wait and retry mechanism for role definition lookup.
+Set to `true` when expecting newly created custom role definitions that may not be immediately available.
+This is deterministic at plan time, unlike checking if the role definition was found.
+DESCRIPTION
+  nullable    = false
+}
+
 variable "role_assignment_principal_type" {
   type        = string
   default     = null

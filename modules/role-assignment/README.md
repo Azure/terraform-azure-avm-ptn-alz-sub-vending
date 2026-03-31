@@ -148,6 +148,16 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_role_assignment_definition_retry_enabled"></a> [role\_assignment\_definition\_retry\_enabled](#input\_role\_assignment\_definition\_retry\_enabled)
+
+Description: Whether to enable the wait and retry mechanism for role definition lookup.  
+Set to `true` when expecting newly created custom role definitions that may not be immediately available.  
+This is deterministic at plan time, unlike checking if the role definition was found.
+
+Type: `bool`
+
+Default: `false`
+
 ### <a name="input_role_assignment_principal_type"></a> [role\_assignment\_principal\_type](#input\_role\_assignment\_principal\_type)
 
 Description: Required when using attribute based access control (ABAC).  
