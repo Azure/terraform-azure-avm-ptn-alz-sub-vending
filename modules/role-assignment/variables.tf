@@ -75,23 +75,32 @@ DESCRIPTION
   }
 }
 
-variable "role_assignment_definition_lookup_enabled" {
-  type        = bool
-  default     = true
-  description = <<DESCRIPTION
-Whether to look up the role definition resource id from the role definition name.
-If disabled, the `role_assignment_definition` must be a role definition resource id.
-DESCRIPTION
-  nullable    = false
-}
-
-variable "role_assignment_definition_retry_enabled" {
+variable "role_assignment_definition_lookup_delay_enabled" {
   type        = bool
   default     = false
   description = <<DESCRIPTION
 Whether to enable the wait and retry mechanism for role definition lookup.
 Set to `true` when expecting newly created custom role definitions that may not be immediately available.
 This is deterministic at plan time, unlike checking if the role definition was found.
+DESCRIPTION
+  nullable    = false
+}
+
+variable "role_assignment_definition_lookup_delay_in_seconds" {
+  type        = number
+  default     = 30
+  description = <<DESCRIPTION
+The delay in seconds for the wait operation for role definition lookup.
+DESCRIPTION
+  nullable    = false
+}
+
+variable "role_assignment_definition_lookup_enabled" {
+  type        = bool
+  default     = true
+  description = <<DESCRIPTION
+Whether to look up the role definition resource id from the role definition name.
+If disabled, the `role_assignment_definition` must be a role definition resource id.
 DESCRIPTION
   nullable    = false
 }

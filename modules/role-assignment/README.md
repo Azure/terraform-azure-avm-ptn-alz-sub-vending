@@ -139,16 +139,7 @@ Type: `string`
 
 Default: `null`
 
-### <a name="input_role_assignment_definition_lookup_enabled"></a> [role\_assignment\_definition\_lookup\_enabled](#input\_role\_assignment\_definition\_lookup\_enabled)
-
-Description: Whether to look up the role definition resource id from the role definition name.  
-If disabled, the `role_assignment_definition` must be a role definition resource id.
-
-Type: `bool`
-
-Default: `true`
-
-### <a name="input_role_assignment_definition_retry_enabled"></a> [role\_assignment\_definition\_retry\_enabled](#input\_role\_assignment\_definition\_retry\_enabled)
+### <a name="input_role_assignment_definition_lookup_delay_enabled"></a> [role\_assignment\_definition\_lookup\_delay\_enabled](#input\_role\_assignment\_definition\_lookup\_delay\_enabled)
 
 Description: Whether to enable the wait and retry mechanism for role definition lookup.  
 Set to `true` when expecting newly created custom role definitions that may not be immediately available.  
@@ -157,6 +148,23 @@ This is deterministic at plan time, unlike checking if the role definition was f
 Type: `bool`
 
 Default: `false`
+
+### <a name="input_role_assignment_definition_lookup_delay_in_seconds"></a> [role\_assignment\_definition\_lookup\_delay\_in\_seconds](#input\_role\_assignment\_definition\_lookup\_delay\_in\_seconds)
+
+Description: The delay in seconds for the wait operation for role definition lookup.
+
+Type: `number`
+
+Default: `30`
+
+### <a name="input_role_assignment_definition_lookup_enabled"></a> [role\_assignment\_definition\_lookup\_enabled](#input\_role\_assignment\_definition\_lookup\_enabled)
+
+Description: Whether to look up the role definition resource id from the role definition name.  
+If disabled, the `role_assignment_definition` must be a role definition resource id.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_role_assignment_principal_type"></a> [role\_assignment\_principal\_type](#input\_role\_assignment\_principal\_type)
 
@@ -198,12 +206,6 @@ Description: The Azure resource id of the created role assignment.
 The following Modules are called:
 
 ### <a name="module_role_definitions"></a> [role\_definitions](#module\_role\_definitions)
-
-Source: Azure/avm-utl-roledefinitions/azure
-
-Version: 0.1.0
-
-### <a name="module_role_definitions_retry"></a> [role\_definitions\_retry](#module\_role\_definitions\_retry)
 
 Source: Azure/avm-utl-roledefinitions/azure
 
