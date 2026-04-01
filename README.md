@@ -502,10 +502,10 @@ Description:   Supply a list of regex patterns to match error messages for which
 Type:
 
 ```hcl
-optional(object({
+object({
     error_message_regex = list(string)
     interval_seconds    = optional(number, 30)
-  }))
+  })
 ```
 
 Default:

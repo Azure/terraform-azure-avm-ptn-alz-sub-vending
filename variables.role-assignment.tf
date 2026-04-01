@@ -83,10 +83,10 @@ DESCRIPTION
 }
 
 variable "role_assignments_retry" {
-  type = optional(object({
+  type = object({
     error_message_regex = list(string)
     interval_seconds    = optional(number, 30)
-  }))
+  })
   default = {
     error_message_regex = [
       ".*PrincipalNotFound.*",
@@ -99,4 +99,3 @@ variable "role_assignments_retry" {
   fail with a transient error that can be resolved by retrying after some time.
   DESCRIPTION
 }
-

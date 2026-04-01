@@ -80,12 +80,12 @@ module "sub_vending" {
   role_assignments = {
     custom_role = {
       # Use the custom role name to test the lookup mechanism
-      definition                = "Custom Vending Reader ${random_string.suffix.result}"
-      relative_scope            = ""
-      principal_id              = data.azapi_client_config.current.object_id
-      use_random_uuid           = true
-      definition_lookup_enabled = true
-      definition_lookup_delay_enabled  = true
+      definition                         = "Custom Vending Reader ${random_string.suffix.result}"
+      relative_scope                     = ""
+      principal_id                       = data.azapi_client_config.current.object_id
+      use_random_uuid                    = true
+      definition_lookup_enabled          = true
+      definition_lookup_delay_enabled    = true
       definition_lookup_delay_in_seconds = 45
     }
   }

@@ -11,9 +11,9 @@ module "roleassignment" {
   retry                                              = var.role_assignments_retry
   role_assignment_condition                          = each.value.condition
   role_assignment_condition_version                  = each.value.condition_version
-  role_assignment_definition_lookup_enabled          = each.value.definition_lookup_enabled
   role_assignment_definition_lookup_delay_enabled    = each.value.definition_lookup_delay_enabled
   role_assignment_definition_lookup_delay_in_seconds = each.value.definition_lookup_delay_in_seconds
+  role_assignment_definition_lookup_enabled          = each.value.definition_lookup_enabled
   role_assignment_principal_type                     = each.value.principal_type
   role_assignment_use_random_uuid                    = each.value.use_random_uuid
 }
@@ -31,9 +31,9 @@ module "roleassignment_umi" {
   retry                                              = var.role_assignments_retry
   role_assignment_condition                          = each.value.condition
   role_assignment_condition_version                  = each.value.condition_version
-  role_assignment_definition_lookup_enabled          = each.value.definition_lookup_enabled
   role_assignment_definition_lookup_delay_enabled    = each.value.definition_lookup_delay.enabled
   role_assignment_definition_lookup_delay_in_seconds = each.value.definition_lookup_delay.delay_in_seconds
+  role_assignment_definition_lookup_enabled          = each.value.definition_lookup_enabled
   role_assignment_principal_type                     = each.value.principal_type
   role_assignment_use_random_uuid                    = each.value.use_random_uuid
 }
