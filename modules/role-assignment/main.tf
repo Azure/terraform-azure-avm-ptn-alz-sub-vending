@@ -6,8 +6,6 @@ resource "time_sleep" "wait_for_role_definition" {
   count = var.role_assignment_definition_lookup_enabled && var.role_assignment_definition_lookup_delay_enabled ? 1 : 0
 
   create_duration = "${var.role_assignment_definition_lookup_delay_in_seconds}s"
-
-  depends_on = [module.role_definitions]
 }
 
 module "role_definitions" {
