@@ -440,8 +440,8 @@ Object fields:
 - `definition_lookup_enabled`: (optional) Whether to look up the role definition resource id from the the Azure API. Default is `false`, where we use a static module of role definitions.
 - `definition_retry_enabled`: (optional) Whether to enable the wait and retry mechanism for role definition lookup. Set to `true` when expecting newly created custom role definitions that may not be immediately available. Default is `false`.
 - `definition_retry_delay_in_seconds`: (optional) The delay in seconds between retries for role definition lookup. Default is `30`.
-- `role_assignment_definition_lookup_delay_enabled`: (optional) Whether to enable the wait and retry mechanism for role definition lookup specifically for role assignment creation. This is to handle the case where a role definition exists at a management group hierarhcy level but due to the subscription placement action, it may take some time to propagate. Default is `false`.
-- `role_assignment_definition_lookup_delay_in_seconds`: (optional) The delay in seconds for the role assignment definition lookup. Default is `30`.
+- `definition_lookup_delay_enabled`: (optional) Whether to enable the wait and retry mechanism for role definition lookup specifically for role assignment creation. This is to handle the case where a role definition exists at a management group hierarhcy level but due to the subscription placement action, it may take some time to propagate. Default is `false`.
+- `definition_lookup_delay_in_seconds`: (optional) The delay in seconds for the role assignment definition lookup. Default is `30`.
 - `use_random_uuid`: (optional) Whether to use a random UUID for the role assignment name. Default is `false`. If set to `true`, the role assignment name will be a random UUID, otherwise it will be a deterministic UUID based on the scope, principal id, and role definition id.
 
 E.g.
@@ -892,15 +892,16 @@ map(object({
     location                     = optional(string)
     tags                         = optional(map(string), {})
     role_assignments = optional(map(object({
-      definition                = string
-      relative_scope            = optional(string, "")
-      resource_group_scope_key  = optional(string)
-      condition                 = optional(string)
-      condition_version         = optional(string)
-      principal_type            = optional(string)
-      definition_lookup_enabled = optional(bool, false)
-      definition_retry_enabled  = optional(bool, false)
-      use_random_uuid           = optional(bool, false)
+      definition                         = string
+      relative_scope                     = optional(string, "")
+      resource_group_scope_key           = optional(string)
+      condition                          = optional(string)
+      condition_version                  = optional(string)
+      principal_type                     = optional(string)
+      definition_lookup_enabled          = optional(bool, false)
+      definition_lookup_delay_enabled    = optional(bool, false)
+      definition_lookup_delay_in_seconds = optional(number, 30)
+      use_random_uuid                    = optional(bool, false)
     })), {})
     federated_credentials_github = optional(map(object({
       name            = optional(string)
