@@ -74,6 +74,7 @@ locals {
   } : {}
   # virtual_networks_merged is a map of virtual networks created, if the module has been enabled.
   # This is used in the outputs.tf file to return the virtual network resource ids.
+  virtual_network_address_spaces                                       = var.virtual_network_enabled ? module.virtualnetwork[0].virtual_network_address_spaces : {}
   virtual_network_resource_ids                                         = var.virtual_network_enabled ? module.virtualnetwork[0].virtual_network_resource_ids : {}
   virtual_network_subnet_network_security_group_available_resource_ids = { for nsg_k, nsg_v in module.networksecuritygroup : nsg_k => nsg_v.network_security_group_resource_id.network_security_group }
   virtual_network_subnet_route_table_available_resource_ids            = { for rt_k, rt_v in module.routetable : rt_k => rt_v.route_table_resource_id.route_table }
