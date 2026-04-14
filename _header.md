@@ -12,6 +12,7 @@ This is currently split logically into the following capabilities:
   - Hub & spoke connectivity (peering to a hub network)
   - vWAN connectivity
   - Mesh peering (peering between spokes)
+  - IPAM pool allocation (dynamic address space from Azure Virtual Network Manager IPAM)
 - Role assignments
 - Resource provider (and feature) registration
 - Resource group creation
@@ -112,6 +113,51 @@ module "avm_ptn_alz_sub_vending" {
       definition     = "Owner"
       relative_scope = "/resourceGroups/MyRg"
     },
+  }
+}
+```
+
+## IPAM Pool Allocation
+
+Instead of specifying static CIDR ranges, you can allocate address space dynamically from Azure Virtual Network Manager IPAM pools.
+This eliminates manual IP address planning and prevents overlapping address spaces across landing zones.
+
+Use `ipam_pools` instead of `address_space` at the VNet level, and instead of `address_prefixes` at the subnet level.
+These are mutually exclusive — you must use one or the other for each VNet and each subnet.
+
+```terraform
+module "lz_vending" {
+  source  = "Azure/avm-ptn-alz-sub-vending/azure"
+  version = "<version>"
+
+  location = "westeurope"
+
+  subscription_alias_enabled = true
+  subscription_billing_scope = "/providers/Microsoft.Billing/billingAccounts/1234567/enrollmentAccounts/123456"
+  subscription_display_name  = "my-ipam-subscription"
+  subscription_alias_name    = "my-ipam-subscription"
+  subscription_workload      = "Production"
+
+  virtual_network_enabled = true
+  virtual_networks = {
+    spoke = {
+      name               = "vnet-spoke"
+      resource_group_key = "rg1"
+      # Dynamic address space from IPAM pool
+      ipam_pools = [{
+        id            = "/subscriptions/.../providers/Microsoft.Network/networkManagers/my-nm/ipamPools/my-pool"
+        prefix_length = 24
+      }]
+      subnets = {
+        workload = {
+          name = "subnet-workload"
+          ipam_pools = [{
+            pool_id       = "/subscriptions/.../providers/Microsoft.Network/networkManagers/my-nm/ipamPools/my-pool"
+            prefix_length = 26
+          }]
+        }
+      }
+    }
   }
 }
 ```
