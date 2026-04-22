@@ -59,8 +59,8 @@ locals {
             role_key = role_k
             role_assignment = {
               principal_id              = module.usermanagedidentity[umi_k].principal_id
-              definition                = strcontains(lower(role_v.definition), lower("/providers/microsoft.authorization/roledefinitions/")) ? "${local.subscription_resource_id}${role_v.definition}" : role_v.definition
-              scope                     = role_v.resource_group_scope_key != null ? module.resourcegroup[role_v.resource_group_scope_key].resource_group_resource_id : "${local.subscription_resource_id}${role_v.relative_scope}"
+              definition                = can(regex("[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}",role_v.definition)) ? role_v.definition : strcontains(lower(role_v.definition), lower("/providers/microsoft.authorization/roledefinitions/")) ? "${local.subscription_resource_id}${role_v.definition}" : role_v.definition
+              scope                     = role_v.resource_group_scope_key != null ? module.resourcegroup[role_v.resource_group_scope_key].resource_group_resource_id : can(regex("[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}",role_v.relative_scope)) ? role_v.relative_scope :"${local.subscription_resource_id}${role_v.relative_scope}"
               condition                 = role_v.condition
               condition_version         = role_v.condition_version
               principal_type            = role_v.principal_type
