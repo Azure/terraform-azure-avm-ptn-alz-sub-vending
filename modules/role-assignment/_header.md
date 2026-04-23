@@ -9,6 +9,10 @@ Module is designed to be instantiated many times, once per role assignment.
 
 See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
 
+## Role Definition Lookup Retry Mechanism
+
+When using role definition names (e.g., `Custom Contributor`) instead of resource IDs, the module performs a lookup to resolve the name to a resource ID. In some scenarios, such as when a subscription is newly placed under a management group with custom RBAC role definitions, there can be a race condition where the role definition is not immediately visible.
+
 ## Example
 
 ```terraform
@@ -18,5 +22,6 @@ module "roleassignment" {
   role_definition = "Owner"
   scope           = "/subscriptions/00000000-0000-0000-0000-000000000000"
   principal_id    = "00000000-0000-0000-0000-000000000000"
+  role_assignment_definition_lookup_delay_enabled = true
 }
 ```

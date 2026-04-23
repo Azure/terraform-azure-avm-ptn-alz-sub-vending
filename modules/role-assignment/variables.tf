@@ -47,7 +47,11 @@ variable "retry" {
     error_message_regex = list(string)
     interval_seconds    = optional(number, 30)
   })
-  default = null
+  default     = null
+  description = <<DESCRIPTION
+  Supply a list of regex patterns to match error messages for which to retry role assignment creation/deletion. This is to mitigate eventual consistency issues in the Azure API where a role assignment creation/deletion may
+  fail with a transient error that can be resolved by retrying after some time.
+  DESCRIPTION
 }
 
 variable "role_assignment_condition" {
@@ -69,6 +73,26 @@ DESCRIPTION
     condition     = var.role_assignment_condition_version != null ? contains(["1.0", "2.0"], var.role_assignment_condition_version) : true
     error_message = "Must be version 1.0 or 2.0."
   }
+}
+
+variable "role_assignment_definition_lookup_delay_enabled" {
+  type        = bool
+  default     = false
+  description = <<DESCRIPTION
+Whether to enable the wait and retry mechanism for role definition lookup.
+Set to `true` when expecting newly created custom role definitions that may not be immediately available.
+This is deterministic at plan time, unlike checking if the role definition was found.
+DESCRIPTION
+  nullable    = false
+}
+
+variable "role_assignment_definition_lookup_delay_in_seconds" {
+  type        = number
+  default     = 30
+  description = <<DESCRIPTION
+The delay in seconds for the wait operation for role definition lookup.
+DESCRIPTION
+  nullable    = false
 }
 
 variable "role_assignment_definition_lookup_enabled" {

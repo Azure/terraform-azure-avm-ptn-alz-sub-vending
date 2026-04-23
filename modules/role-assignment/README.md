@@ -11,6 +11,10 @@ Module is designed to be instantiated many times, once per role assignment.
 
 See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
 
+## Role Definition Lookup Retry Mechanism
+
+When using role definition names (e.g., `Custom Contributor`) instead of resource IDs, the module performs a lookup to resolve the name to a resource ID. In some scenarios, such as when a subscription is newly placed under a management group with custom RBAC role definitions, there can be a race condition where the role definition is not immediately visible.
+
 ## Example
 
 ```terraform
@@ -20,6 +24,7 @@ module "roleassignment" {
   role_definition = "Owner"
   scope           = "/subscriptions/00000000-0000-0000-0000-000000000000"
   principal_id    = "00000000-0000-0000-0000-000000000000"
+  role_assignment_definition_lookup_delay_enabled = true
 }
 ```
 
@@ -34,12 +39,15 @@ The following requirements are needed by this module:
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
+- <a name="requirement_time"></a> [time](#requirement\_time) (~> 0.9)
+
 ## Resources
 
 The following resources are used by this module:
 
 - [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [random_uuid.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
+- [time_sleep.wait_for_role_definition](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -84,7 +92,8 @@ Default: `true`
 
 ### <a name="input_retry"></a> [retry](#input\_retry)
 
-Description: n/a
+Description:   Supply a list of regex patterns to match error messages for which to retry role assignment creation/deletion. This is to mitigate eventual consistency issues in the Azure API where a role assignment creation/deletion may  
+  fail with a transient error that can be resolved by retrying after some time.
 
 Type:
 
@@ -112,6 +121,24 @@ Description: The version of the condition. Possible values are `null`, 1.0 or 2.
 Type: `string`
 
 Default: `null`
+
+### <a name="input_role_assignment_definition_lookup_delay_enabled"></a> [role\_assignment\_definition\_lookup\_delay\_enabled](#input\_role\_assignment\_definition\_lookup\_delay\_enabled)
+
+Description: Whether to enable the wait and retry mechanism for role definition lookup.  
+Set to `true` when expecting newly created custom role definitions that may not be immediately available.  
+This is deterministic at plan time, unlike checking if the role definition was found.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_role_assignment_definition_lookup_delay_in_seconds"></a> [role\_assignment\_definition\_lookup\_delay\_in\_seconds](#input\_role\_assignment\_definition\_lookup\_delay\_in\_seconds)
+
+Description: The delay in seconds for the wait operation for role definition lookup.
+
+Type: `number`
+
+Default: `30`
 
 ### <a name="input_role_assignment_definition_lookup_enabled"></a> [role\_assignment\_definition\_lookup\_enabled](#input\_role\_assignment\_definition\_lookup\_enabled)
 
