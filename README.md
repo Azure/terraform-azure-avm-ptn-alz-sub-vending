@@ -677,6 +677,7 @@ Default:
   "Microsoft.ContainerRegistry": [],
   "Microsoft.ContainerService": [],
   "Microsoft.CostManagement": [],
+  "Microsoft.Consumption": [],
   "Microsoft.CustomProviders": [],
   "Microsoft.DBforMariaDB": [],
   "Microsoft.DBforMySQL": [],

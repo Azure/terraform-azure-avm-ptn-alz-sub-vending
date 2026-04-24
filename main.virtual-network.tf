@@ -8,4 +8,8 @@ module "virtualnetwork" {
   subscription_id  = local.subscription_id
   virtual_networks = local.virtual_networks
   enable_telemetry = var.enable_telemetry
+
+  depends_on = [
+    module.resourceproviders,
+  ]
 }
