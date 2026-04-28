@@ -6,15 +6,18 @@ module "resourceproviders" {
   subscription_id   = local.subscription_id
   features          = each.value
 
-  # Note: This module intentionally does not declare a `depends_on` against the
-  # other resource modules in this pattern. Forcing resource-provider
-  # registration to run after the resources that consume those providers
-  # creates a circular ordering problem: a change to
-  # `var.subscription_register_resource_providers_and_features` would force
-  # those downstream modules to re-plan as well.
-  #
-  # Instead, the resources that depend on a registered resource provider
-  # (virtual networks, budgets, route tables, NSGs, UMIs, etc.) retry on the
-  # `MissingSubscriptionRegistration` error returned by ARM, which lets the
-  # registration race-with the resource creation safely.
+  # Note: this module declares an explicit `depends_on` against the other
+  # resource modules in this pattern. Resource-provider registration runs last,
+  # ensuring that any RPs the other modules need are registered on demand by
+  # the underlying `azapi` provider during their own resource creation, while
+  # this module is responsible for registering the full configured set
+  # (including RPs that no resource in this run consumes) at the end.
+  depends_on = [
+    module.resourcegroup,
+    module.roleassignment,
+    module.roleassignment_umi,
+    module.subscription,
+    module.usermanagedidentity,
+    module.virtualnetwork,
+  ]
 }
