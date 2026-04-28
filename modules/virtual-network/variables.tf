@@ -407,9 +407,10 @@ Defaults to retrying on:
   resource provider has not yet finished registering on the subscription. This default
   allows the resource-provider registration submodule to run in parallel with this
   module without an explicit `depends_on` ordering.
-- `ReferencedResourceNotProvisioned` - retained from the upstream
-  `Azure/avm-res-network-virtualnetwork/azurerm` module default to avoid changing
-  existing behaviour.
+- `ReferencedResourceNotProvisioned` - explicitly included here because the upstream
+  `Azure/avm-res-network-virtualnetwork/azurerm` module sets this as its own default,
+  and forwarding `var.retry` to that module would otherwise drop it. Including it here
+  preserves the upstream behaviour unchanged.
 
 Override `error_message_regex` to change the set of errors that trigger retries
 (supplying your own list replaces both default values entirely; `interval_seconds`
