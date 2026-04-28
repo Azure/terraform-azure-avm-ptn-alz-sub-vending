@@ -9,6 +9,7 @@ module "resourcegroup" {
   lock_enabled        = each.value.lock_enabled
   lock_name           = each.value.lock_name
   tags                = each.value.tags
+  retry               = var.resource_group_retry
 }
 
 # v3.3.0 introduced networkwatcherrg support,

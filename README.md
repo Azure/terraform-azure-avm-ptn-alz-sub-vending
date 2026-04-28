@@ -211,6 +211,31 @@ Type: `bool`
 
 Default: `false`
 
+### <a name="input_budget_retry"></a> [budget\_retry](#input\_budget\_retry)
+
+Description: (Optional) Retry configuration forwarded to the local `budget` submodule's  
+underlying `azapi_resource`. Set to `null` to disable retries.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = list(string)
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
+  })
+```
+
+Default:
+
+```json
+{
+  "error_message_regex": [
+    "MissingSubscriptionRegistration"
+  ]
+}
+```
+
 ### <a name="input_budgets"></a> [budgets](#input\_budgets)
 
 Description: Map of budgets to create for the subscription.
@@ -307,6 +332,31 @@ Type: `bool`
 
 Default: `false`
 
+### <a name="input_network_security_group_retry"></a> [network\_security\_group\_retry](#input\_network\_security\_group\_retry)
+
+Description: (Optional) Retry configuration forwarded to the local `network-security-group`  
+submodule's underlying `azapi_resource`. Set to `null` to disable retries.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = list(string)
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
+  })
+```
+
+Default:
+
+```json
+{
+  "error_message_regex": [
+    "MissingSubscriptionRegistration"
+  ]
+}
+```
+
 ### <a name="input_network_security_groups"></a> [network\_security\_groups](#input\_network\_security\_groups)
 
 Description: A map of the network security groups to create. The map key must be known at the plan stage, e.g. must not be calculated and known only after apply.
@@ -388,6 +438,31 @@ Type: `bool`
 
 Default: `false`
 
+### <a name="input_resource_group_retry"></a> [resource\_group\_retry](#input\_resource\_group\_retry)
+
+Description: (Optional) Retry configuration forwarded to the local `resource-group`  
+submodule's underlying `azapi_resource` blocks. Set to `null` to disable retries.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = list(string)
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
+  })
+```
+
+Default:
+
+```json
+{
+  "error_message_regex": [
+    "MissingSubscriptionRegistration"
+  ]
+}
+```
+
 ### <a name="input_resource_groups"></a> [resource\_groups](#input\_resource\_groups)
 
 Description: A map of the resource groups to create. The value is an object with the following attributes:
@@ -422,6 +497,49 @@ If enabled, supply the list of role assignments in `var.role_assignments`.
 Type: `bool`
 
 Default: `false`
+
+### <a name="input_role_assignment_retry"></a> [role\_assignment\_retry](#input\_role\_assignment\_retry)
+
+Description: (Optional) Retry configuration forwarded to the `role-assignment` submodule  
+calls created from `var.role_assignments`. Defaults to `null` (no retries).
+
+Type:
+
+```hcl
+object({
+    error_message_regex = list(string)
+    interval_seconds    = optional(number, 30)
+  })
+```
+
+Default: `null`
+
+### <a name="input_role_assignment_umi_retry"></a> [role\_assignment\_umi\_retry](#input\_role\_assignment\_umi\_retry)
+
+Description: (Optional) Retry configuration forwarded to the `role-assignment` submodule  
+calls created from the `role_assignments` property of
+`var.user_managed_identities`. Defaults to retrying on `PrincipalNotFound`,  
+which can be returned by ARM when the user-assigned managed identity's  
+service principal has not yet propagated. Set to `null` to disable retries.
+
+Type:
+
+```hcl
+object({
+    error_message_regex = list(string)
+    interval_seconds    = optional(number, 30)
+  })
+```
+
+Default:
+
+```json
+{
+  "error_message_regex": [
+    "PrincipalNotFound"
+  ]
+}
+```
 
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
@@ -485,6 +603,31 @@ Description: Whether to create route tables and routes in the target subscriptio
 Type: `bool`
 
 Default: `false`
+
+### <a name="input_route_table_retry"></a> [route\_table\_retry](#input\_route\_table\_retry)
+
+Description: (Optional) Retry configuration forwarded to the local `route-table` submodule's  
+underlying `azapi_resource`. Set to `null` to disable retries.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = list(string)
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
+  })
+```
+
+Default:
+
+```json
+{
+  "error_message_regex": [
+    "MissingSubscriptionRegistration"
+  ]
+}
+```
 
 ### <a name="input_route_tables"></a> [route\_tables](#input\_route\_tables)
 
@@ -673,10 +816,10 @@ Default:
   "Microsoft.Cdn": [],
   "Microsoft.CognitiveServices": [],
   "Microsoft.Compute": [],
+  "Microsoft.Consumption": [],
   "Microsoft.ContainerInstance": [],
   "Microsoft.ContainerRegistry": [],
   "Microsoft.ContainerService": [],
-  "Microsoft.Consumption": [],
   "Microsoft.CostManagement": [],
   "Microsoft.CustomProviders": [],
   "Microsoft.DBforMariaDB": [],
@@ -886,6 +1029,32 @@ map(object({
 
 Default: `{}`
 
+### <a name="input_user_managed_identity_retry"></a> [user\_managed\_identity\_retry](#input\_user\_managed\_identity\_retry)
+
+Description: (Optional) Retry configuration forwarded to the local
+`user-assigned-managed-identity` submodule's underlying `azapi_resource` blocks.  
+Set to `null` to disable retries.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = list(string)
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
+  })
+```
+
+Default:
+
+```json
+{
+  "error_message_regex": [
+    "MissingSubscriptionRegistration"
+  ]
+}
+```
+
 ### <a name="input_virtual_network_enabled"></a> [virtual\_network\_enabled](#input\_virtual\_network\_enabled)
 
 Description: Enables and disables the virtual network submodule.
@@ -893,6 +1062,49 @@ Description: Enables and disables the virtual network submodule.
 Type: `bool`
 
 Default: `false`
+
+### <a name="input_virtual_network_peering_retry"></a> [virtual\_network\_peering\_retry](#input\_virtual\_network\_peering\_retry)
+
+Description: (Optional) Retry configuration forwarded to the AVM
+`Azure/avm-res-network-virtualnetwork/azurerm//modules/peering` submodule for  
+all hub and mesh peerings. Defaults match the upstream peering submodule's own  
+default of `ReferencedResourceNotProvisioned`.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = optional(list(string), ["ReferencedResourceNotProvisioned"])
+    interval_seconds     = optional(number, 10)
+    max_interval_seconds = optional(number, 180)
+  })
+```
+
+Default: `{}`
+
+### <a name="input_virtual_network_retry"></a> [virtual\_network\_retry](#input\_virtual\_network\_retry)
+
+Description: (Optional) Retry configuration forwarded to the local `virtual-network`  
+submodule. Used by the underlying `azapi_resource` blocks (including the  
+virtual hub connection resources) and forwarded into the AVM
+`Azure/avm-res-network-virtualnetwork/azurerm` module.
+
+Defaults to retrying on `MissingSubscriptionRegistration` (so the
+`Microsoft.Network` resource provider can finish registering in parallel) and  
+on `ReferencedResourceNotProvisioned` (preserving the upstream AVM module's  
+own default).
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = optional(list(string), ["MissingSubscriptionRegistration", "ReferencedResourceNotProvisioned"])
+    interval_seconds     = optional(number, 10)
+    max_interval_seconds = optional(number, 180)
+  })
+```
+
+Default: `{}`
 
 ### <a name="input_virtual_networks"></a> [virtual\_networks](#input\_virtual\_networks)
 

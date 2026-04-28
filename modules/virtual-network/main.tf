@@ -38,6 +38,7 @@ module "peering_hub_outbound" {
   create_reverse_peering       = false
   name                         = each.value.outbound.name
   remote_virtual_network_id    = each.value["outbound"].remote_resource_id
+  retry                        = var.peering_retry
   use_remote_gateways          = each.value.outbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -57,6 +58,7 @@ module "peering_hub_inbound" {
   create_reverse_peering       = false
   name                         = each.value.inbound.name
   remote_virtual_network_id    = each.value["inbound"].remote_resource_id
+  retry                        = var.peering_retry
   use_remote_gateways          = each.value.inbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -76,6 +78,7 @@ module "peering_mesh" {
   create_reverse_peering       = false
   name                         = each.value.name
   remote_virtual_network_id    = each.value.remote_resource_id
+  retry                        = var.peering_retry
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]

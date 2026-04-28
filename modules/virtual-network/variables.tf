@@ -419,3 +419,23 @@ declared with `optional()` defaults).
 DESCRIPTION
   nullable    = false
 }
+
+variable "peering_retry" {
+  type = object({
+    error_message_regex  = optional(list(string), ["ReferencedResourceNotProvisioned"])
+    interval_seconds     = optional(number, 10)
+    max_interval_seconds = optional(number, 180)
+  })
+  default     = {}
+  description = <<DESCRIPTION
+(Optional) Retry configuration forwarded to the AVM
+`Azure/avm-res-network-virtualnetwork/azurerm//modules/peering` submodule for
+all hub and mesh peerings created by this module.
+
+Defaults match the upstream peering submodule's own default
+(`ReferencedResourceNotProvisioned`), which is returned by ARM when the remote
+virtual network is not yet provisioned at the time the peering is created.
+Override `error_message_regex` to change the set of errors that trigger retries.
+DESCRIPTION
+  nullable    = false
+}
