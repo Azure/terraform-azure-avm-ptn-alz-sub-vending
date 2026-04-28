@@ -19,6 +19,7 @@ module "virtual_networks" {
   flow_timeout_in_minutes = each.value.flow_timeout_in_minutes
   ipam_pools              = each.value.ipam_pools
   name                    = each.value.name
+  retry                   = var.retry
   subnets                 = each.value.subnets
   tags                    = each.value.tags
 }
@@ -90,6 +91,7 @@ resource "azapi_resource" "vhubconnection" {
   body = {
     properties = local.vhubconnection_body_properties[each.key]
   }
+  retry = var.retry
 
   depends_on = [module.virtual_networks]
 }
@@ -106,6 +108,7 @@ resource "azapi_resource" "vhubconnection_routing_intent" {
   body = {
     properties = local.vhubconnection_body_properties[each.key]
   }
+  retry = var.retry
 
   depends_on = [module.virtual_networks]
 

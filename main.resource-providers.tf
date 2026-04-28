@@ -6,12 +6,15 @@ module "resourceproviders" {
   subscription_id   = local.subscription_id
   features          = each.value
 
-  depends_on = [
-    module.resourcegroup,
-    module.roleassignment,
-    module.roleassignment_umi,
-    module.subscription,
-    module.usermanagedidentity,
-    module.virtualnetwork,
-  ]
+  # Note: This module intentionally does not declare a `depends_on` against the
+  # other resource modules in this pattern. Forcing resource-provider
+  # registration to run after the resources that consume those providers
+  # creates a circular ordering problem: a change to
+  # `var.subscription_register_resource_providers_and_features` would force
+  # those downstream modules to re-plan as well.
+  #
+  # Instead, the resources that depend on a registered resource provider
+  # (virtual networks, budgets, route tables, NSGs, UMIs, etc.) retry on the
+  # `MissingSubscriptionRegistration` error returned by ARM, which lets the
+  # registration race-with the resource creation safely.
 }

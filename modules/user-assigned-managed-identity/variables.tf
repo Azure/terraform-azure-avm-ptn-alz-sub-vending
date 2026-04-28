@@ -125,3 +125,20 @@ variable "tags" {
   default     = null
   description = "(Optional) Tags of the resource."
 }
+
+variable "retry" {
+  type = object({
+    error_message_regex  = list(string)
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
+  })
+  default = {
+    error_message_regex = ["MissingSubscriptionRegistration"]
+  }
+  description = <<DESCRIPTION
+(Optional) Retry configuration for the underlying `azapi_resource` blocks.
+Defaults to retrying on `MissingSubscriptionRegistration`, which can be returned by ARM
+when a resource provider has not yet finished registering on the subscription.
+Set to `null` to disable retries.
+DESCRIPTION
+}

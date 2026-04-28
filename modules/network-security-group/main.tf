@@ -29,5 +29,6 @@ resource "azapi_resource" "network_security_group" {
       ]
     }
   }
-  tags = var.tags
+  tags  = var.tags
+  retry = var.retry
 }
