@@ -15,6 +15,7 @@ variable "subscription_register_resource_providers_and_features" {
     "Microsoft.ContainerInstance"       = [],
     "Microsoft.ContainerRegistry"       = [],
     "Microsoft.ContainerService"        = [],
+    "Microsoft.Consumption"             = [],
     "Microsoft.CostManagement"          = [],
     "Microsoft.CustomProviders"         = [],
     "Microsoft.Databricks"              = [],

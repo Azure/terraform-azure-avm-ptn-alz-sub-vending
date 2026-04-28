@@ -676,6 +676,7 @@ Default:
   "Microsoft.ContainerInstance": [],
   "Microsoft.ContainerRegistry": [],
   "Microsoft.ContainerService": [],
+  "Microsoft.Consumption": [],
   "Microsoft.CostManagement": [],
   "Microsoft.CustomProviders": [],
   "Microsoft.DBforMariaDB": [],
