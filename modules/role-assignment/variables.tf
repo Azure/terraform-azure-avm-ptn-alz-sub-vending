@@ -44,10 +44,16 @@ variable "enable_telemetry" {
 
 variable "retry" {
   type = object({
-    error_message_regex = list(string)
-    interval_seconds    = optional(number, 30)
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
   })
-  default = null
+  default     = null
+  description = <<DESCRIPTION
+(Optional) Retry configuration for the underlying `azapi_resource`.
+Forwarded to the `retry` block of the role-assignment `azapi_resource`. Set to
+`null` to disable retries.
+DESCRIPTION
 }
 
 variable "role_assignment_condition" {

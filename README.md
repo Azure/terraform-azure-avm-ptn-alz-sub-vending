@@ -23,6 +23,26 @@ This is currently split logically into the following capabilities:
 
 > When creating virtual network peerings, be aware of the [limit of peerings per virtual network](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits?toc=%2Fazure%2Fvirtual-network%2Ftoc.json#azure-resource-manager-virtual-networking-limits).
 
+## Resource provider registration
+
+This module relies on the [AzAPI](https://registry.terraform.io/providers/azure/azapi/latest)
+provider to register resource providers on demand. As each resource is created
+the provider checks whether the required resource provider is registered on the
+target subscription and, if not, registers it before continuing.
+
+Any resource providers (and features) declared in
+`var.subscription_register_resource_providers_and_features` are registered by
+the `module.resourceproviders` submodule **after** the resources managed by
+this module have been deployed. That set is intended to cover the resource
+providers needed by the **workloads** that will subsequently be deployed into
+the landing-zone subscription, rather than by the resources this module itself
+creates. Set `var.subscription_register_resource_providers_enabled = true` to
+opt in to this behaviour.
+
+If you want to tune or disable the retry logic that lets resource creation
+race resource-provider registration safely, see the `*_retry` variables
+(e.g. `var.virtual_network_retry`).
+
 We would like feedback on what's missing in the module.
 Please raise an [issue](https://github.com/Azure/terraform-azurerm-lz-vending/issues) if you have any suggestions.
 
@@ -214,27 +234,19 @@ Default: `false`
 ### <a name="input_budget_retry"></a> [budget\_retry](#input\_budget\_retry)
 
 Description: (Optional) Retry configuration forwarded to the local `budget` submodule's  
-underlying `azapi_resource`. Set to `null` to disable retries.
+underlying `azapi_resource`.
 
 Type:
 
 ```hcl
 object({
-    error_message_regex  = list(string)
+    error_message_regex  = optional(list(string), ["MissingSubscriptionRegistration"])
     interval_seconds     = optional(number, 30)
     max_interval_seconds = optional(number, 180)
   })
 ```
 
-Default:
-
-```json
-{
-  "error_message_regex": [
-    "MissingSubscriptionRegistration"
-  ]
-}
-```
+Default: `{}`
 
 ### <a name="input_budgets"></a> [budgets](#input\_budgets)
 
@@ -335,27 +347,19 @@ Default: `false`
 ### <a name="input_network_security_group_retry"></a> [network\_security\_group\_retry](#input\_network\_security\_group\_retry)
 
 Description: (Optional) Retry configuration forwarded to the local `network-security-group`  
-submodule's underlying `azapi_resource`. Set to `null` to disable retries.
+submodule's underlying `azapi_resource`.
 
 Type:
 
 ```hcl
 object({
-    error_message_regex  = list(string)
+    error_message_regex  = optional(list(string), ["MissingSubscriptionRegistration"])
     interval_seconds     = optional(number, 30)
     max_interval_seconds = optional(number, 180)
   })
 ```
 
-Default:
-
-```json
-{
-  "error_message_regex": [
-    "MissingSubscriptionRegistration"
-  ]
-}
-```
+Default: `{}`
 
 ### <a name="input_network_security_groups"></a> [network\_security\_groups](#input\_network\_security\_groups)
 
@@ -441,27 +445,19 @@ Default: `false`
 ### <a name="input_resource_group_retry"></a> [resource\_group\_retry](#input\_resource\_group\_retry)
 
 Description: (Optional) Retry configuration forwarded to the local `resource-group`  
-submodule's underlying `azapi_resource` blocks. Set to `null` to disable retries.
+submodule's underlying `azapi_resource` blocks.
 
 Type:
 
 ```hcl
 object({
-    error_message_regex  = list(string)
+    error_message_regex  = optional(list(string), ["MissingSubscriptionRegistration"])
     interval_seconds     = optional(number, 30)
     max_interval_seconds = optional(number, 180)
   })
 ```
 
-Default:
-
-```json
-{
-  "error_message_regex": [
-    "MissingSubscriptionRegistration"
-  ]
-}
-```
+Default: `{}`
 
 ### <a name="input_resource_groups"></a> [resource\_groups](#input\_resource\_groups)
 
@@ -501,18 +497,20 @@ Default: `false`
 ### <a name="input_role_assignment_retry"></a> [role\_assignment\_retry](#input\_role\_assignment\_retry)
 
 Description: (Optional) Retry configuration forwarded to the `role-assignment` submodule  
-calls created from `var.role_assignments`. Defaults to `null` (no retries).
+calls created from `var.role_assignments`. Defaults to no retries
+(`error_message_regex` unset).
 
 Type:
 
 ```hcl
 object({
-    error_message_regex = list(string)
-    interval_seconds    = optional(number, 30)
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
   })
 ```
 
-Default: `null`
+Default: `{}`
 
 ### <a name="input_role_assignment_umi_retry"></a> [role\_assignment\_umi\_retry](#input\_role\_assignment\_umi\_retry)
 
@@ -520,26 +518,19 @@ Description: (Optional) Retry configuration forwarded to the `role-assignment` s
 calls created from the `role_assignments` property of
 `var.user_managed_identities`. Defaults to retrying on `PrincipalNotFound`,  
 which can be returned by ARM when the user-assigned managed identity's  
-service principal has not yet propagated. Set to `null` to disable retries.
+service principal has not yet propagated.
 
 Type:
 
 ```hcl
 object({
-    error_message_regex = list(string)
-    interval_seconds    = optional(number, 30)
+    error_message_regex  = optional(list(string), ["PrincipalNotFound"])
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
   })
 ```
 
-Default:
-
-```json
-{
-  "error_message_regex": [
-    "PrincipalNotFound"
-  ]
-}
-```
+Default: `{}`
 
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
@@ -607,27 +598,19 @@ Default: `false`
 ### <a name="input_route_table_retry"></a> [route\_table\_retry](#input\_route\_table\_retry)
 
 Description: (Optional) Retry configuration forwarded to the local `route-table` submodule's  
-underlying `azapi_resource`. Set to `null` to disable retries.
+underlying `azapi_resource`.
 
 Type:
 
 ```hcl
 object({
-    error_message_regex  = list(string)
+    error_message_regex  = optional(list(string), ["MissingSubscriptionRegistration"])
     interval_seconds     = optional(number, 30)
     max_interval_seconds = optional(number, 180)
   })
 ```
 
-Default:
-
-```json
-{
-  "error_message_regex": [
-    "MissingSubscriptionRegistration"
-  ]
-}
-```
+Default: `{}`
 
 ### <a name="input_route_tables"></a> [route\_tables](#input\_route\_tables)
 
@@ -792,10 +775,19 @@ Default: `null`
 
 ### <a name="input_subscription_register_resource_providers_and_features"></a> [subscription\_register\_resource\_providers\_and\_features](#input\_subscription\_register\_resource\_providers\_and\_features)
 
-Description: The map of resource providers to register.  
+Description: The map of resource providers (and features) to register on the subscription.  
 The map keys are the resource provider namespace, e.g. `Microsoft.Compute`.  
 The map values are a list of provider features to enable.  
 Leave the value empty to not register any resource provider features.
+
+Registration is performed by the `module.resourceproviders` submodule
+**after** the resources managed by this module have been deployed, and is  
+intended to cover the resource providers needed by the **workloads** that will  
+subsequently be deployed into the landing-zone subscription. Resource  
+providers required by the resources this module itself creates are registered  
+on demand by the `azapi` provider at resource-creation time.
+
+Requires `var.subscription_register_resource_providers_enabled = true`.
 
 The default values are taken from [Hashicorp's AzureRM provider](https://github.com/hashicorp/terraform-provider-azurerm/blob/main/internal/resourceproviders/required.go).
 
@@ -873,8 +865,15 @@ Default:
 
 ### <a name="input_subscription_register_resource_providers_enabled"></a> [subscription\_register\_resource\_providers\_enabled](#input\_subscription\_register\_resource\_providers\_enabled)
 
-Description: Whether to register resource providers for the subscription.  
-Use `var.subscription_register_resource_providers_and_features` to customize registration.
+Description: Whether to register the resource providers (and features) listed in
+`var.subscription_register_resource_providers_and_features`.
+
+When `true`, registration is performed by `module.resourceproviders` after the  
+resources managed by this module have been deployed, and is intended to  
+pre-register the providers needed by **workloads** subsequently deployed into  
+the subscription. Resource providers required by the resources this module  
+itself creates are always registered on demand by the `azapi` provider at  
+resource-creation time, regardless of this setting.
 
 Type: `bool`
 
@@ -1032,28 +1031,19 @@ Default: `{}`
 ### <a name="input_user_managed_identity_retry"></a> [user\_managed\_identity\_retry](#input\_user\_managed\_identity\_retry)
 
 Description: (Optional) Retry configuration forwarded to the local
-`user-assigned-managed-identity` submodule's underlying `azapi_resource` blocks.  
-Set to `null` to disable retries.
+`user-assigned-managed-identity` submodule's underlying `azapi_resource` blocks.
 
 Type:
 
 ```hcl
 object({
-    error_message_regex  = list(string)
+    error_message_regex  = optional(list(string), ["MissingSubscriptionRegistration"])
     interval_seconds     = optional(number, 30)
     max_interval_seconds = optional(number, 180)
   })
 ```
 
-Default:
-
-```json
-{
-  "error_message_regex": [
-    "MissingSubscriptionRegistration"
-  ]
-}
-```
+Default: `{}`
 
 ### <a name="input_virtual_network_enabled"></a> [virtual\_network\_enabled](#input\_virtual\_network\_enabled)
 
@@ -1090,9 +1080,9 @@ virtual hub connection resources) and forwarded into the AVM
 `Azure/avm-res-network-virtualnetwork/azurerm` module.
 
 Defaults to retrying on `MissingSubscriptionRegistration` (so the
-`Microsoft.Network` resource provider can finish registering in parallel) and  
-on `ReferencedResourceNotProvisioned` (preserving the upstream AVM module's  
-own default).
+`Microsoft.Network` resource provider can finish registering on demand) and on
+`ReferencedResourceNotProvisioned` (preserving the upstream AVM module's own  
+default).
 
 Type:
 
