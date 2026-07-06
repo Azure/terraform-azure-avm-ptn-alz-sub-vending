@@ -2,7 +2,7 @@ locals {
   role_assignments_definitions = {
     for k, v in var.role_assignments : k => strcontains(lower(v.definition), lower("/providers/microsoft.authorization/roledefinitions/")) ? "${local.subscription_resource_id}${v.definition}" : v.definition
   }
-  # route_table_routes is a list of objects containing the routes that need to be converted from a map to a list to match the submodule input variable definition.
+  # route_tables is a map of objects containing the route tables and their routes.
   route_tables = {
     for rt_k, rt_v in var.route_tables : rt_k => {
       name     = rt_v.name
@@ -13,7 +13,7 @@ locals {
       )
       bgp_route_propagation_enabled = rt_v.bgp_route_propagation_enabled
       tags                          = rt_v.tags
-      routes                        = [for k, v in rt_v.routes : v]
+      routes                        = rt_v.routes
     }
   }
   # subscription_id is the id of the subscription into which resources will be created.
