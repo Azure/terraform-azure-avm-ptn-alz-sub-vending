@@ -31,7 +31,7 @@ resource "azapi_resource" "this" {
 
 module "route" {
   source   = "./modules/route"
-  for_each = { for route_k, route_v in var.routes : route_v.name => route_v }
+  for_each = var.routes
 
   name      = each.value.name
   parent_id = azapi_resource.this.id

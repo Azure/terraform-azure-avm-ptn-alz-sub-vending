@@ -34,15 +34,15 @@ DESCRIPTION
 }
 
 variable "routes" {
-  type = list(object({
+  type = map(object({
     name                   = string
     address_prefix         = string
     next_hop_type          = string
     next_hop_in_ip_address = optional(string)
   }))
-  default     = []
+  default     = {}
   description = <<DESCRIPTION
-A list of objects defining route tables and their associated routes to be created:
+A map of objects defining routes to be created:
 
 - `name` (required): The name of the route.
 - `address_prefix` (required): The address prefix for the route.
@@ -53,11 +53,11 @@ DESCRIPTION
 
   validation {
     error_message = "Next hop type must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'."
-    condition     = alltrue([for route in var.routes : contains(["Internet", "None", "VirtualAppliance", "VirtualNetworkGateway", "VnetLocal"], route.next_hop_type)])
+    condition     = alltrue([for route_k, route_v in var.routes : contains(["Internet", "None", "VirtualAppliance", "VirtualNetworkGateway", "VnetLocal"], route_v.next_hop_type)])
   }
   validation {
     error_message = "Next hop IP address must be provided if next hop type is 'VirtualAppliance'."
-    condition     = alltrue([for route in var.routes : route.next_hop_type != "VirtualAppliance" || route.next_hop_in_ip_address != null])
+    condition     = alltrue([for route_k, route_v in var.routes : route_v.next_hop_type != "VirtualAppliance" || route_v.next_hop_in_ip_address != null])
   }
 }
 
