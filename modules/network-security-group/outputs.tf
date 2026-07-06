@@ -1,13 +1,14 @@
-output "network_security_group_resource_id" {
-  description = "The created network security group resource ID."
-  value = {
-    network_security_group = azapi_resource.network_security_group.id
-  }
+output "name" {
+  description = "The name of the network security group."
+  value       = azapi_resource.this.name
 }
 
 output "resource_id" {
-  description = "The created network security group resource ID."
-  value = {
-    network_security_group = azapi_resource.network_security_group.id
-  }
+  description = "The resource ID of the network security group."
+  value       = azapi_resource.this.id
+}
+
+output "security_rules" {
+  description = "A map of security rule names to their resource IDs."
+  value       = { for k, v in module.security_rule : k => v.resource_id }
 }

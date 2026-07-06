@@ -1,33 +1,56 @@
-resource "azapi_resource" "network_security_group" {
-  location  = var.location
+resource "azapi_resource" "this" {
+  type      = var.resource_types.this
   name      = var.name
   parent_id = var.parent_id
-  type      = "Microsoft.Network/networkSecurityGroups@2024-05-01"
+  location  = var.location
+
   body = {
-    properties = {
-      securityRules = [
-        for rule in var.security_rules : {
-          name = rule.name
-          properties = {
-            access                               = rule.access
-            description                          = rule.description
-            destinationAddressPrefix             = rule.destination_address_prefix
-            destinationAddressPrefixes           = rule.destination_address_prefixes
-            destinationApplicationSecurityGroups = rule.destination_application_security_group_ids != null ? [for asg in rule.destination_application_security_group_ids : { id = asg }] : null
-            destinationPortRange                 = rule.destination_port_range
-            destinationPortRanges                = rule.destination_port_ranges
-            direction                            = rule.direction
-            priority                             = rule.priority
-            protocol                             = rule.protocol
-            sourceAddressPrefix                  = rule.source_address_prefix
-            sourceAddressPrefixes                = rule.source_address_prefixes
-            sourceApplicationSecurityGroups      = rule.source_application_security_group_ids != null ? [for asg in rule.source_application_security_group_ids : { id = asg }] : null
-            sourcePortRange                      = rule.source_port_range
-            sourcePortRanges                     = rule.source_port_ranges
-          }
-        }
-      ]
+    properties = {}
+  }
+
+  tags = var.tags
+
+  replace_triggers_refs = []
+
+  response_export_values = []
+
+  retry = var.retry
+
+  dynamic "timeouts" {
+    for_each = var.timeouts == null ? [] : [var.timeouts]
+    content {
+      create = timeouts.value.create
+      read   = timeouts.value.read
+      update = timeouts.value.update
+      delete = timeouts.value.delete
     }
   }
-  tags = var.tags
+}
+
+module "security_rule" {
+  source   = "./modules/security-rule"
+  for_each = var.security_rules
+
+  name      = each.value.name
+  parent_id = azapi_resource.this.id
+
+  access                                     = each.value.access
+  direction                                  = each.value.direction
+  priority                                   = each.value.priority
+  protocol                                   = each.value.protocol
+  description                                = each.value.description
+  destination_address_prefix                 = each.value.destination_address_prefix
+  destination_address_prefixes               = each.value.destination_address_prefixes
+  destination_application_security_group_ids = each.value.destination_application_security_group_ids
+  destination_port_range                     = each.value.destination_port_range
+  destination_port_ranges                    = each.value.destination_port_ranges
+  source_address_prefix                      = each.value.source_address_prefix
+  source_address_prefixes                    = each.value.source_address_prefixes
+  source_application_security_group_ids      = each.value.source_application_security_group_ids
+  source_port_range                          = each.value.source_port_range
+  source_port_ranges                         = each.value.source_port_ranges
+
+  resource_types = { this = var.resource_types.security_rule }
+  retry          = var.retry
+  timeouts       = var.timeouts
 }

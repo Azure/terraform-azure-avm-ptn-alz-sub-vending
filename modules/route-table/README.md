@@ -52,7 +52,7 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
-- [azapi_resource.route_table](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -73,7 +73,7 @@ Type: `string`
 
 ### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
 
-Description: The ID of the parent resource to which this user-assigned managed identity.
+Description: The fully-qualified ARM resource ID of the resource group into which this route table will be deployed.
 
 Type: `string`
 
@@ -88,6 +88,43 @@ Description: Whether BGP route propagation is enabled.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_resource_types"></a> [resource\_types](#input\_resource\_types)
+
+Description: (Optional) A map of resource types and their API versions used by this module.  
+The `this` key corresponds to the primary route table resource.  
+The `route` key is cascaded to the route submodule.
+
+Type:
+
+```hcl
+object({
+    this  = optional(string, "Microsoft.Network/routeTables@2024-05-01")
+    route = optional(string, "Microsoft.Network/routeTables/routes@2024-05-01")
+  })
+```
+
+Default: `{}`
+
+### <a name="input_retry"></a> [retry](#input\_retry)
+
+Description: Retry configuration applied to every `azapi` resource managed by this module.
+
+- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
+- `interval_seconds`     - (Optional) Initial interval between retries in seconds.
+- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number)
+    max_interval_seconds = optional(number)
+  })
+```
+
+Default: `null`
 
 ### <a name="input_routes"></a> [routes](#input\_routes)
 
@@ -119,21 +156,53 @@ Type: `map(string)`
 
 Default: `null`
 
+### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
+
+Description: Per-operation timeouts for resources managed by this module. Each value is a Go duration string (e.g. `30m`, `1h`).
+
+- `create` - (Optional) Timeout for create operations.
+- `read`   - (Optional) Timeout for read operations.
+- `update` - (Optional) Timeout for update operations.
+- `delete` - (Optional) Timeout for delete operations.
+
+Type:
+
+```hcl
+object({
+    create = optional(string)
+    read   = optional(string)
+    update = optional(string)
+    delete = optional(string)
+  })
+```
+
+Default: `null`
+
 ## Outputs
 
 The following outputs are exported:
 
+### <a name="output_name"></a> [name](#output\_name)
+
+Description: The name of the route table.
+
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
-Description: The created route table ID.
+Description: The resource ID of the route table.
 
-### <a name="output_route_table_resource_id"></a> [route\_table\_resource\_id](#output\_route\_table\_resource\_id)
+### <a name="output_routes"></a> [routes](#output\_routes)
 
-Description: The created route table ID.
+Description: A map of route names to their resource IDs.
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_route"></a> [route](#module\_route)
+
+Source: ./modules/route
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
