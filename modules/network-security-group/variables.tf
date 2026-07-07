@@ -127,15 +127,3 @@ Per-operation timeouts for resources managed by this module. Each value is a Go 
 - `delete` - (Optional) Timeout for delete operations.
 DESCRIPTION
 }
-
-variable "ignore_body_changes" {
-  type        = list(string)
-  default     = []
-  description = <<DESCRIPTION
-(Optional) List of body property paths to ignore during updates.
-Use during migration to prevent deletion of inline security rules:
-`ignore_body_changes = ["properties.securityRules"]`
-Remove this setting after migration is complete.
-DESCRIPTION
-  nullable    = false
-}

@@ -10,5 +10,4 @@ module "routetable" {
   bgp_route_propagation_enabled = each.value.bgp_route_propagation_enabled
   routes                        = each.value.routes
   tags                          = each.value.tags
-  ignore_body_changes           = each.value.ignore_body_changes
 }

@@ -6,12 +6,11 @@ variable "network_security_group_enabled" {
 
 variable "network_security_groups" {
   type = map(object({
-    name                         = string
-    location                     = optional(string)
-    resource_group_key           = optional(string)
-    resource_group_name_existing = optional(string)
-    tags                         = optional(map(string))
-    ignore_body_changes          = optional(list(string), ["properties.securityRules"])
+    name                           = string
+    location                       = optional(string)
+    resource_group_key             = optional(string)
+    resource_group_name_existing   = optional(string)
+    tags                           = optional(map(string))
 
     security_rules = optional(map(object({
       access                                     = string
@@ -55,7 +54,7 @@ A map of the network security groups to create. The map key must be known at the
 
 ### Security Rules
 
-- `security_rules` - (Optional) A map of security rules to create within the network network security group. The value is an object with the following fields: 
+- `security_rules` - (Optional) A map of security rules to create within the network network security group. The value is an object with the following fields:
   - `access` - (Required) Specifies whether network traffic is allowed or denied. Possible values are `Allow` and `Deny`.
   - `description` - (Optional) A description for this rule. Restricted to 140 characters.
   - `destination_address_prefix` - (Optional) CIDR or destination IP range or `*` to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. It also supports all available Service Tags like `Sql.WestEurope`, `Storage.EastUS`, etc. You can list the available service tags with the CLI: `az network list-service-tags --location westcentralus`.
@@ -73,9 +72,7 @@ A map of the network security groups to create. The map key must be known at the
   - `source_port_range` - (Optional) Source Port or Range. Integer or range between `0` and `65535` or `*` to match any. This is required if `source_port_ranges` is not specified.
   - `source_port_ranges` - (Optional) List of source ports or port ranges. This is required if `source_port_range` is not specified.
 
-### Migration Support
-
-- `ignore_body_changes` - (Optional) List of body property paths to ignore during updates. Use `["properties.securityRules"]` during migration from inline rules to prevent deletion of existing rules. Remove after migration is complete.
+> **Note:** Migration protection is built-in. The module uses `ignore_other_items_in_list = ["properties.securityRules"]` to preserve existing inline rules.
 
 DESCRIPTION
   nullable    = false

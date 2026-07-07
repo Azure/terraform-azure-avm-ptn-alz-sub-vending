@@ -10,7 +10,7 @@ resource "azapi_resource" "this" {
 
   tags = var.tags
 
-  ignore_body_changes = var.ignore_body_changes
+  ignore_other_items_in_list = ["properties.securityRules"]
 
   replace_triggers_refs = []
 

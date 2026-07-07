@@ -14,7 +14,6 @@ locals {
       bgp_route_propagation_enabled = rt_v.bgp_route_propagation_enabled
       tags                          = rt_v.tags
       routes                        = rt_v.routes
-      ignore_body_changes           = rt_v.ignore_body_changes
     }
   }
   # subscription_id is the id of the subscription into which resources will be created.

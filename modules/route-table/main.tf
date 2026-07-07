@@ -12,7 +12,7 @@ resource "azapi_resource" "this" {
 
   tags = var.tags
 
-  ignore_body_changes = var.ignore_body_changes
+  ignore_other_items_in_list = ["properties.routes"]
 
   replace_triggers_refs = []
 

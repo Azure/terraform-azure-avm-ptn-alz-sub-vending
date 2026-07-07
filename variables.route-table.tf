@@ -12,7 +12,6 @@ variable "route_tables" {
     resource_group_name_existing  = optional(string)
     bgp_route_propagation_enabled = optional(bool, true)
     tags                          = optional(map(string))
-    ignore_body_changes           = optional(list(string), ["properties.routes"])
 
     routes = optional(map(object({
       name                   = string
@@ -40,9 +39,7 @@ A map defining route tables and their associated routes to be created:
 - `next_hop_type` (required): The next hop type, must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'.
 - `next_hop_in_ip_address` (optional): The next hop IP address for the route. Required if next hop type is 'VirtualAppliance'.
 
-### Migration Support
-
-- `ignore_body_changes` (optional): List of body property paths to ignore during updates. Use `["properties.routes"]` during migration from inline routes to prevent deletion of existing routes. Remove after migration is complete.
+> **Note:** Migration protection is built-in. The module uses `ignore_other_items_in_list = ["properties.routes"]` to preserve existing inline routes.
 DESCRIPTION
   nullable    = false
 }
