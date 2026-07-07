@@ -13,6 +13,9 @@ resource "azapi_resource" "this" {
   tags = var.tags
 
   ignore_other_items_in_list = ["properties.routes"]
+  list_unique_id_property = {
+    "properties.routes" = "name"
+  }
 
   replace_triggers_refs = []
 

@@ -11,6 +11,9 @@ resource "azapi_resource" "this" {
   tags = var.tags
 
   ignore_other_items_in_list = ["properties.securityRules"]
+  list_unique_id_property = {
+    "properties.securityRules" = "name"
+  }
 
   replace_triggers_refs = []
 
