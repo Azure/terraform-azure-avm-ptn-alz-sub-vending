@@ -5,7 +5,9 @@ resource "azapi_resource" "this" {
   location  = var.location
 
   body = {
-    properties = {}
+    properties = {
+      securityRules = []
+    }
   }
 
   tags = var.tags
