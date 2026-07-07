@@ -10,6 +10,8 @@ resource "azapi_resource" "this" {
 
   tags = var.tags
 
+  ignore_body_changes = var.ignore_body_changes
+
   replace_triggers_refs = []
 
   response_export_values = []

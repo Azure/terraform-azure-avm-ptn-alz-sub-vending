@@ -11,6 +11,7 @@ variable "network_security_groups" {
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
     tags                         = optional(map(string))
+    ignore_body_changes          = optional(list(string), ["properties.securityRules"])
 
     security_rules = optional(map(object({
       access                                     = string
@@ -71,6 +72,10 @@ A map of the network security groups to create. The map key must be known at the
   - `source_application_security_group_ids` - (Optional) A List of source Application Security Group IDs
   - `source_port_range` - (Optional) Source Port or Range. Integer or range between `0` and `65535` or `*` to match any. This is required if `source_port_ranges` is not specified.
   - `source_port_ranges` - (Optional) List of source ports or port ranges. This is required if `source_port_range` is not specified.
+
+### Migration Support
+
+- `ignore_body_changes` - (Optional) List of body property paths to ignore during updates. Use `["properties.securityRules"]` during migration from inline rules to prevent deletion of existing rules. Remove after migration is complete.
 
 DESCRIPTION
   nullable    = false
