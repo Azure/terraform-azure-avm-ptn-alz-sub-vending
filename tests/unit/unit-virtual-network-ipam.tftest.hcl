@@ -2,8 +2,12 @@
 # Tests IPAM pool allocation path for VNets and subnets
 
 mock_provider "azurerm" {}
-mock_provider "azapi" {}
-mock_provider "modtm" {}
+mock_provider "azapi" {
+  source = "Azure/azapi"
+}
+mock_provider "modtm" {
+  source = "Azure/modtm"
+}
 mock_provider "time" {}
 
 variables {
