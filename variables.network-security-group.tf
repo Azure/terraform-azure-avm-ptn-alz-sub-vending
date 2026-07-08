@@ -6,11 +6,11 @@ variable "network_security_group_enabled" {
 
 variable "network_security_groups" {
   type = map(object({
-    name                           = string
-    location                       = optional(string)
-    resource_group_key             = optional(string)
-    resource_group_name_existing   = optional(string)
-    tags                           = optional(map(string))
+    name                         = string
+    location                     = optional(string)
+    resource_group_key           = optional(string)
+    resource_group_name_existing = optional(string)
+    tags                         = optional(map(string))
 
     security_rules = optional(map(object({
       access                                     = string
@@ -71,8 +71,6 @@ A map of the network security groups to create. The map key must be known at the
   - `source_application_security_group_ids` - (Optional) A List of source Application Security Group IDs
   - `source_port_range` - (Optional) Source Port or Range. Integer or range between `0` and `65535` or `*` to match any. This is required if `source_port_ranges` is not specified.
   - `source_port_ranges` - (Optional) List of source ports or port ranges. This is required if `source_port_range` is not specified.
-
-> **Note:** Migration protection is built-in. The module uses `ignore_other_items_in_list = ["properties.securityRules"]` to preserve existing inline rules.
 
 DESCRIPTION
   nullable    = false

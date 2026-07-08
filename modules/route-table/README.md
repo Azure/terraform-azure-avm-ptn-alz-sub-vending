@@ -46,7 +46,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.10)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.5)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.9)
 
 ## Resources
 
@@ -128,7 +128,7 @@ Default: `null`
 
 ### <a name="input_routes"></a> [routes](#input\_routes)
 
-Description: A list of objects defining route tables and their associated routes to be created:
+Description: A map of objects defining routes to be created:
 
 - `name` (required): The name of the route.
 - `address_prefix` (required): The address prefix for the route.
@@ -138,7 +138,7 @@ Description: A list of objects defining route tables and their associated routes
 Type:
 
 ```hcl
-list(object({
+map(object({
     name                   = string
     address_prefix         = string
     next_hop_type          = string
@@ -146,7 +146,7 @@ list(object({
   }))
 ```
 
-Default: `[]`
+Default: `{}`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
