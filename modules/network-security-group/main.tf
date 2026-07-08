@@ -6,7 +6,7 @@ resource "azapi_resource" "this" {
 
   body = {
     properties = {
-      securityRules = []
+      # securityRules = []
     }
   }
 

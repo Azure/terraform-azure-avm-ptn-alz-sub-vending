@@ -7,7 +7,7 @@ resource "azapi_resource" "this" {
   body = {
     properties = {
       disableBgpRoutePropagation = !var.bgp_route_propagation_enabled
-      routes                     = []
+      # routes                     = []
     }
   }
 
