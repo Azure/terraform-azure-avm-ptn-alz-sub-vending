@@ -7,20 +7,10 @@ resource "azapi_resource" "this" {
   body = {
     properties = {
       disableBgpRoutePropagation = !var.bgp_route_propagation_enabled
-      # routes                     = []
     }
   }
 
   tags = var.tags
-
-  ignore_other_items_in_list = ["properties.routes"]
-  list_unique_id_property = {
-    "properties.routes" = "name"
-  }
-
-  replace_triggers_refs = []
-
-  response_export_values = []
 
   retry = var.retry
 

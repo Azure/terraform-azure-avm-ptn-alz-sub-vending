@@ -5,21 +5,10 @@ resource "azapi_resource" "this" {
   location  = var.location
 
   body = {
-    properties = {
-      # securityRules = []
-    }
+    properties = {}
   }
 
   tags = var.tags
-
-  ignore_other_items_in_list = ["properties.securityRules"]
-  list_unique_id_property = {
-    "properties.securityRules" = "name"
-  }
-
-  replace_triggers_refs = []
-
-  response_export_values = []
 
   retry = var.retry
 
