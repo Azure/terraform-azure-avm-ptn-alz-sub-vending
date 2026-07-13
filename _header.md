@@ -21,6 +21,26 @@ This is currently split logically into the following capabilities:
 
 > When creating virtual network peerings, be aware of the [limit of peerings per virtual network](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits?toc=%2Fazure%2Fvirtual-network%2Ftoc.json#azure-resource-manager-virtual-networking-limits).
 
+## Resource provider registration
+
+This module relies on the [AzAPI](https://registry.terraform.io/providers/azure/azapi/latest)
+provider to register resource providers on demand. As each resource is created
+the provider checks whether the required resource provider is registered on the
+target subscription and, if not, registers it before continuing.
+
+Any resource providers (and features) declared in
+`var.subscription_register_resource_providers_and_features` are registered by
+the `module.resourceproviders` submodule **after** the resources managed by
+this module have been deployed. That set is intended to cover the resource
+providers needed by the **workloads** that will subsequently be deployed into
+the landing-zone subscription, rather than by the resources this module itself
+creates. Set `var.subscription_register_resource_providers_enabled = true` to
+opt in to this behaviour.
+
+If you want to tune or disable the retry logic that lets resource creation
+race resource-provider registration safely, see the `*_retry` variables
+(e.g. `var.virtual_network_retry`).
+
 We would like feedback on what's missing in the module.
 Please raise an [issue](https://github.com/Azure/terraform-azurerm-lz-vending/issues) if you have any suggestions.
 

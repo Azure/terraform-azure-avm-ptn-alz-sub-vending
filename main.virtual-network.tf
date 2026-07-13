@@ -8,4 +8,6 @@ module "virtualnetwork" {
   subscription_id  = local.subscription_id
   virtual_networks = local.virtual_networks
   enable_telemetry = var.enable_telemetry
+  retry            = var.virtual_network_retry
+  peering_retry    = var.virtual_network_peering_retry
 }

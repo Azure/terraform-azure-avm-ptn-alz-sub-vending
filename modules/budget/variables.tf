@@ -97,3 +97,20 @@ variable "budget_notifications" {
     error_message = "At least one of contact_emails, contact_roles, or contact_groups must be supplied."
   }
 }
+
+variable "retry" {
+  type = object({
+    error_message_regex  = list(string)
+    interval_seconds     = optional(number, 30)
+    max_interval_seconds = optional(number, 180)
+  })
+  default = {
+    error_message_regex = ["MissingSubscriptionRegistration"]
+  }
+  description = <<DESCRIPTION
+(Optional) Retry configuration for the underlying `azapi_resource`.
+Defaults to retrying on `MissingSubscriptionRegistration`, which can be returned by ARM
+when a resource provider (e.g. `Microsoft.Consumption`) has not yet finished registering
+on the subscription. Set to `null` to disable retries.
+DESCRIPTION
+}

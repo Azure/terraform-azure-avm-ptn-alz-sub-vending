@@ -389,3 +389,53 @@ If it is set to false, then no telemetry will be collected.
 DESCRIPTION
   nullable    = false
 }
+
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string), ["MissingSubscriptionRegistration", "ReferencedResourceNotProvisioned"])
+    interval_seconds     = optional(number, 10)
+    max_interval_seconds = optional(number, 180)
+  })
+  default     = {}
+  description = <<DESCRIPTION
+(Optional) Retry configuration for the underlying `azapi_resource` blocks (including
+those in the AVM `Azure/avm-res-network-virtualnetwork/azurerm` module).
+
+Defaults to retrying on:
+
+- `MissingSubscriptionRegistration` - returned by ARM when the `Microsoft.Network`
+  resource provider has not yet finished registering on the subscription. This default
+  allows the resource-provider registration submodule to run in parallel with this
+  module without an explicit `depends_on` ordering.
+- `ReferencedResourceNotProvisioned` - explicitly included here because the upstream
+  `Azure/avm-res-network-virtualnetwork/azurerm` module sets this as its own default,
+  and forwarding `var.retry` to that module would otherwise drop it. Including it here
+  preserves the upstream behaviour unchanged.
+
+Override `error_message_regex` to change the set of errors that trigger retries
+(supplying your own list replaces both default values entirely; `interval_seconds`
+and `max_interval_seconds` can still be overridden individually because they are
+declared with `optional()` defaults).
+DESCRIPTION
+  nullable    = false
+}
+
+variable "peering_retry" {
+  type = object({
+    error_message_regex  = optional(list(string), ["ReferencedResourceNotProvisioned"])
+    interval_seconds     = optional(number, 10)
+    max_interval_seconds = optional(number, 180)
+  })
+  default     = {}
+  description = <<DESCRIPTION
+(Optional) Retry configuration forwarded to the AVM
+`Azure/avm-res-network-virtualnetwork/azurerm//modules/peering` submodule for
+all hub and mesh peerings created by this module.
+
+Defaults match the upstream peering submodule's own default
+(`ReferencedResourceNotProvisioned`), which is returned by ARM when the remote
+virtual network is not yet provisioned at the time the peering is created.
+Override `error_message_regex` to change the set of errors that trigger retries.
+DESCRIPTION
+  nullable    = false
+}

@@ -19,6 +19,7 @@ module "virtual_networks" {
   flow_timeout_in_minutes = each.value.flow_timeout_in_minutes
   ipam_pools              = each.value.ipam_pools
   name                    = each.value.name
+  retry                   = var.retry
   subnets                 = each.value.subnets
   tags                    = each.value.tags
 }
@@ -37,6 +38,7 @@ module "peering_hub_outbound" {
   create_reverse_peering       = false
   name                         = each.value.outbound.name
   remote_virtual_network_id    = each.value["outbound"].remote_resource_id
+  retry                        = var.peering_retry
   use_remote_gateways          = each.value.outbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -56,6 +58,7 @@ module "peering_hub_inbound" {
   create_reverse_peering       = false
   name                         = each.value.inbound.name
   remote_virtual_network_id    = each.value["inbound"].remote_resource_id
+  retry                        = var.peering_retry
   use_remote_gateways          = each.value.inbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -75,6 +78,7 @@ module "peering_mesh" {
   create_reverse_peering       = false
   name                         = each.value.name
   remote_virtual_network_id    = each.value.remote_resource_id
+  retry                        = var.peering_retry
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]
@@ -90,6 +94,7 @@ resource "azapi_resource" "vhubconnection" {
   body = {
     properties = local.vhubconnection_body_properties[each.key]
   }
+  retry = var.retry
 
   depends_on = [module.virtual_networks]
 }
@@ -106,6 +111,7 @@ resource "azapi_resource" "vhubconnection_routing_intent" {
   body = {
     properties = local.vhubconnection_body_properties[each.key]
   }
+  retry = var.retry
 
   depends_on = [module.virtual_networks]
 

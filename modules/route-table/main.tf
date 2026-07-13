@@ -18,5 +18,6 @@ resource "azapi_resource" "route_table" {
       ]
     }
   }
-  tags = var.tags
+  tags  = var.tags
+  retry = var.retry
 }
