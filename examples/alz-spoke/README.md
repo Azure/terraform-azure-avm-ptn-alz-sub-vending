@@ -153,7 +153,7 @@ Description: The billing scope for the subscription.
 
 Type: `string`
 
-Default: `null`
+Default: `"/providers/Microsoft.Billing/billingAccounts/1234567/enrollmentAccounts/123456"`
 
 ## Outputs
 
