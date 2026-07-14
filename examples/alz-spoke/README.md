@@ -141,7 +141,11 @@ The following resources are used by this module:
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
-The following input variables are required:
+No required inputs.
+
+## Optional Inputs
+
+The following input variables are optional (have default values):
 
 ### <a name="input_subscription_billing_scope"></a> [subscription\_billing\_scope](#input\_subscription\_billing\_scope)
 
@@ -149,9 +153,7 @@ Description: The billing scope for the subscription.
 
 Type: `string`
 
-## Optional Inputs
-
-No optional inputs.
+Default: `null`
 
 ## Outputs
 
