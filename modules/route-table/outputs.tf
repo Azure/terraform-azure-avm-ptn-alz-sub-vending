@@ -1,13 +1,14 @@
-output "resource_id" {
-  description = "The created route table ID."
-  value = {
-    route_table = azapi_resource.route_table.id
-  }
+output "name" {
+  description = "The name of the route table."
+  value       = azapi_resource.this.name
 }
 
-output "route_table_resource_id" {
-  description = "The created route table ID."
-  value = {
-    route_table = azapi_resource.route_table.id
-  }
+output "resource_id" {
+  description = "The resource ID of the route table."
+  value       = azapi_resource.this.id
+}
+
+output "routes" {
+  description = "A map of route names to their resource IDs."
+  value       = { for k, v in module.route : k => v.resource_id }
 }

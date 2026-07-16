@@ -23,7 +23,7 @@ output "resource_id" {
 
 output "route_table_resource_ids" {
   description = "The created route table resource IDs, expressed as a map."
-  value       = { for k, v in module.routetable : k => v.route_table_resource_id }
+  value       = { for k, v in module.routetable : k => v.resource_id }
 }
 
 output "subscription_id" {
