@@ -2,7 +2,7 @@ locals {
   role_assignments_definitions = {
     for k, v in var.role_assignments : k => strcontains(lower(v.definition), lower("/providers/microsoft.authorization/roledefinitions/")) ? "${local.subscription_resource_id}${v.definition}" : v.definition
   }
-  # route_table_routes is a list of objects containing the routes that need to be converted from a map to a list to match the submodule input variable definition.
+  # route_tables is a map of objects containing the route tables and their routes.
   route_tables = {
     for rt_k, rt_v in var.route_tables : rt_k => {
       name     = rt_v.name
@@ -13,7 +13,7 @@ locals {
       )
       bgp_route_propagation_enabled = rt_v.bgp_route_propagation_enabled
       tags                          = rt_v.tags
-      routes                        = [for k, v in rt_v.routes : v]
+      routes                        = rt_v.routes
     }
   }
   # subscription_id is the id of the subscription into which resources will be created.
@@ -75,8 +75,8 @@ locals {
   # virtual_networks_merged is a map of virtual networks created, if the module has been enabled.
   # This is used in the outputs.tf file to return the virtual network resource ids.
   virtual_network_resource_ids                                         = var.virtual_network_enabled ? module.virtualnetwork[0].virtual_network_resource_ids : {}
-  virtual_network_subnet_network_security_group_available_resource_ids = { for nsg_k, nsg_v in module.networksecuritygroup : nsg_k => nsg_v.network_security_group_resource_id.network_security_group }
-  virtual_network_subnet_route_table_available_resource_ids            = { for rt_k, rt_v in module.routetable : rt_k => rt_v.route_table_resource_id.route_table }
+  virtual_network_subnet_network_security_group_available_resource_ids = { for nsg_k, nsg_v in module.networksecuritygroup : nsg_k => nsg_v.resource_id }
+  virtual_network_subnet_route_table_available_resource_ids            = { for rt_k, rt_v in module.routetable : rt_k => rt_v.resource_id }
   # This virtual_networks varialbe is used internally to consume the mapped subnet properties for dependencies on resources such as
   # route tables today but at some point network security groups as well.
   virtual_networks = var.virtual_network_enabled ? {

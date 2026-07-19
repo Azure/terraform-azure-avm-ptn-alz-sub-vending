@@ -505,6 +505,8 @@ Description: A map defining route tables and their associated routes to be creat
 - `next_hop_type` (required): The next hop type, must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'.
 - `next_hop_in_ip_address` (optional): The next hop IP address for the route. Required if next hop type is 'VirtualAppliance'.
 
+> **Note:** Migration protection is built-in. The module uses `ignore_other_items_in_list = ["properties.routes"]` to preserve existing inline routes.
+
 Type:
 
 ```hcl
