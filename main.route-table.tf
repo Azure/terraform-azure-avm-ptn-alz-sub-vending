@@ -8,6 +8,7 @@ module "routetable" {
   name                          = each.value.name
   parent_id                     = "${local.subscription_resource_id}/resourceGroups/${each.value.resource_group_name}"
   bgp_route_propagation_enabled = each.value.bgp_route_propagation_enabled
+  resource_types                = each.value.resource_types
   routes                        = each.value.routes
   tags                          = each.value.tags
 }
