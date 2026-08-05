@@ -11,6 +11,10 @@ variable "network_security_groups" {
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
     tags                         = optional(map(string))
+    resource_types = optional(object({
+      this          = optional(string)
+      security_rule = optional(string)
+    }), {})
 
     security_rules = optional(map(object({
       access                                     = string
@@ -50,6 +54,12 @@ A map of the network security groups to create. The map key must be known at the
 ### Tags
 
 - `tags`: A map of tags to apply to the virtual network. [optional - default empty]
+
+### Resource Types
+
+- `resource_types`: An optional object to override the ARM resource types (and their API versions) used by the network security group submodule. [optional]
+  - `this`: The resource type for the network security group, e.g. `Microsoft.Network/networkSecurityGroups@2024-05-01`. [optional]
+  - `security_rule`: The resource type for the security rules, e.g. `Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01`. [optional]
 
 
 ### Security Rules
