@@ -54,7 +54,7 @@ resource "azurerm_virtual_network" "hub" {
 locals {
   resource_groups = {
     nwrg = {
-      name     = "NetworkWatcherRG" # Make sure to create this if you want to be able to cancel you subscription
+      name     = "NetworkWatcherRG" # Make sure to create this if you want to be able to cancel your subscription
       location = azurerm_resource_group.hub.location
     }
     rg1 = {
