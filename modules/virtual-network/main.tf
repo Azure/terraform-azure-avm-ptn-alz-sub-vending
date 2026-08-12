@@ -2,7 +2,7 @@
 # as many virtual networks as is required by the var.virtual_networks input variable
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.17.1"
+  version  = "0.20.0"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
@@ -27,7 +27,7 @@ module "virtual_networks" {
 # to create the outboud peering from the spoke to the hub network when specified
 module "peering_hub_outbound" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.14.1"
+  version  = "0.20.0"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_fromhub }
 
   parent_id                    = each.value["outbound"].this_resource_id
@@ -46,7 +46,7 @@ module "peering_hub_outbound" {
 # to create the inbound peering from the hub network to the spoke network when specified
 module "peering_hub_inbound" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.14.1"
+  version  = "0.20.0"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_tohub }
 
   parent_id                    = each.value["inbound"].this_resource_id
@@ -65,7 +65,7 @@ module "peering_hub_inbound" {
 # to create the peering from the local and remote virtual networks as specified
 module "peering_mesh" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.14.1"
+  version  = "0.20.0"
   for_each = { for i in local.virtual_networks_mesh_peering_list : "${i.source_key}-${i.destination_key}" => i }
 
   parent_id                    = each.value.this_resource_id
