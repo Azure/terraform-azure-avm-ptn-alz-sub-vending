@@ -329,7 +329,7 @@ DESCRIPTION
       for k, v in var.virtual_networks :
       [
         for subnet in v.subnets :
-        can(regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}/resourceGroups/[\\w-._]{1,89}[^\\s.]/providers/Microsoft.Network/networkSecurityGroups/[\\w-_.]{2,64}$", subnet.network_security_group.id)) if try(subnet["network_security_group"], null) != null
+        can(regex("^/subscriptions/[a-f\\d]{4}(?:[a-f\\d]{4}-){4}[a-f\\d]{12}/resourceGroups/[\\w-._]{1,89}[^\\s.]/providers/Microsoft.Network/networkSecurityGroups/[\\w-_.]{1,80}$", subnet.network_security_group.id)) if try(subnet["network_security_group"], null) != null
       ]
     ]))
     error_message = "Network security group resource id must be valid, e.g. /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/my-rg/providers/Microsoft.Network/networkSecurityGroups/testvnsg."
