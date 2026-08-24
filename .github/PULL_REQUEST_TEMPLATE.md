@@ -27,6 +27,6 @@ Closes #456
 
 - [ ] I'm sure there are no other open Pull Requests for the same update/change
 - [ ] My corresponding pipelines / checks run clean and green without any errors or warnings
-- [ ] I did run all  [pre-commit](https://azure.github.io/Azure-Verified-Modules/contributing/terraform/terraform-contribution-flow/#5-run-pre-commit-checks) checks
+- [ ] I did run all  [pre-commit](https://azure.github.io/Azure-Verified-Modules/contributing/terraform/contribution-flow/#4-run-avm-pre-commit) checks
 
 <!--  Please keep up to date with the contribution guide at https://aka.ms/avm/contribute/terraform -->
