@@ -22,7 +22,7 @@ This is currently split logically into the following capabilities:
 > When creating virtual network peerings, be aware of the [limit of peerings per virtual network](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits?toc=%2Fazure%2Fvirtual-network%2Ftoc.json#azure-resource-manager-virtual-networking-limits).
 
 We would like feedback on what's missing in the module.
-Please raise an [issue](https://github.com/Azure/terraform-azurerm-lz-vending/issues) if you have any suggestions.
+Please raise an [issue](https://github.com/Azure/Azure-Landing-Zones/issues) if you have any suggestions.
 
 ## Example
 
@@ -32,7 +32,7 @@ One virtual network is in the default location of the subscription, the other is
 The virtual networks are peered with the supplied hub network resource ids, they are also peered with each other using the mesh peering option.
 
 ```terraform
-module "lz_vending" {
+module "avm_ptn_alz_sub_vending" {
   source  = "Azure/avm-ptn-alz-sub-vending/azure"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
