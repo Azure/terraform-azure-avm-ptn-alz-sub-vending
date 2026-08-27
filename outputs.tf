@@ -13,7 +13,7 @@ DESCRIPTION
 
 output "network_security_group_resource_ids" {
   description = "The created network security group resource IDs, expressed as a map."
-  value       = { for k, v in module.networksecuritygroup : k => v.network_security_group_resource_id }
+  value       = { for k, v in module.networksecuritygroup : v.resource_id }
 }
 
 output "resource_group_resource_ids" {
