@@ -60,6 +60,10 @@ variable "virtual_networks" {
         }))
         default_outbound_access_enabled = optional(bool, false)
         service_endpoints               = optional(set(string))
+        service_endpoints_with_location = optional(list(object({
+          service   = string
+          locations = optional(list(string), ["*"])
+        })))
         service_endpoint_policies = optional(map(object({
           id = string
         })))
@@ -172,6 +176,7 @@ DNS. [optional - default empty list]
     - `id` - The ID of the Route Table which should be associated with the Subnet. Changing this forces a new association to be created.
   - `default_outbound_access_enabled` - (Optional) Whether to allow internet access from the subnet. Defaults to `false`.
   - `service_endpoints` - (Optional) The list of Service endpoints to associate with the subnet.
+  - `service_endpoints_with_location` - (Optional) Service endpoints with location restrictions to associate with the subnet. Cannot be used together with `service_endpoints`.
   - `service_endpoint_policies` - (Optional) The list of Service Endpoint Policy objects with the resource id to associate with the subnet.
     - `id` - The ID of the endpoint policy that should be associated with the subnet.
   - `service_endpoint_policy_assignment_enabled` - (Optional) Should the Service Endpoint Policy be assigned to the subnet? Default `true`.
@@ -300,6 +305,16 @@ DESCRIPTION
       ]
     ]))
     error_message = "Each subnet must specify either 'address_prefixes' or 'ipam_pools', but not both."
+  }
+  # validate each subnet uses either service_endpoints or service_endpoints_with_location, but not both
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.virtual_networks : [
+        for subnet in v.subnets :
+        !(subnet.service_endpoints != null && subnet.service_endpoints_with_location != null)
+      ]
+    ]))
+    error_message = "Each subnet may specify either 'service_endpoints' or 'service_endpoints_with_location', but not both."
   }
   # validate subnet address prefixes is not zero length when specified
   validation {
