@@ -1,23 +1,12 @@
-variable "name" {
-  type        = string
-  description = "(Required) The name of the route."
-  nullable    = false
-}
-
-variable "parent_id" {
-  type        = string
-  description = "The fully-qualified ARM resource ID of the route table into which this route will be deployed."
-  nullable    = false
-
-  validation {
-    condition     = can(provider::azapi::parse_resource_id("Microsoft.Network/routeTables", var.parent_id))
-    error_message = "`parent_id` must be a valid Azure route table resource ID."
-  }
-}
-
 variable "address_prefix" {
   type        = string
   description = "(Required) The destination CIDR to which the route applies."
+  nullable    = false
+}
+
+variable "name" {
+  type        = string
+  description = "(Required) The name of the route."
   nullable    = false
 }
 
@@ -29,6 +18,17 @@ variable "next_hop_type" {
   validation {
     condition     = contains(["Internet", "None", "VirtualAppliance", "VirtualNetworkGateway", "VnetLocal"], var.next_hop_type)
     error_message = "Next hop type must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'."
+  }
+}
+
+variable "parent_id" {
+  type        = string
+  description = "The fully-qualified ARM resource ID of the route table into which this route will be deployed."
+  nullable    = false
+
+  validation {
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.Network/routeTables", var.parent_id))
+    error_message = "`parent_id` must be a valid Azure route table resource ID."
   }
 }
 

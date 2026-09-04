@@ -1,20 +1,3 @@
-variable "name" {
-  type        = string
-  description = "(Required) The name of the security rule. This needs to be unique across all Rules in the Network Security Group. Changing this forces a new resource to be created."
-  nullable    = false
-}
-
-variable "parent_id" {
-  type        = string
-  description = "The fully-qualified ARM resource ID of the network security group into which this security rule will be deployed."
-  nullable    = false
-
-  validation {
-    condition     = can(provider::azapi::parse_resource_id("Microsoft.Network/networkSecurityGroups", var.parent_id))
-    error_message = "`parent_id` must be a valid Azure network security group resource ID."
-  }
-}
-
 variable "access" {
   type        = string
   description = "(Required) Specifies whether network traffic is allowed or denied. Possible values are `Allow` and `Deny`."
@@ -34,6 +17,23 @@ variable "direction" {
   validation {
     condition     = contains(["Inbound", "Outbound"], var.direction)
     error_message = "Direction must be either 'Inbound' or 'Outbound'."
+  }
+}
+
+variable "name" {
+  type        = string
+  description = "(Required) The name of the security rule. This needs to be unique across all Rules in the Network Security Group. Changing this forces a new resource to be created."
+  nullable    = false
+}
+
+variable "parent_id" {
+  type        = string
+  description = "The fully-qualified ARM resource ID of the network security group into which this security rule will be deployed."
+  nullable    = false
+
+  validation {
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.Network/networkSecurityGroups", var.parent_id))
+    error_message = "`parent_id` must be a valid Azure network security group resource ID."
   }
 }
 
@@ -95,6 +95,34 @@ variable "destination_port_ranges" {
   description = "(Optional) List of destination ports or port ranges. This is required if `destination_port_range` is not specified."
 }
 
+variable "resource_types" {
+  type = object({
+    this = optional(string, "Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01")
+  })
+  default     = {}
+  description = <<DESCRIPTION
+(Optional) A map of resource types and their API versions used by this module.
+The `this` key corresponds to the primary security rule resource.
+DESCRIPTION
+  nullable    = false
+}
+
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number)
+    max_interval_seconds = optional(number)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Retry configuration applied to the `azapi` resource managed by this module.
+
+- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
+- `interval_seconds`     - (Optional) Initial interval between retries in seconds.
+- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds.
+DESCRIPTION
+}
+
 variable "source_address_prefix" {
   type        = string
   default     = null
@@ -123,34 +151,6 @@ variable "source_port_ranges" {
   type        = set(string)
   default     = null
   description = "(Optional) List of source ports or port ranges. This is required if `source_port_range` is not specified."
-}
-
-variable "resource_types" {
-  type = object({
-    this = optional(string, "Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01")
-  })
-  default     = {}
-  description = <<DESCRIPTION
-(Optional) A map of resource types and their API versions used by this module.
-The `this` key corresponds to the primary security rule resource.
-DESCRIPTION
-  nullable    = false
-}
-
-variable "retry" {
-  type = object({
-    error_message_regex  = optional(list(string))
-    interval_seconds     = optional(number)
-    max_interval_seconds = optional(number)
-  })
-  default     = null
-  description = <<DESCRIPTION
-Retry configuration applied to the `azapi` resource managed by this module.
-
-- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
-- `interval_seconds`     - (Optional) Initial interval between retries in seconds.
-- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds.
-DESCRIPTION
 }
 
 variable "timeouts" {

@@ -36,11 +36,11 @@ module "peering_hub_outbound" {
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_fromhub }
 
   parent_id                    = each.value["outbound"].this_resource_id
+  name                         = each.value.outbound.name
   allow_forwarded_traffic      = each.value.outbound.options.allow_forwarded_traffic
   allow_gateway_transit        = each.value.outbound.options.allow_gateway_transit
   allow_virtual_network_access = each.value.outbound.options.allow_virtual_network_access
   create_reverse_peering       = false
-  name                         = each.value.outbound.name
   remote_virtual_network_id    = each.value["outbound"].remote_resource_id
   use_remote_gateways          = each.value.outbound.options.use_remote_gateways
 
@@ -55,11 +55,11 @@ module "peering_hub_inbound" {
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_tohub }
 
   parent_id                    = each.value["inbound"].this_resource_id
+  name                         = each.value.inbound.name
   allow_forwarded_traffic      = each.value.inbound.options.allow_forwarded_traffic
   allow_gateway_transit        = each.value.inbound.options.allow_gateway_transit
   allow_virtual_network_access = each.value.inbound.options.allow_virtual_network_access
   create_reverse_peering       = false
-  name                         = each.value.inbound.name
   remote_virtual_network_id    = each.value["inbound"].remote_resource_id
   use_remote_gateways          = each.value.inbound.options.use_remote_gateways
 
@@ -74,11 +74,11 @@ module "peering_mesh" {
   for_each = { for i in local.virtual_networks_mesh_peering_list : "${i.source_key}-${i.destination_key}" => i }
 
   parent_id                    = each.value.this_resource_id
+  name                         = each.value.name
   allow_forwarded_traffic      = each.value.allow_forwarded_traffic
   allow_gateway_transit        = false
   allow_virtual_network_access = true
   create_reverse_peering       = false
-  name                         = each.value.name
   remote_virtual_network_id    = each.value.remote_resource_id
   use_remote_gateways          = false
 
@@ -112,11 +112,10 @@ resource "azapi_resource" "vhubconnection_routing_intent" {
     properties = local.vhubconnection_body_properties[each.key]
   }
 
-  depends_on = [module.virtual_networks]
-
   lifecycle {
     ignore_changes = [
       body.properties.routingConfiguration,
     ]
   }
+  depends_on = [module.virtual_networks]
 }
