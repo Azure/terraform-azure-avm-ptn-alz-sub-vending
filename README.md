@@ -964,6 +964,7 @@ Description: A map of the virtual networks to create. The map key must be known 
     - `key_reference` - The name of the var.route\_tables map key that should be associated with the subnet once it has been provisioned. If you are passing in an `id` value, this will not be used.
   - `default_outbound_access_enabled` - (Optional) Whether to allow internet access from the subnet. Defaults to `false`.
   - `service_endpoints` - (Optional) The list of Service endpoints to associate with the subnet.
+  - `service_endpoints_with_location` - (Optional) Service endpoints with location restrictions to associate with the subnet. Cannot be used together with `service_endpoints`.
   - `service_endpoint_policies` - (Optional) The list of Service Endpoint Policy objects with the resource id to associate with the subnet.
     - `id` - The ID of the endpoint policy that should be associated with the subnet.
   - `delegations` - (Optional) A list of delegation objects with the following fields:
@@ -1067,6 +1068,10 @@ map(object({
         }))
         default_outbound_access_enabled = optional(bool, false)
         service_endpoints               = optional(set(string))
+        service_endpoints_with_location = optional(list(object({
+          service   = string
+          locations = optional(list(string), ["*"])
+        })))
         service_endpoint_policies = optional(map(object({
           id = string
         })))
