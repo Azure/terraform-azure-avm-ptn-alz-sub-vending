@@ -28,7 +28,6 @@ provider "azurerm" {
   features {}
 }
 
-
 data "azurerm_client_config" "current" {}
 
 resource "random_string" "suffix" {
@@ -54,7 +53,7 @@ resource "azurerm_virtual_network" "hub" {
 locals {
   resource_groups = {
     nwrg = {
-      name     = "NetworkWatcherRG" # Make sure to create this if you want to be able to cancel you subscription
+      name     = "NetworkWatcherRG" # Make sure to create this if you want to be able to cancel your subscription
       location = azurerm_resource_group.hub.location
     }
     rg1 = {
@@ -113,7 +112,6 @@ module "sub_vending" {
   virtual_network_enabled = true
   virtual_networks        = local.virtual_networks
 }
-
 ```
 
 <!-- markdownlint-disable MD033 -->

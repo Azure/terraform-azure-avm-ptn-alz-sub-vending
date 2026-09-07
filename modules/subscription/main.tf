@@ -1,4 +1,3 @@
-
 resource "azapi_resource" "subscription" {
   count = var.subscription_alias_enabled ? 1 : 0
 
@@ -53,13 +52,12 @@ resource "azapi_resource_action" "subscription_association" {
   resource_id = "/providers/Microsoft.Management/managementGroups/${var.subscription_management_group_id}/subscriptions/${local.subscription_id}"
   type        = "Microsoft.Management/managementGroups/subscriptions@2021-04-01"
 
-  depends_on = [
-    time_sleep.wait_for_subscription_before_subscription_operations
-  ]
-
   lifecycle {
     replace_triggered_by = [terraform_data.replacement]
   }
+  depends_on = [
+    time_sleep.wait_for_subscription_before_subscription_operations
+  ]
 }
 
 resource "azapi_update_resource" "subscription_tags" {

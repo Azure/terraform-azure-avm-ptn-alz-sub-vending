@@ -327,13 +327,18 @@ Description: A map of the network security groups to create. The map key must be
 
 - `tags`: A map of tags to apply to the virtual network. [optional - default empty]
 
+### Resource Types
+
+- `resource_types`: An optional object to override the ARM resource types (and their API versions) used by the network security group submodule. [optional]
+  - `this`: The resource type for the network security group, e.g. `Microsoft.Network/networkSecurityGroups@2024-05-01`. [optional]
+  - `security_rule`: The resource type for the security rules, e.g. `Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01`. [optional]
+
 ### Security Rules
 
 - `security_rules` - (Optional) A map of security rules to create within the network network security group. The value is an object with the following fields:
   - `access` - (Required) Specifies whether network traffic is allowed or denied. Possible values are `Allow` and `Deny`.
   - `description` - (Optional) A description for this rule. Restricted to 140 characters.
-  - `destination_address_prefix` - (Optional) CIDR or destination IP range or * to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. Besides, it also supports all available Service Tags like ‘Sql.WestEurope‘, ‘Storage.EastUS‘, etc. You can list the available service tags with the CLI: ```shell az network list-service-tags --location westcentralus
-```. For further information please see [Azure CLI
+  - `destination_address_prefix` - (Optional) CIDR or destination IP range or `*` to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. It also supports all available Service Tags like `Sql.WestEurope`, `Storage.EastUS`, etc. You can list the available service tags with the CLI: `az network list-service-tags --location westcentralus`.
   - `destination_address_prefixes` - (Optional) List of destination address prefixes. Tags may not be used. This is required if `destination_address_prefix` is not specified.
   - `destination_application_security_group_ids` - (Optional) A List of destination Application Security Group IDs
   - `destination_port_range` - (Optional) Destination Port or Range. Integer or range between `0` and `65535` or `*` to match any. This is required if `destination_port_ranges` is not specified.
@@ -357,6 +362,10 @@ map(object({
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
     tags                         = optional(map(string))
+    resource_types = optional(object({
+      this          = optional(string)
+      security_rule = optional(string)
+    }), {})
 
     security_rules = optional(map(object({
       access                                     = string
@@ -500,11 +509,16 @@ Description: A map defining route tables and their associated routes to be creat
 
 - `bgp_route_propagation_enabled` (optional): Boolean that controls whether routes learned by BGP are propagated to the route table. Default is `true`.
 - `tags` (optional): A map of key-value pairs for tags associated with the route table.
+- `resource_types` (optional): An object to override the ARM resource types (and their API versions) used by the route table submodule.
+  - `this` (optional): The resource type for the route table, e.g. `Microsoft.Network/routeTables@2024-05-01`.
+  - `route` (optional): The resource type for the routes, e.g. `Microsoft.Network/routeTables/routes@2024-05-01`.
 - `routes` (optional): A map defining routes for the route table. Each route object has the following properties:
 - `name` (required): The name of the route.
 - `address_prefix` (required): The address prefix for the route.
 - `next_hop_type` (required): The next hop type, must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'.
 - `next_hop_in_ip_address` (optional): The next hop IP address for the route. Required if next hop type is 'VirtualAppliance'.
+
+> **Note:** Migration protection is built-in. The module uses `ignore_other_items_in_list = ["properties.routes"]` to preserve existing inline routes.
 
 Type:
 
@@ -516,6 +530,10 @@ map(object({
     resource_group_name_existing  = optional(string)
     bgp_route_propagation_enabled = optional(bool, true)
     tags                          = optional(map(string))
+    resource_types = optional(object({
+      this  = optional(string)
+      route = optional(string)
+    }), {})
 
     routes = optional(map(object({
       name                   = string
@@ -1145,6 +1163,10 @@ Description: The created budget resource IDs, expressed as a map.
 
 Description: The management\_group\_subscription\_association\_id output is the ID of the management group subscription association.  
 Value will be null if `var.subscription_management_group_association_enabled` is false.
+
+### <a name="output_network_security_group_resource_ids"></a> [network\_security\_group\_resource\_ids](#output\_network\_security\_group\_resource\_ids)
+
+Description: The created network security group resource IDs, expressed as a map.
 
 ### <a name="output_resource_group_resource_ids"></a> [resource\_group\_resource\_ids](#output\_resource\_group\_resource\_ids)
 

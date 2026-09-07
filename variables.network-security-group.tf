@@ -11,6 +11,10 @@ variable "network_security_groups" {
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
     tags                         = optional(map(string))
+    resource_types = optional(object({
+      this          = optional(string)
+      security_rule = optional(string)
+    }), {})
 
     security_rules = optional(map(object({
       access                                     = string
@@ -51,13 +55,19 @@ A map of the network security groups to create. The map key must be known at the
 
 - `tags`: A map of tags to apply to the virtual network. [optional - default empty]
 
+### Resource Types
+
+- `resource_types`: An optional object to override the ARM resource types (and their API versions) used by the network security group submodule. [optional]
+  - `this`: The resource type for the network security group, e.g. `Microsoft.Network/networkSecurityGroups@2024-05-01`. [optional]
+  - `security_rule`: The resource type for the security rules, e.g. `Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01`. [optional]
+
 
 ### Security Rules
 
-- `security_rules` - (Optional) A map of security rules to create within the network network security group. The value is an object with the following fields: 
+- `security_rules` - (Optional) A map of security rules to create within the network network security group. The value is an object with the following fields:
   - `access` - (Required) Specifies whether network traffic is allowed or denied. Possible values are `Allow` and `Deny`.
   - `description` - (Optional) A description for this rule. Restricted to 140 characters.
-  - `destination_address_prefix` - (Optional) CIDR or destination IP range or * to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. Besides, it also supports all available Service Tags like ‘Sql.WestEurope‘, ‘Storage.EastUS‘, etc. You can list the available service tags with the CLI: ```shell az network list-service-tags --location westcentralus```. For further information please see [Azure CLI
+  - `destination_address_prefix` - (Optional) CIDR or destination IP range or `*` to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. It also supports all available Service Tags like `Sql.WestEurope`, `Storage.EastUS`, etc. You can list the available service tags with the CLI: `az network list-service-tags --location westcentralus`.
   - `destination_address_prefixes` - (Optional) List of destination address prefixes. Tags may not be used. This is required if `destination_address_prefix` is not specified.
   - `destination_application_security_group_ids` - (Optional) A List of destination Application Security Group IDs
   - `destination_port_range` - (Optional) Destination Port or Range. Integer or range between `0` and `65535` or `*` to match any. This is required if `destination_port_ranges` is not specified.

@@ -38,7 +38,6 @@ override.tf.json
 *.md.tmp
 *.mptfbackup
 .DS_Store
-.avm
 .terraformrc
 README-generated.md
 avm.tflint.hcl
@@ -52,3 +51,4 @@ crash.*.log
 crash.log
 examples/*/policy
 terraform.rc
+.avm/managed-files.json

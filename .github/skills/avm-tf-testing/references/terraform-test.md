@@ -1,6 +1,6 @@
 # Writing Terraform Tests for AVM Modules
 
-This sub-skill covers writing `.tftest.hcl` files for Azure Verified Modules (AVM). It adapts Terraform's built-in testing framework to AVM conventions.
+This reference covers writing `.tftest.hcl` files for Azure Verified Modules (AVM). It adapts Terraform's built-in testing framework to AVM conventions.
 
 ## AVM Test Directory Structure
 
@@ -11,13 +11,15 @@ Tests MUST live in one of two directories. No other location is permitted.
   tests/
     unit/
       unit.tftest.hcl          # Unit tests WITH mock_provider blocks
-      setup.sh                  # Optional pre-test setup script
+      setup.ps1                # Optional pre-test setup script
     integration/
       integration.tftest.hcl   # Integration tests WITHOUT mock_provider blocks
-      setup.sh                  # Optional pre-test setup script
+      setup.ps1                # Optional pre-test setup script
 ```
 
 Submodules under `./modules/` follow the same pattern — each can have its own `tests/unit/` and `tests/integration/` directories.
+
+All test files, fixtures, and setup or teardown Terraform for a newly authored module use AzAPI for control-plane and ordinary supporting resources. Direct Azure scaffolding uses an AzAPI resource, data source, or action, and each standalone Terraform root includes `Azure/azapi` in `required_providers`.
 
 ## Unit Tests vs Integration Tests
 
@@ -28,13 +30,13 @@ Submodules under `./modules/` follow the same pattern — each can have its own 
 | **Command** | `command = apply` (safe with mocks) | `command = apply` (default) |
 | **Speed** | Fast (seconds) | Slow (minutes) |
 | **Credentials needed** | No | Yes (Azure) |
-| **Run command** | `PORCH_NO_TUI=1 ./avm tf-test-unit` | `PORCH_NO_TUI=1 ./avm tf-test-integration` |
+| **Run command** | `avm test unit` | `avm test integration` |
 
 **Critical rule**: Unit tests use `command = apply` (NOT `command = plan`) because mocked providers make apply safe and allow testing resource creation logic.
 
 ## Unit Test Template
 
-Every AVM module uses the AzAPI provider. Unit tests MUST mock **all** providers declared in `terraform.tf` `required_providers`. AVM modules always include `azapi`, `modtm`, and `random`.
+Unit tests MUST mock **all** providers declared in `terraform.tf` `required_providers` for the module under test.
 
 ```hcl
 # tests/unit/unit.tftest.hcl
@@ -81,15 +83,9 @@ mock_provider "modtm" {}
 mock_provider "random" {}
 ```
 
-### AzureRM Module Variant
+### AzureRM exception
 
-For legacy AzureRM-based modules, mock `azurerm` instead of (or in addition to) `azapi`:
-
-```hcl
-mock_provider "azurerm" {}
-mock_provider "modtm" {}
-mock_provider "random" {}
-```
+Do not add an AzureRM mock to make test scaffolding easier. If a test needs a direct Azure dependency outside the module under test, model it with AzAPI. An AzureRM mock is permitted only when the test exercises independently justified `azurerm_*` resource or data-source blocks. Each block must implement one specific unsupported data-plane/non-ARM operation, document the exact block and AzAPI gap with an upstream issue or pull request, and be replaced when support ships. One valid block does not authorize another.
 
 ## Integration Test Template
 
@@ -355,42 +351,46 @@ run "test_module_b" {
 
 ### Optional Setup Script
 
-If `tests/unit/setup.sh` or `tests/integration/setup.sh` exists, it runs automatically before `terraform init`. Use this for environment preparation.
+If `tests/unit/setup.ps1` or `tests/integration/setup.ps1` exists, it runs in an isolated `pwsh` subprocess before `terraform init`. Use this for environment preparation. A failing hook records an issue and skips that target.
+
+Shell hooks are **not** supported: a `setup.sh` or `teardown.sh` under `tests/<tier>/` fails the run before Terraform is invoked. Port them to PowerShell.
+
+If setup or teardown requires Terraform, use AzAPI for all control-plane and ordinary supporting resources. Configure AzureRM only when setup or teardown must exercise independently justified data-plane/non-ARM exception blocks.
 
 ## Running Tests
 
-Tests run inside the AVM container via the `./avm` wrapper. Always prefix with `PORCH_NO_TUI=1`.
+Tests run via the `Avm.Authoring` PowerShell module.
 
-```bash
+```pwsh
 # Unit tests
-PORCH_NO_TUI=1 ./avm tf-test-unit
+avm test unit
 
 # Integration tests
-PORCH_NO_TUI=1 ./avm tf-test-integration
+avm test integration
 ```
 
 The test runner automatically:
-1. Checks that `tests/unit/` or `tests/integration/` exists (skips gracefully if not)
-2. Copies the working directory to a temp location
-3. Cleans `.terraform`, lock files, and state files
-4. Runs `setup.sh` if present
-5. Runs `terraform init -test-directory ./tests/<type>`
-6. Runs `terraform test -test-directory ./tests/<type>`
-7. Repeats for each submodule under `./modules/` (in parallel)
-8. Cleans up
+1. Enumerates the module root and each immediate `modules/*` directory.
+2. Fails fast if a target has a `setup.sh` or `teardown.sh` under `tests/<tier>/`.
+3. Runs `tests/<tier>/setup.ps1` if present.
+4. Runs `terraform init -backend=false -upgrade=false -input=false -test-directory=tests/<tier>`. Pass `-NoInit` to skip this.
+5. Runs `terraform test -test-directory=tests/<tier> -no-color -json`.
+6. Reports failing run blocks and diagnostics with submodule paths.
+
+Tests execute in place, so `.terraform/` and lock files remain after `terraform init`. Bare `avm test` runs `terraform validate`; always name the test tier.
 
 ## Cleanup and Destruction
 
 Resources created by integration tests are destroyed automatically in **reverse run block order** after test completion. This handles dependency ordering correctly.
 
-For debugging, the `terraform test -no-cleanup` flag prevents automatic destruction — but note that this must be run directly, not via `./avm`.
+For debugging, the `terraform test -no-cleanup` flag prevents automatic destruction, but it must be run directly with `terraform`.
 
 ## Best Practices
 
-1. **Always mock all providers** in unit tests — check `terraform.tf` `required_providers` for the full list. AVM modules always have at least `azapi`, `modtm`, and `random`.
+1. **Always mock all providers** in unit tests — check `terraform.tf` `required_providers` for the full list for the module under test.
 2. **Use `command = apply`** for unit tests (not `plan`) — mocked providers make apply safe and allow testing resource creation.
 3. **Write clear error messages** — assertion messages should describe the expected behavior, not restate the condition.
-4. **Set `location`** in the `variables` block — it is a required variable in all AVM modules with no default.
+4. **Set all required inputs** in the `variables` block — use the module's `variables.tf` to determine which variables are required and have no default.
 5. **Test validation rules** — use `expect_failures` to verify that invalid inputs are rejected.
 6. **Test conditional logic** — verify that optional features create resources when enabled and skip them when disabled.
 7. **Keep tests focused** — each run block should test one scenario or behavior.

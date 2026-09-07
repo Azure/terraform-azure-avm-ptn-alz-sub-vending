@@ -66,7 +66,7 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
-- [azapi_resource.network_security_group](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -87,7 +87,7 @@ Type: `string`
 
 ### <a name="input_parent_id"></a> [parent\_id](#input\_parent\_id)
 
-Description: The ID of the parent resource to which this user-assigned managed identity.
+Description: The fully-qualified ARM resource ID of the resource group into which this network security group will be deployed.
 
 Type: `string`
 
@@ -95,12 +95,49 @@ Type: `string`
 
 The following input variables are optional (have default values):
 
+### <a name="input_resource_types"></a> [resource\_types](#input\_resource\_types)
+
+Description: (Optional) A map of resource types and their API versions used by this module.  
+The `this` key corresponds to the primary network security group resource.  
+The `security_rule` key is cascaded to the security-rule submodule.
+
+Type:
+
+```hcl
+object({
+    this          = optional(string, "Microsoft.Network/networkSecurityGroups@2024-05-01")
+    security_rule = optional(string, "Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01")
+  })
+```
+
+Default: `{}`
+
+### <a name="input_retry"></a> [retry](#input\_retry)
+
+Description: Retry configuration applied to every `azapi` resource managed by this module.
+
+- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
+- `interval_seconds`     - (Optional) Initial interval between retries in seconds.
+- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds.
+
+Type:
+
+```hcl
+object({
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number)
+    max_interval_seconds = optional(number)
+  })
+```
+
+Default: `null`
+
 ### <a name="input_security_rules"></a> [security\_rules](#input\_security\_rules)
 
 Description: These are the security rule configuration properties.
 - `access` - (Required) Specifies whether network traffic is allowed or denied. Possible values are `Allow` and `Deny`.
 - `description` - (Optional) A description for this rule. Restricted to 140 characters.
-- `destination_address_prefix` - (Optional) CIDR or destination IP range or * to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. Besides, it also supports all available Service Tags like ‘Sql.WestEurope‘, ‘Storage.EastUS‘, etc.
+- `destination_address_prefix` - (Optional) CIDR or destination IP range or `*` to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. It also supports all available Service Tags like `Sql.WestEurope`, `Storage.EastUS`, etc.
 - `destination_address_prefixes` - (Optional) List of destination address prefixes. Tags may not be used. This is required if `destination_address_prefix` is not specified.
 - `destination_application_security_group_ids` - (Optional) A List of destination Application Security Group IDs
 - `destination_port_range` - (Optional) Destination Port or Range. Integer or range between `0` and `65535` or `*` to match any. This is required if `destination_port_ranges` is not specified.
@@ -148,21 +185,53 @@ Type: `map(string)`
 
 Default: `null`
 
+### <a name="input_timeouts"></a> [timeouts](#input\_timeouts)
+
+Description: Per-operation timeouts for resources managed by this module. Each value is a Go duration string (e.g. `30m`, `1h`).
+
+- `create` - (Optional) Timeout for create operations.
+- `read`   - (Optional) Timeout for read operations.
+- `update` - (Optional) Timeout for update operations.
+- `delete` - (Optional) Timeout for delete operations.
+
+Type:
+
+```hcl
+object({
+    create = optional(string)
+    read   = optional(string)
+    update = optional(string)
+    delete = optional(string)
+  })
+```
+
+Default: `null`
+
 ## Outputs
 
 The following outputs are exported:
 
-### <a name="output_network_security_group_resource_id"></a> [network\_security\_group\_resource\_id](#output\_network\_security\_group\_resource\_id)
+### <a name="output_name"></a> [name](#output\_name)
 
-Description: The created network security group resource ID.
+Description: The name of the network security group.
 
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
-Description: The created network security group resource ID.
+Description: The resource ID of the network security group.
+
+### <a name="output_security_rules"></a> [security\_rules](#output\_security\_rules)
+
+Description: A map of security rule names to their resource IDs.
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_security_rule"></a> [security\_rule](#module\_security\_rule)
+
+Source: ./modules/security-rule
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

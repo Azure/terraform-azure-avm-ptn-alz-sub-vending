@@ -21,16 +21,43 @@ variable "name" {
 # This is required for most resource modules
 variable "parent_id" {
   type        = string
-  description = "The ID of the parent resource to which this user-assigned managed identity."
+  description = "The fully-qualified ARM resource ID of the resource group into which this network security group will be deployed."
+  nullable    = false
 
   validation {
-    condition     = length(var.parent_id) > 0
-    error_message = "The parent_id must not be empty."
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.Resources/resourceGroups", var.parent_id))
+    error_message = "`parent_id` must be a valid Azure resource group resource ID."
   }
-  validation {
-    condition     = can(regex("^/subscriptions/[a-fA-F0-9-]+/resourceGroups/[a-zA-Z0-9-_.()]+$", var.parent_id))
-    error_message = "The parent_id must be a valid Azure Resource Group ID."
-  }
+}
+
+variable "resource_types" {
+  type = object({
+    this          = optional(string, "Microsoft.Network/networkSecurityGroups@2024-05-01")
+    security_rule = optional(string, "Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01")
+  })
+  default     = {}
+  description = <<DESCRIPTION
+(Optional) A map of resource types and their API versions used by this module.
+The `this` key corresponds to the primary network security group resource.
+The `security_rule` key is cascaded to the security-rule submodule.
+DESCRIPTION
+  nullable    = false
+}
+
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number)
+    max_interval_seconds = optional(number)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Retry configuration applied to every `azapi` resource managed by this module.
+
+- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
+- `interval_seconds`     - (Optional) Initial interval between retries in seconds.
+- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds.
+DESCRIPTION
 }
 
 # Optional variables
@@ -58,7 +85,7 @@ variable "security_rules" {
 These are the security rule configuration properties.
 - `access` - (Required) Specifies whether network traffic is allowed or denied. Possible values are `Allow` and `Deny`.
 - `description` - (Optional) A description for this rule. Restricted to 140 characters.
-- `destination_address_prefix` - (Optional) CIDR or destination IP range or * to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. Besides, it also supports all available Service Tags like ‘Sql.WestEurope‘, ‘Storage.EastUS‘, etc.
+- `destination_address_prefix` - (Optional) CIDR or destination IP range or `*` to match any IP. Tags such as `VirtualNetwork`, `AzureLoadBalancer` and `Internet` can also be used. It also supports all available Service Tags like `Sql.WestEurope`, `Storage.EastUS`, etc.
 - `destination_address_prefixes` - (Optional) List of destination address prefixes. Tags may not be used. This is required if `destination_address_prefix` is not specified.
 - `destination_application_security_group_ids` - (Optional) A List of destination Application Security Group IDs
 - `destination_port_range` - (Optional) Destination Port or Range. Integer or range between `0` and `65535` or `*` to match any. This is required if `destination_port_ranges` is not specified.
@@ -81,4 +108,22 @@ variable "tags" {
   type        = map(string)
   default     = null
   description = "(Optional) Tags of the resource."
+}
+
+variable "timeouts" {
+  type = object({
+    create = optional(string)
+    read   = optional(string)
+    update = optional(string)
+    delete = optional(string)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Per-operation timeouts for resources managed by this module. Each value is a Go duration string (e.g. `30m`, `1h`).
+
+- `create` - (Optional) Timeout for create operations.
+- `read`   - (Optional) Timeout for read operations.
+- `update` - (Optional) Timeout for update operations.
+- `delete` - (Optional) Timeout for delete operations.
+DESCRIPTION
 }
