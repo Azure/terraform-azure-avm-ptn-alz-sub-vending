@@ -1,8 +1,13 @@
 # module.virtual_networks uses the Azure Verified Module to create
-# as many virtual networks as is required by the var.virtual_networks input variable
+# as many virtual networks as is required by the var.virtual_networks input variable.
+# The subnet `service_endpoints` set is passed straight through: the wrapper, this submodule and
+# the VNet module all use `optional(set(string))`, and endpoint-list idempotency is handled inside
+# the VNet module via AzAPI list identity keyed on `service`. v0.20.0 is the first release that
+# restores the names-only `service_endpoints` input (VNet PR #130), which fixes ALZ #554 / #4017;
+# versions v0.15.0 through v0.19.0 silently dropped the attribute during object type conversion.
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.17.1"
+  version  = "0.20.0"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
