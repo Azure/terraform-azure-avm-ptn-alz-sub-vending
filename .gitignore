@@ -50,5 +50,6 @@ avmmakefile
 crash.*.log
 crash.log
 examples/*/policy
+providers.tf
 terraform.rc
 .avm/managed-files.json

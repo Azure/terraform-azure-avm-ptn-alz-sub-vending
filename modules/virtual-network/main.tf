@@ -7,7 +7,7 @@
 # versions v0.15.0 through v0.19.0 silently dropped the attribute during object type conversion.
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.20.0"
+  version  = "0.22.1"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
@@ -26,6 +26,14 @@ module "virtual_networks" {
   name                    = each.value.name
   subnets                 = each.value.subnets
   tags                    = each.value.tags
+
+  # AVNM ManagedOnly routing attaches route tables out-of-band on corp/online spokes.
+  # Ignore subnet routeTable associations so Terraform does not fight AVNM on every apply.
+  ignore_body_changes = {
+    virtual_networks_subnets = {
+      virtual_networks_subnets = ["properties.routeTable"]
+    }
+  }
 }
 
 # module.peering_hub_outbound uses the peering submodule from theAzure Verified Module

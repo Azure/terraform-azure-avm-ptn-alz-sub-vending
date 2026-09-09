@@ -1,29 +1,35 @@
 ---
 name: PR Check
+
 on:
   pull_request:
-    types: ['opened', 'reopened', 'synchronize']
-  merge_group:
+    types: [opened, reopened, synchronize]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  check:
-    permissions: {}
+  validate:
+    name: fmt and validate
     runs-on: ubuntu-latest
     steps:
-      - name: checking for fork
-        shell: pwsh
-        run: |
-          $isFork = "${{ github.event.pull_request.head.repo.fork }}"
-          if($isFork -eq "true") {
-            echo "### WARNING: This workflow is disabled for forked repositories. Please follow the [release branch process](https://azure.github.io/Azure-Verified-Modules/contributing/terraform/terraform-contribution-flow/#5-create-a-pull-request-to-the-upstream-repository) if end to end tests are required." >> $env:GITHUB_STEP_SUMMARY
-          }
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
-  run-managed-workflow:
-    if: github.event.pull_request.head.repo.fork == false
-    uses: Azure/azure-verified-modules-tools/.github/workflows/terraform-module.yml@main
-    name: run managed workflow
-    secrets: inherit
-    permissions:
-      id-token: write
-      contents: read
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54bfd3834743f8e2c5786635a4705b5f9d2 # v3.1.2
+        with:
+          terraform_version: 1.14.0
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: Prepare unit test providers
+        run: cp tests/unit/setup/providers.tf providers.tf
+
+      - name: Terraform init
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        run: terraform validate
