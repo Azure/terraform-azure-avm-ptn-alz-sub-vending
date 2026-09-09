@@ -35,13 +35,13 @@ module "peering_hub_outbound" {
   version  = "0.14.1"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_fromhub }
 
-  parent_id                    = each.value["outbound"].this_resource_id
   name                         = each.value.outbound.name
+  parent_id                    = each.value["outbound"].this_resource_id
+  remote_virtual_network_id    = each.value["outbound"].remote_resource_id
   allow_forwarded_traffic      = each.value.outbound.options.allow_forwarded_traffic
   allow_gateway_transit        = each.value.outbound.options.allow_gateway_transit
   allow_virtual_network_access = each.value.outbound.options.allow_virtual_network_access
   create_reverse_peering       = false
-  remote_virtual_network_id    = each.value["outbound"].remote_resource_id
   use_remote_gateways          = each.value.outbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -54,13 +54,13 @@ module "peering_hub_inbound" {
   version  = "0.14.1"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_tohub }
 
-  parent_id                    = each.value["inbound"].this_resource_id
   name                         = each.value.inbound.name
+  parent_id                    = each.value["inbound"].this_resource_id
+  remote_virtual_network_id    = each.value["inbound"].remote_resource_id
   allow_forwarded_traffic      = each.value.inbound.options.allow_forwarded_traffic
   allow_gateway_transit        = each.value.inbound.options.allow_gateway_transit
   allow_virtual_network_access = each.value.inbound.options.allow_virtual_network_access
   create_reverse_peering       = false
-  remote_virtual_network_id    = each.value["inbound"].remote_resource_id
   use_remote_gateways          = each.value.inbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -73,13 +73,13 @@ module "peering_mesh" {
   version  = "0.14.1"
   for_each = { for i in local.virtual_networks_mesh_peering_list : "${i.source_key}-${i.destination_key}" => i }
 
-  parent_id                    = each.value.this_resource_id
   name                         = each.value.name
+  parent_id                    = each.value.this_resource_id
+  remote_virtual_network_id    = each.value.remote_resource_id
   allow_forwarded_traffic      = each.value.allow_forwarded_traffic
   allow_gateway_transit        = false
   allow_virtual_network_access = true
   create_reverse_peering       = false
-  remote_virtual_network_id    = each.value.remote_resource_id
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]
