@@ -102,6 +102,7 @@ locals {
 
       subnets = { for subnet_k, subnet_v in vnet_v.subnets : subnet_k => {
         name                                          = subnet_v.name
+        address_prefix                                = subnet_v.address_prefix
         address_prefixes                              = subnet_v.address_prefixes
         ipam_pools                                    = subnet_v.ipam_pools
         nat_gateway                                   = subnet_v.nat_gateway

@@ -27,6 +27,7 @@ variable "virtual_networks" {
     subnets = optional(map(object(
       {
         name             = string
+        address_prefix   = optional(string)
         address_prefixes = optional(list(string))
         ipam_pools = optional(list(object({
           pool_id       = string
@@ -148,8 +149,9 @@ A map of the virtual networks to create. The map key must be known at the plan s
 
 - `subnets` - (Optional) A map of subnets to create in the virtual network. The value is an object with the following fields:
   - `name` - The name of the subnet.
-  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
-  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefixes`.
+  - `address_prefix` - A single IPv4 address prefix to use for the subnet in CIDR format. Mutually exclusive with `address_prefixes` and `ipam_pools`. [optional]
+  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `address_prefix` and `ipam_pools`. [optional - required if `address_prefix` and `ipam_pools` are not set]
+  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefix` and `address_prefixes`.
     - `pool_id` - The resource ID of the IPAM pool.
     - `prefix_length` - (Optional) The prefix length to allocate from the pool.
   - `nat_gateway` - (Optional) An object with the following fields:
@@ -237,14 +239,14 @@ DESCRIPTION
     ])
     error_message = "Each virtual network must specify either 'address_space' or 'ipam_pools', but not both."
   }
-  # validate each subnet has either address_prefixes or ipam_pools, but not both
+  # validate each subnet specifies exactly one of address_prefix, address_prefixes, or ipam_pools
   validation {
     condition = alltrue(flatten([
       for k, v in var.virtual_networks : [
         for sk, sv in v.subnets :
-        (sv.address_prefixes != null && sv.ipam_pools == null) || (sv.address_prefixes == null && sv.ipam_pools != null)
+        length([for exists in [sv.address_prefix != null, sv.address_prefixes != null, sv.ipam_pools != null] : exists if exists]) == 1
       ]
     ]))
-    error_message = "Each subnet must specify either 'address_prefixes' or 'ipam_pools', but not both."
+    error_message = "Each subnet must specify exactly one of 'address_prefix', 'address_prefixes', or 'ipam_pools'."
   }
 }
