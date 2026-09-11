@@ -35,7 +35,9 @@ module "peering_hub_outbound" {
   version  = "0.14.1"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_fromhub }
 
+  name                          = each.value.outbound.name
   parent_id                     = each.value["outbound"].this_resource_id
+  remote_virtual_network_id     = each.value["outbound"].remote_resource_id
   allow_forwarded_traffic       = each.value.outbound.options.allow_forwarded_traffic
   allow_gateway_transit         = each.value.outbound.options.allow_gateway_transit
   allow_virtual_network_access  = each.value.outbound.options.allow_virtual_network_access
@@ -44,9 +46,7 @@ module "peering_hub_outbound" {
   enable_only_ipv6_peering      = each.value.outbound.options.enable_only_ipv6_peering
   local_peered_address_spaces   = [for address_prefix in each.value.outbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
   local_peered_subnets          = [for subnet_name in each.value.outbound.options.local_peered_subnets : { subnet_name = subnet_name }]
-  name                          = each.value.outbound.name
   peer_complete_vnets           = each.value.outbound.options.peer_complete_vnets
-  remote_virtual_network_id     = each.value["outbound"].remote_resource_id
   use_remote_gateways           = each.value.outbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -59,7 +59,9 @@ module "peering_hub_inbound" {
   version  = "0.14.1"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_tohub }
 
+  name                          = each.value.inbound.name
   parent_id                     = each.value["inbound"].this_resource_id
+  remote_virtual_network_id     = each.value["inbound"].remote_resource_id
   allow_forwarded_traffic       = each.value.inbound.options.allow_forwarded_traffic
   allow_gateway_transit         = each.value.inbound.options.allow_gateway_transit
   allow_virtual_network_access  = each.value.inbound.options.allow_virtual_network_access
@@ -68,9 +70,7 @@ module "peering_hub_inbound" {
   enable_only_ipv6_peering      = each.value.inbound.options.enable_only_ipv6_peering
   local_peered_address_spaces   = [for address_prefix in each.value.inbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
   local_peered_subnets          = [for subnet_name in each.value.inbound.options.local_peered_subnets : { subnet_name = subnet_name }]
-  name                          = each.value.inbound.name
   peer_complete_vnets           = each.value.inbound.options.peer_complete_vnets
-  remote_virtual_network_id     = each.value["inbound"].remote_resource_id
   use_remote_gateways           = each.value.inbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
