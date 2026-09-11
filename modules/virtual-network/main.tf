@@ -83,13 +83,13 @@ module "peering_mesh" {
   version  = "0.14.1"
   for_each = { for i in local.virtual_networks_mesh_peering_list : "${i.source_key}-${i.destination_key}" => i }
 
-  parent_id                    = each.value.this_resource_id
   name                         = each.value.name
+  parent_id                    = each.value.this_resource_id
+  remote_virtual_network_id    = each.value.remote_resource_id
   allow_forwarded_traffic      = each.value.allow_forwarded_traffic
   allow_gateway_transit        = false
   allow_virtual_network_access = true
   create_reverse_peering       = false
-  remote_virtual_network_id    = each.value.remote_resource_id
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]
