@@ -14,4 +14,8 @@ module "networksecuritygroup" {
   resource_types = each.value.resource_types
   security_rules = each.value.security_rules
   tags           = each.value.tags
+
+  depends_on = [
+    module.resourceproviders,
+  ]
 }
