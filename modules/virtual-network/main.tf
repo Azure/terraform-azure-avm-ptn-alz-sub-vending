@@ -1,8 +1,13 @@
 # module.virtual_networks uses the Azure Verified Module to create
-# as many virtual networks as is required by the var.virtual_networks input variable
+# as many virtual networks as is required by the var.virtual_networks input variable.
+# The subnet `service_endpoints` set is passed straight through: the wrapper, this submodule and
+# the VNet module all use `optional(set(string))`, and endpoint-list idempotency is handled inside
+# the VNet module via AzAPI list identity keyed on `service`. v0.20.0 is the first release that
+# restores the names-only `service_endpoints` input (VNet PR #130), which fixes ALZ #554 / #4017;
+# versions v0.15.0 through v0.19.0 silently dropped the attribute during object type conversion.
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.17.1"
+  version  = "0.20.0"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
@@ -30,14 +35,19 @@ module "peering_hub_outbound" {
   version  = "0.14.1"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_fromhub }
 
-  parent_id                    = each.value["outbound"].this_resource_id
-  allow_forwarded_traffic      = each.value.outbound.options.allow_forwarded_traffic
-  allow_gateway_transit        = each.value.outbound.options.allow_gateway_transit
-  allow_virtual_network_access = each.value.outbound.options.allow_virtual_network_access
-  create_reverse_peering       = false
-  name                         = each.value.outbound.name
-  remote_virtual_network_id    = each.value["outbound"].remote_resource_id
-  use_remote_gateways          = each.value.outbound.options.use_remote_gateways
+  name                          = each.value.outbound.name
+  parent_id                     = each.value["outbound"].this_resource_id
+  remote_virtual_network_id     = each.value["outbound"].remote_resource_id
+  allow_forwarded_traffic       = each.value.outbound.options.allow_forwarded_traffic
+  allow_gateway_transit         = each.value.outbound.options.allow_gateway_transit
+  allow_virtual_network_access  = each.value.outbound.options.allow_virtual_network_access
+  create_reverse_peering        = false
+  do_not_verify_remote_gateways = each.value.outbound.options.do_not_verify_remote_gateways
+  enable_only_ipv6_peering      = each.value.outbound.options.enable_only_ipv6_peering
+  local_peered_address_spaces   = [for address_prefix in each.value.outbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
+  local_peered_subnets          = [for subnet_name in each.value.outbound.options.local_peered_subnets : { subnet_name = subnet_name }]
+  peer_complete_vnets           = each.value.outbound.options.peer_complete_vnets
+  use_remote_gateways           = each.value.outbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
 }
@@ -49,14 +59,19 @@ module "peering_hub_inbound" {
   version  = "0.14.1"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_tohub }
 
-  parent_id                    = each.value["inbound"].this_resource_id
-  allow_forwarded_traffic      = each.value.inbound.options.allow_forwarded_traffic
-  allow_gateway_transit        = each.value.inbound.options.allow_gateway_transit
-  allow_virtual_network_access = each.value.inbound.options.allow_virtual_network_access
-  create_reverse_peering       = false
-  name                         = each.value.inbound.name
-  remote_virtual_network_id    = each.value["inbound"].remote_resource_id
-  use_remote_gateways          = each.value.inbound.options.use_remote_gateways
+  name                          = each.value.inbound.name
+  parent_id                     = each.value["inbound"].this_resource_id
+  remote_virtual_network_id     = each.value["inbound"].remote_resource_id
+  allow_forwarded_traffic       = each.value.inbound.options.allow_forwarded_traffic
+  allow_gateway_transit         = each.value.inbound.options.allow_gateway_transit
+  allow_virtual_network_access  = each.value.inbound.options.allow_virtual_network_access
+  create_reverse_peering        = false
+  do_not_verify_remote_gateways = each.value.inbound.options.do_not_verify_remote_gateways
+  enable_only_ipv6_peering      = each.value.inbound.options.enable_only_ipv6_peering
+  local_peered_address_spaces   = [for address_prefix in each.value.inbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
+  local_peered_subnets          = [for subnet_name in each.value.inbound.options.local_peered_subnets : { subnet_name = subnet_name }]
+  peer_complete_vnets           = each.value.inbound.options.peer_complete_vnets
+  use_remote_gateways           = each.value.inbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
 }
@@ -68,13 +83,13 @@ module "peering_mesh" {
   version  = "0.14.1"
   for_each = { for i in local.virtual_networks_mesh_peering_list : "${i.source_key}-${i.destination_key}" => i }
 
+  name                         = each.value.name
   parent_id                    = each.value.this_resource_id
+  remote_virtual_network_id    = each.value.remote_resource_id
   allow_forwarded_traffic      = each.value.allow_forwarded_traffic
   allow_gateway_transit        = false
   allow_virtual_network_access = true
   create_reverse_peering       = false
-  name                         = each.value.name
-  remote_virtual_network_id    = each.value.remote_resource_id
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]
@@ -107,11 +122,10 @@ resource "azapi_resource" "vhubconnection_routing_intent" {
     properties = local.vhubconnection_body_properties[each.key]
   }
 
-  depends_on = [module.virtual_networks]
-
   lifecycle {
     ignore_changes = [
       body.properties.routingConfiguration,
     ]
   }
+  depends_on = [module.virtual_networks]
 }

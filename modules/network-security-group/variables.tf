@@ -30,6 +30,36 @@ variable "parent_id" {
   }
 }
 
+variable "resource_types" {
+  type = object({
+    this          = optional(string, "Microsoft.Network/networkSecurityGroups@2024-05-01")
+    security_rule = optional(string, "Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01")
+  })
+  default     = {}
+  description = <<DESCRIPTION
+(Optional) A map of resource types and their API versions used by this module.
+The `this` key corresponds to the primary network security group resource.
+The `security_rule` key is cascaded to the security-rule submodule.
+DESCRIPTION
+  nullable    = false
+}
+
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number)
+    max_interval_seconds = optional(number)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Retry configuration applied to every `azapi` resource managed by this module.
+
+- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
+- `interval_seconds`     - (Optional) Initial interval between retries in seconds.
+- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds.
+DESCRIPTION
+}
+
 # Optional variables
 variable "security_rules" {
   type = map(object({
@@ -78,36 +108,6 @@ variable "tags" {
   type        = map(string)
   default     = null
   description = "(Optional) Tags of the resource."
-}
-
-variable "resource_types" {
-  type = object({
-    this          = optional(string, "Microsoft.Network/networkSecurityGroups@2024-05-01")
-    security_rule = optional(string, "Microsoft.Network/networkSecurityGroups/securityRules@2024-05-01")
-  })
-  default     = {}
-  description = <<DESCRIPTION
-(Optional) A map of resource types and their API versions used by this module.
-The `this` key corresponds to the primary network security group resource.
-The `security_rule` key is cascaded to the security-rule submodule.
-DESCRIPTION
-  nullable    = false
-}
-
-variable "retry" {
-  type = object({
-    error_message_regex  = optional(list(string))
-    interval_seconds     = optional(number)
-    max_interval_seconds = optional(number)
-  })
-  default     = null
-  description = <<DESCRIPTION
-Retry configuration applied to every `azapi` resource managed by this module.
-
-- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
-- `interval_seconds`     - (Optional) Initial interval between retries in seconds.
-- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds.
-DESCRIPTION
 }
 
 variable "timeouts" {

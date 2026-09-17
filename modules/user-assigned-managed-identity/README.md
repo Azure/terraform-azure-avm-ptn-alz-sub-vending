@@ -68,19 +68,19 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.10)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.5)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azapi_resource.umi](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.umi_federated_credential_advanced](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.umi_federated_credential_github_branch](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.umi_federated_credential_github_environment](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.umi_federated_credential_github_pull_request](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.umi_federated_credential_github_tag](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
-- [azapi_resource.umi_federated_credential_terraform_cloud](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.umi](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.umi_federated_credential_advanced](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.umi_federated_credential_github_branch](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.umi_federated_credential_github_environment](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.umi_federated_credential_github_pull_request](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.umi_federated_credential_github_tag](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.umi_federated_credential_terraform_cloud](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs

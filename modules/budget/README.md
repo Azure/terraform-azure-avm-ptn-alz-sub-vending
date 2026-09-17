@@ -35,13 +35,13 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.10)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.5)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
 ## Resources
 
 The following resources are used by this module:
 
-- [azapi_resource.budget](https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.budget](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs

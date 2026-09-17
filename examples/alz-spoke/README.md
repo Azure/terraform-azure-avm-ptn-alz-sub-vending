@@ -28,7 +28,6 @@ provider "azurerm" {
   features {}
 }
 
-
 data "azurerm_client_config" "current" {}
 
 resource "random_string" "suffix" {
@@ -113,7 +112,6 @@ module "sub_vending" {
   virtual_network_enabled = true
   virtual_networks        = local.virtual_networks
 }
-
 ```
 
 <!-- markdownlint-disable MD033 -->
