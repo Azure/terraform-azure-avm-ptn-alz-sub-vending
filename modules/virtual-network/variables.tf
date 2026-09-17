@@ -27,8 +27,9 @@ variable "virtual_networks" {
     resource_group_name = string
 
     ipam_pools = optional(list(object({
-      id            = string
-      prefix_length = number
+      id                     = string
+      prefix_length          = optional(number)
+      number_of_ip_addresses = optional(string)
     })))
 
     location = optional(string)
@@ -134,7 +135,8 @@ A map of the virtual networks to create. The map key must be known at the plan s
 - `address_space`: The address space of the virtual network as a list of strings in CIDR format, e.g. `["192.168.0.0/24", "10.0.0.0/24"]`. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
 - `ipam_pools`: A list of IPAM pool objects for dynamic address space allocation from Azure Virtual Network Manager IPAM. Mutually exclusive with `address_space`. [optional - required if `address_space` is not set]
   - `id`: The resource ID of the IPAM pool. [required]
-  - `prefix_length`: The prefix length to allocate from the pool (2-29 for IPv4, 48-64 for IPv6). [required]
+  - `prefix_length`: The prefix length to allocate from the pool (2-29 for IPv4, 48-64 for IPv6). Mutually exclusive with `number_of_ip_addresses`. [optional - required if `number_of_ip_addresses` is not set]
+  - `number_of_ip_addresses`: The number of IP addresses to allocate from the pool. Azure may allocate this as multiple, non-contiguous prefixes if a single contiguous block of this size is not available in the pool. Mutually exclusive with `prefix_length`. [optional - required if `prefix_length` is not set]
 - `resource_group_name`: The name of the resource group to create the virtual network in. The default is that the resource group will be created by this module. [required]
 
 ### DNS servers
@@ -300,6 +302,16 @@ DESCRIPTION
       ]
     ]))
     error_message = "Each subnet must specify either 'address_prefixes' or 'ipam_pools', but not both."
+  }
+  # validate each vnet ipam_pools entry specifies either prefix_length or number_of_ip_addresses, but not both
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.virtual_networks : [
+        for pool in coalesce(v.ipam_pools, []) :
+        (pool.prefix_length != null && pool.number_of_ip_addresses == null) || (pool.prefix_length == null && pool.number_of_ip_addresses != null)
+      ]
+    ]))
+    error_message = "Each virtual network ipam_pools entry must specify either 'prefix_length' or 'number_of_ip_addresses', but not both."
   }
   # validate subnet address prefixes is not zero length when specified
   validation {
