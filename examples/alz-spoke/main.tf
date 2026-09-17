@@ -78,7 +78,8 @@ locals {
 module "sub_vending" {
   source = "../../"
 
-  location = azurerm_resource_group.hub.location
+  location         = azurerm_resource_group.hub.location
+  enable_telemetry = false
   # resource groups
   resource_group_creation_enabled = true
   resource_groups                 = local.resource_groups
