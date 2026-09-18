@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "ALZ Subscription vending",
+  "moduleDescription": "AVM Pattern Module for ALZ Subscription vending",
+  "canonicalType": "lz/sub-vending",
+  "owners": [
+    "yeddlapurishivasai",
+    "akshayrohilla"
+  ],
+  "telemetryIdPrefix": "46d3xtrf.ptn.d10ed71"
+}

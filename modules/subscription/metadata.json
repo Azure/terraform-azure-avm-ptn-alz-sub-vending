@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "Landing zone subscription submodule",
+  "moduleDescription": "Creates a subscription alias, and optionally manages management group association for the resulting subscription.",
+  "canonicalType": "lz/sub-vending/subscription",
+  "telemetryIdPrefix": "46d3xtrf.ptn.c892ee4"
+}
