@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "Landing zone role assignment submodule",
+  "moduleDescription": "Creates a role assignment at subscription or lower scope.",
+  "canonicalType": "lz/sub-vending/role-assignment",
+  "telemetryIdPrefix": "46d3xtrf.ptn.769c86e"
+}
