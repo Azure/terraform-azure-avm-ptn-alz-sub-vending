@@ -86,7 +86,7 @@ module "sub_vending" {
   source = "../../"
 
   location         = azurerm_resource_group.hub.location
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
   # resource groups
   resource_group_creation_enabled = true
   resource_groups                 = local.resource_groups
@@ -150,7 +150,17 @@ Type: `string`
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
+
+Type: `bool`
+
+Default: `false`
 
 ## Outputs
 
