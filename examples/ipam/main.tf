@@ -119,7 +119,7 @@ module "sub_vending" {
   source = "../../"
 
   location         = azurerm_resource_group.ipam.location
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
   # Use the current subscription (NM is scoped here)
   subscription_id = data.azurerm_client_config.current.subscription_id
   # virtual network variables with IPAM

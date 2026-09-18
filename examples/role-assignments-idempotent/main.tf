@@ -35,7 +35,7 @@ module "sub_vending" {
   source = "../../"
 
   location                        = "swedencentral"
-  enable_telemetry                = false
+  enable_telemetry                = var.enable_telemetry
   resource_group_creation_enabled = true
   resource_groups = {
     rg1 = {
