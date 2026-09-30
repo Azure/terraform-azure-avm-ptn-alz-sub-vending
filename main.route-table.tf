@@ -11,4 +11,8 @@ module "routetable" {
   resource_types                = each.value.resource_types
   routes                        = each.value.routes
   tags                          = each.value.tags
+
+  depends_on = [
+    module.resourceproviders,
+  ]
 }
