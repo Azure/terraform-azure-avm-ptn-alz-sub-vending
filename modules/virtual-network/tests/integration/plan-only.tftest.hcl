@@ -287,3 +287,43 @@ run "vnet_with_ddos_protection" {
     error_message = "Expected primary VNet to have a DDoS protection plan ID configured"
   }
 }
+
+run "vnet_with_subnet_address_prefix" {
+  command = plan
+
+  variables {
+    virtual_networks = {
+      primary = {
+        name                = "primary-vnet"
+        address_space       = ["192.168.0.0/24"]
+        location            = "westeurope"
+        resource_group_name = "primary-rg"
+        subnets = {
+          singular = {
+            name           = "snet-singular"
+            address_prefix = "192.168.0.0/26"
+          }
+          plural = {
+            name             = "snet-plural"
+            address_prefixes = ["192.168.0.64/26"]
+          }
+        }
+      }
+    }
+  }
+
+  assert {
+    condition     = length(keys(module.virtual_networks)) == 1
+    error_message = "Expected exactly 1 virtual network, got ${length(keys(module.virtual_networks))}"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].subnets["singular"].address_prefix == "192.168.0.0/26"
+    error_message = "Expected the singular subnet to use address_prefix"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].subnets["singular"].address_prefixes == null
+    error_message = "Expected the singular subnet to have null address_prefixes"
+  }
+}
