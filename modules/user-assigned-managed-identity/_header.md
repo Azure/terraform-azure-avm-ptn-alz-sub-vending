@@ -10,13 +10,13 @@ Outputs useful values for use in other modules, e.g. assigning the identity to a
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
 ```terraform
 module "umi" {
-  source  = "Azure/lz-vending/azurerm/modules/usermanagedidentity"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure/modules/usermanagedidentity"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   location            = "eastus"
@@ -29,7 +29,7 @@ module "umi" {
   federated_credentials_github = {
     gh1 = {
       organization = "Azure"
-      repository   = "terraform-azurerm-lz-vending"
+      repository   = "terraform-azure-avm-ptn-alz-sub-vending"
       entity       = "branch"
       value        = "main"
     }
