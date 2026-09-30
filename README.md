@@ -72,13 +72,17 @@ module "lz_vending" {
     }
   }
 
-  umi_enabled             = true
-  umi_name                = "umi"
-  umi_resource_group_name = "rg-identity"
-  umi_role_assignments = {
-    myrg-contrib = {
-      definition     = "Contributor"
-      relative_scope = "/resourceGroups/MyRg"
+  umi_enabled = true
+  user_managed_identities = {
+    umi1 = {
+      name               = "umi"
+      resource_group_key = "identityrg"
+      role_assignments = {
+        myrg-contrib = {
+          definition               = "Contributor"
+          resource_group_scope_key = "myrg"
+        }
+      }
     }
   }
 
@@ -90,6 +94,10 @@ module "lz_vending" {
     }
     myrg = {
       name     = "MyRg"
+      location = "westeurope"
+    }
+    identityrg = {
+      name     = "rg-identity"
       location = "westeurope"
     }
   }
