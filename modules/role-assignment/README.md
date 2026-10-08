@@ -165,7 +165,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-roledefinitions/azure
 
-Version: 0.1.0
+Version: 0.3.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
