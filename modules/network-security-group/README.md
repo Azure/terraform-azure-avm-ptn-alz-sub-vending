@@ -229,7 +229,7 @@ The following Modules are called:
 
 ### <a name="module_security_rule"></a> [security\_rule](#module\_security\_rule)
 
-Source: ./modules/security-rule
+Source: ../network-security-group-security-rule
 
 Version:
 

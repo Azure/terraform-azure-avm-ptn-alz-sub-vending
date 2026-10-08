@@ -21,7 +21,7 @@ resource "azapi_resource" "this" {
 }
 
 module "security_rule" {
-  source   = "./modules/security-rule"
+  source   = "../network-security-group-security-rule"
   for_each = var.security_rules
 
   access                                     = each.value.access

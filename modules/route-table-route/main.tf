@@ -9,7 +9,6 @@ resource "azapi_resource" "this" {
       nextHopType      = var.next_hop_type
     }
   }
-  replace_triggers_refs  = []
   response_export_values = []
   retry                  = var.retry
 
