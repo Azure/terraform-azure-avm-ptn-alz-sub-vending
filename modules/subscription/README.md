@@ -41,23 +41,42 @@ The following requirements are needed by this module:
 The following resources are used by this module:
 
 - [azapi_resource.subscription](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource_action.subscription_association](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_resource_action.subscription_cancel](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_resource_action.subscription_rename](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_update_resource.subscription_tags](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/update_resource) (resource)
 - [terraform_data.replacement](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [time_sleep.wait_for_subscription_before_subscription_operations](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [azapi_resource_list.subscription_management_group_association](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/resource_list) (data source)
 - [azapi_resource_list.subscriptions](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/resource_list) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
-No required inputs.
+The following input variables are required:
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
+
+Type: `string`
 
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_subscription_alias_enabled"></a> [subscription\_alias\_enabled](#input\_subscription\_alias\_enabled)
 

@@ -20,6 +20,12 @@ variable "direction" {
   }
 }
 
+variable "location" {
+  type        = string
+  description = "The Azure region for this module's resources or telemetry deployment."
+  nullable    = false
+}
+
 variable "name" {
   type        = string
   description = "(Required) The name of the security rule. This needs to be unique across all Rules in the Network Security Group. Changing this forces a new resource to be created."
@@ -93,6 +99,17 @@ variable "destination_port_ranges" {
   type        = set(string)
   default     = null
   description = "(Optional) List of destination ports or port ranges. This is required if `destination_port_range` is not specified."
+}
+
+variable "enable_telemetry" {
+  type        = bool
+  default     = true
+  description = <<DESCRIPTION
+This variable controls whether or not telemetry is enabled for the module.
+For more information see <https://aka.ms/avm/telemetryinfo>.
+If it is set to false, then no telemetry will be collected.
+DESCRIPTION
+  nullable    = false
 }
 
 variable "resource_types" {

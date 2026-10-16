@@ -3,8 +3,9 @@ resource "random_uuid" "this" {
 }
 
 module "role_definitions" {
-  source  = "Azure/avm-utl-roledefinitions/azure"
-  version = "0.1.0"
+  source    = "Azure/avm-utl-roledefinitions/azure"
+  version   = "0.1.0"
+  providers = { modtm = modtm }
 
   enable_telemetry      = var.enable_telemetry
   role_definition_scope = var.role_assignment_scope

@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    modtm = {
+      source  = "registry.terraform.io/azure/modtm"
+      version = "~> 0.3"
+    }
     random = {
       source  = "hashicorp/random"
       version = "~> 3.5"
@@ -76,7 +80,8 @@ locals {
 }
 
 module "sub_vending" {
-  source = "../../"
+  source    = "../../"
+  providers = { modtm = modtm }
 
   location         = azurerm_resource_group.hub.location
   enable_telemetry = var.enable_telemetry

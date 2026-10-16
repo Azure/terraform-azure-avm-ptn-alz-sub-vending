@@ -11,7 +11,8 @@ module "networksecuritygroup" {
     can(module.resourcegroup[each.value.resource_group_key].resource_group_resource_id) ? module.resourcegroup[each.value.resource_group_key].resource_group_resource_id : null,
     each.value.resource_group_name_existing != null ? "${local.subscription_resource_id}/resourceGroups/${each.value.resource_group_name_existing}" : null
   )
-  resource_types = each.value.resource_types
-  security_rules = each.value.security_rules
-  tags           = each.value.tags
+  enable_telemetry = var.enable_telemetry
+  resource_types   = each.value.resource_types
+  security_rules   = each.value.security_rules
+  tags             = each.value.tags
 }

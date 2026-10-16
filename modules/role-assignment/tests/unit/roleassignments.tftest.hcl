@@ -22,9 +22,19 @@ mock_provider "azapi" {
       }
     }
   }
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
 }
 
+mock_provider "modtm" {}
+
+mock_provider "random" {}
+
 variables {
+  location                     = "uksouth"
   role_assignment_principal_id = "00000000-0000-0000-0000-000000000000"
   role_assignment_scope        = "/subscriptions/00000000-0000-0000-0000-000000000000"
   role_assignment_definition   = "Owner"
@@ -52,6 +62,11 @@ run "simple_role_name_valid" {
     condition     = var.role_assignment_scope == "/subscriptions/00000000-0000-0000-0000-000000000000"
     error_message = "Expected scope to be subscription level, got '${var.role_assignment_scope}'"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
 
 run "simple_role_definition_id_valid" {
@@ -75,6 +90,11 @@ run "simple_role_definition_id_valid" {
     condition     = azapi_resource.this.body.properties.principalId == "00000000-0000-0000-0000-000000000000"
     error_message = "Expected principalId to be set correctly"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
 
 run "scope_invalid" {
@@ -88,6 +108,11 @@ run "scope_invalid" {
 
   # This test expects the validation to fail because "/" is not a valid scope
   # Valid scopes must be subscription, resource group, or resource level
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
 
 run "condition_valid_v2" {
@@ -112,8 +137,12 @@ run "condition_valid_v2" {
     condition     = can(regex("ActionMatches", var.role_assignment_condition))
     error_message = "Expected condition to contain ActionMatches clause"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
-
 
 run "condition_valid_v1" {
   command = plan
@@ -137,6 +166,11 @@ run "condition_valid_v1" {
     condition     = can(regex("ActionMatches", var.role_assignment_condition))
     error_message = "Expected condition to contain ActionMatches clause"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
 
 run "condition_invalid" {
@@ -151,4 +185,9 @@ run "condition_invalid" {
 
   # This test expects validation to fail because condition version must be either "1.0" or "2.0"
   # "2.2" is not a valid condition version
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
