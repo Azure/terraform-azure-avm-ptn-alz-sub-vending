@@ -1,8 +1,6 @@
 # Virtual Network IPAM Pool Tests
 # Tests IPAM pool allocation path for VNets and subnets
 
-mock_provider "azurerm" {}
-
 mock_provider "azapi" {
   mock_data "azapi_client_config" {
     defaults = {
@@ -16,6 +14,7 @@ mock_provider "modtm" {}
 mock_provider "random" {}
 
 mock_provider "time" {}
+mock_provider "terraform" {}
 
 variables {
   location         = "uksouth"
@@ -46,10 +45,11 @@ run "valid_vnet_with_ipam_pools" {
     error_message = "Expected exactly 1 virtual network to be created"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
-    time   = time
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }
 
@@ -85,10 +85,11 @@ run "valid_vnet_with_ipam_subnets" {
     error_message = "Expected exactly 1 virtual network to be created"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
-    time   = time
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }
 
@@ -118,9 +119,10 @@ run "valid_vnet_with_address_space" {
     error_message = "Expected exactly 1 virtual network to be created"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
-    time   = time
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }

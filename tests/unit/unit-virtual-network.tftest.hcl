@@ -1,8 +1,6 @@
 # Virtual Network Module Basic Tests
 # Tests basic VNet creation without deploying
 
-mock_provider "azurerm" {}
-
 mock_provider "azapi" {
   mock_data "azapi_client_config" {
     defaults = {
@@ -16,6 +14,7 @@ mock_provider "modtm" {}
 mock_provider "random" {}
 
 mock_provider "time" {}
+mock_provider "terraform" {}
 
 variables {
   location         = "uksouth"
@@ -59,10 +58,11 @@ run "valid_two_vnets" {
     error_message = "Expected 'secondary' virtual network to be present in output"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
-    time   = time
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }
 
@@ -106,10 +106,11 @@ run "vnet_with_subnet_address_prefix" {
     error_message = "Expected the singular subnet to have null address_prefixes"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
-    time   = time
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }
 
@@ -153,9 +154,10 @@ run "subnet_resource_ids_output" {
     error_message = "Expected 'subnet1' and 'subnet2' keys under 'primary' in virtual_network_subnet_resource_ids output"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
-    time   = time
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }

@@ -32,6 +32,7 @@ mock_provider "azapi" {
 mock_provider "modtm" {}
 
 mock_provider "random" {}
+mock_provider "terraform" {}
 
 variables {
   location                     = "uksouth"
@@ -63,9 +64,10 @@ run "simple_role_name_valid" {
     error_message = "Expected scope to be subscription level, got '${var.role_assignment_scope}'"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
   }
 }
 
@@ -91,9 +93,10 @@ run "simple_role_definition_id_valid" {
     error_message = "Expected principalId to be set correctly"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
   }
 }
 
@@ -109,9 +112,10 @@ run "scope_invalid" {
   # This test expects the validation to fail because "/" is not a valid scope
   # Valid scopes must be subscription, resource group, or resource level
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
   }
 }
 
@@ -138,9 +142,10 @@ run "condition_valid_v2" {
     error_message = "Expected condition to contain ActionMatches clause"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
   }
 }
 
@@ -167,9 +172,10 @@ run "condition_valid_v1" {
     error_message = "Expected condition to contain ActionMatches clause"
   }
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
   }
 }
 
@@ -186,8 +192,9 @@ run "condition_invalid" {
   # This test expects validation to fail because condition version must be either "1.0" or "2.0"
   # "2.2" is not a valid condition version
   providers = {
-    azapi  = azapi
-    modtm  = modtm
-    random = random
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
   }
 }

@@ -6,6 +6,7 @@ mock_provider "azapi" {
   }
 }
 mock_provider "time" {}
+mock_provider "terraform" {}
 
 variables {
   location                   = "uksouth"
@@ -22,6 +23,12 @@ variables {
 
 run "existing_with_management_group" {
   command = plan
+
+  providers = {
+    azapi     = azapi
+    time      = time
+    terraform = terraform
+  }
 
   variables {
     subscription_management_group_id                  = "00000000-0000-0000-0000-000000000000"

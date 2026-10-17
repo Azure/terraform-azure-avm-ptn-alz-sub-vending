@@ -10,5 +10,8 @@ terraform {
       source  = "registry.terraform.io/azure/modtm"
       version = "~> 0.3"
     }
+    terraform = {
+      source = "terraform.io/builtin/terraform"
+    }
   }
 }
