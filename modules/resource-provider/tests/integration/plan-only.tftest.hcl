@@ -1,6 +1,10 @@
 # Tests for the resourceprovider module
 # Converts the test from tests/resourceprovider/resourceprovider_test.go
 
+variables {
+  location = "westeurope"
+}
+
 run "subscription_rp_registration" {
   command = plan
 
