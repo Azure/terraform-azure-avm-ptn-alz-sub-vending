@@ -89,3 +89,44 @@ run "vnet_with_subnet_address_prefix" {
     error_message = "Expected the singular subnet to have null address_prefixes"
   }
 }
+
+run "subnet_resource_ids_output" {
+  command = plan
+
+  variables {
+    virtual_network_enabled = true
+    virtual_networks = {
+      primary = {
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
+        resource_group_name_existing = "primary-rg"
+        subnets = {
+          subnet1 = {
+            name             = "subnet1"
+            address_prefixes = ["192.168.0.0/26"]
+          }
+          subnet2 = {
+            name             = "subnet2"
+            address_prefixes = ["192.168.0.64/26"]
+          }
+        }
+      }
+    }
+  }
+
+  assert {
+    condition     = contains(keys(output.virtual_network_subnet_resource_ids), "primary")
+    error_message = "Expected 'primary' vnet key in virtual_network_subnet_resource_ids output"
+  }
+
+  assert {
+    condition     = length(keys(output.virtual_network_subnet_resource_ids["primary"])) == 2
+    error_message = "Expected 2 subnets under 'primary', got ${length(keys(output.virtual_network_subnet_resource_ids["primary"]))}"
+  }
+
+  assert {
+    condition     = contains(keys(output.virtual_network_subnet_resource_ids["primary"]), "subnet1") && contains(keys(output.virtual_network_subnet_resource_ids["primary"]), "subnet2")
+    error_message = "Expected 'subnet1' and 'subnet2' keys under 'primary' in virtual_network_subnet_resource_ids output"
+  }
+}
