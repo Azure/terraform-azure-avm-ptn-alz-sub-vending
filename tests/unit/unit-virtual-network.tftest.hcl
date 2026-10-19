@@ -2,8 +2,19 @@
 # Tests basic VNet creation without deploying
 
 mock_provider "azurerm" {}
-mock_provider "azapi" {}
+
+mock_provider "azapi" {
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+
 mock_provider "modtm" {}
+
+mock_provider "random" {}
+
 mock_provider "time" {}
 
 variables {
@@ -47,6 +58,12 @@ run "valid_two_vnets" {
     condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "secondary")
     error_message = "Expected 'secondary' virtual network to be present in output"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+    time   = time
+  }
 }
 
 run "vnet_with_subnet_address_prefix" {
@@ -88,6 +105,12 @@ run "vnet_with_subnet_address_prefix" {
     condition     = var.virtual_networks["primary"].subnets["singular"].address_prefixes == null
     error_message = "Expected the singular subnet to have null address_prefixes"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+    time   = time
+  }
 }
 
 run "subnet_resource_ids_output" {
@@ -128,5 +151,11 @@ run "subnet_resource_ids_output" {
   assert {
     condition     = contains(keys(output.virtual_network_subnet_resource_ids["primary"]), "subnet1") && contains(keys(output.virtual_network_subnet_resource_ids["primary"]), "subnet2")
     error_message = "Expected 'subnet1' and 'subnet2' keys under 'primary' in virtual_network_subnet_resource_ids output"
+  }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+    time   = time
   }
 }

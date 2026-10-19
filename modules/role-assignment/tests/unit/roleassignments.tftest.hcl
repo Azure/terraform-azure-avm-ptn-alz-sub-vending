@@ -1,3 +1,7 @@
+mock_provider "modtm" {}
+
+mock_provider "random" {}
+
 mock_provider "azapi" {
   override_data {
     target = module.role_definitions.data.azapi_resource_list.role_definitions
@@ -20,6 +24,11 @@ mock_provider "azapi" {
           },
         ]
       }
+    }
+  }
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
     }
   }
 }
@@ -52,6 +61,14 @@ run "simple_role_name_valid" {
     condition     = var.role_assignment_scope == "/subscriptions/00000000-0000-0000-0000-000000000000"
     error_message = "Expected scope to be subscription level, got '${var.role_assignment_scope}'"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
+  variables {
+    location = "eastus"
+  }
 }
 
 run "simple_role_definition_id_valid" {
@@ -59,6 +76,7 @@ run "simple_role_definition_id_valid" {
 
   variables {
     role_assignment_definition = "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635"
+    location                   = "eastus"
   }
 
   assert {
@@ -75,6 +93,11 @@ run "simple_role_definition_id_valid" {
     condition     = azapi_resource.this.body.properties.principalId == "00000000-0000-0000-0000-000000000000"
     error_message = "Expected principalId to be set correctly"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
 
 run "scope_invalid" {
@@ -82,12 +105,18 @@ run "scope_invalid" {
 
   variables {
     role_assignment_scope = "/"
+    location              = "eastus"
   }
 
   expect_failures = [var.role_assignment_scope]
 
   # This test expects the validation to fail because "/" is not a valid scope
   # Valid scopes must be subscription, resource group, or resource level
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
 
 run "condition_valid_v2" {
@@ -96,6 +125,7 @@ run "condition_valid_v2" {
   variables {
     role_assignment_condition         = "(!(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read'} AND NOT SubOperationMatches{'Blob.List'}))"
     role_assignment_condition_version = "2.0"
+    location                          = "eastus"
   }
 
   assert {
@@ -112,8 +142,12 @@ run "condition_valid_v2" {
     condition     = can(regex("ActionMatches", var.role_assignment_condition))
     error_message = "Expected condition to contain ActionMatches clause"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
-
 
 run "condition_valid_v1" {
   command = plan
@@ -121,6 +155,7 @@ run "condition_valid_v1" {
   variables {
     role_assignment_condition         = "(!(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read'} AND NOT SubOperationMatches{'Blob.List'}))"
     role_assignment_condition_version = "1.0"
+    location                          = "eastus"
   }
 
   assert {
@@ -137,6 +172,11 @@ run "condition_valid_v1" {
     condition     = can(regex("ActionMatches", var.role_assignment_condition))
     error_message = "Expected condition to contain ActionMatches clause"
   }
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }
 
 run "condition_invalid" {
@@ -145,10 +185,16 @@ run "condition_invalid" {
   variables {
     role_assignment_condition         = "(!(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read'} AND NOT SubOperationMatches{'Blob.List'}))"
     role_assignment_condition_version = "2.2"
+    location                          = "eastus"
   }
 
   expect_failures = [var.role_assignment_condition_version]
 
   # This test expects validation to fail because condition version must be either "1.0" or "2.0"
   # "2.2" is not a valid condition version
+  providers = {
+    azapi  = azapi
+    modtm  = modtm
+    random = random
+  }
 }

@@ -24,6 +24,17 @@ variable "parent_id" {
   }
 }
 
+variable "enable_telemetry" {
+  type        = bool
+  default     = true
+  description = <<DESCRIPTION
+This variable controls whether or not telemetry is enabled for the module.
+For more information see <https://aka.ms/avm/telemetryinfo>.
+If it is set to false, then no telemetry will be collected.
+DESCRIPTION
+  nullable    = false
+}
+
 # allow the caller to configure federated credentials by supplying the values verbatim
 variable "federated_credentials_advanced" {
   type = map(object({

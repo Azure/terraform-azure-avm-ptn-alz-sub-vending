@@ -4,11 +4,15 @@ terraform {
   required_providers {
     azapi = {
       source  = "Azure/azapi"
-      version = "~> 2.5"
+      version = "~> 2.12"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
+    }
+    modtm = {
+      source  = "registry.terraform.io/azure/modtm"
+      version = "~> 0.3"
     }
     random = {
       source  = "hashicorp/random"
@@ -32,7 +36,8 @@ resource "random_string" "suffix" {
 }
 
 module "sub_vending" {
-  source = "../../"
+  source    = "../../"
+  providers = { modtm = modtm }
 
   location                        = "swedencentral"
   enable_telemetry                = var.enable_telemetry

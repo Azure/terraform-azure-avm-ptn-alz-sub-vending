@@ -4,6 +4,12 @@ variable "address_prefix" {
   nullable    = false
 }
 
+variable "location" {
+  type        = string
+  description = "The Azure region for this module's resources or telemetry deployment."
+  nullable    = false
+}
+
 variable "name" {
   type        = string
   description = "(Required) The name of the route."
@@ -30,6 +36,17 @@ variable "parent_id" {
     condition     = can(provider::azapi::parse_resource_id("Microsoft.Network/routeTables", var.parent_id))
     error_message = "`parent_id` must be a valid Azure route table resource ID."
   }
+}
+
+variable "enable_telemetry" {
+  type        = bool
+  default     = true
+  description = <<DESCRIPTION
+This variable controls whether or not telemetry is enabled for the module.
+For more information see <https://aka.ms/avm/telemetryinfo>.
+If it is set to false, then no telemetry will be collected.
+DESCRIPTION
+  nullable    = false
 }
 
 variable "next_hop_in_ip_address" {

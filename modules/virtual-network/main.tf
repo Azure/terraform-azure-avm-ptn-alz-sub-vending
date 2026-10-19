@@ -6,9 +6,10 @@
 # restores the names-only `service_endpoints` input (VNet PR #130), which fixes ALZ #554 / #4017;
 # versions v0.15.0 through v0.19.0 silently dropped the attribute during object type conversion.
 module "virtual_networks" {
-  source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.20.0"
-  for_each = var.virtual_networks
+  source    = "Azure/avm-res-network-virtualnetwork/azurerm"
+  version   = "0.20.0"
+  providers = { modtm = modtm }
+  for_each  = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
   parent_id     = "/subscriptions/${var.subscription_id}/resourceGroups/${each.value.resource_group_name}"

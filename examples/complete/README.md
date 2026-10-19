@@ -13,6 +13,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    modtm = {
+      source  = "registry.terraform.io/azure/modtm"
+      version = "~> 0.3"
+    }
     random = {
       source  = "hashicorp/random"
       version = "~> 3.5"
@@ -35,7 +39,8 @@ resource "random_string" "suffix" {
 }
 
 module "sub_vending" {
-  source = "../../"
+  source    = "../../"
+  providers = { modtm = modtm }
 
   location                        = "westeurope"
   enable_telemetry                = var.enable_telemetry
@@ -71,7 +76,8 @@ module "sub_vending" {
 }
 
 module "sub_vending_rg_existing" {
-  source = "../../"
+  source    = "../../"
+  providers = { modtm = modtm }
 
   location                                         = "westeurope"
   enable_telemetry                                 = var.enable_telemetry
@@ -104,6 +110,8 @@ The following requirements are needed by this module:
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.8)
 
 - <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+
+- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 

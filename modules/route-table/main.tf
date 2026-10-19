@@ -27,9 +27,11 @@ module "route" {
   for_each = var.routes
 
   address_prefix         = each.value.address_prefix
+  location               = var.location
   name                   = each.value.name
   next_hop_type          = each.value.next_hop_type
   parent_id              = azapi_resource.this.id
+  enable_telemetry       = var.enable_telemetry
   next_hop_in_ip_address = each.value.next_hop_in_ip_address
   resource_types         = { this = var.resource_types.route }
   retry                  = var.retry

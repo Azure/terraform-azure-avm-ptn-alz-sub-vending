@@ -5,6 +5,8 @@ module "subscription" {
   source = "./modules/subscription"
   count  = (var.subscription_id != "" && var.subscription_update_existing) || var.subscription_alias_enabled || var.subscription_management_group_association_enabled ? 1 : 0
 
+  location                                             = var.location
+  enable_telemetry                                     = var.enable_telemetry
   subscription_alias_enabled                           = var.subscription_alias_enabled
   subscription_alias_name                              = var.subscription_alias_name
   subscription_billing_scope                           = var.subscription_billing_scope
