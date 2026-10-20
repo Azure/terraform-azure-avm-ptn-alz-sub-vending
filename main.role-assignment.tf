@@ -1,9 +1,11 @@
 # The roleassignments module creates role assignments from the data
 # supplied in the var.role_assignments variable
 module "roleassignment" {
-  source   = "./modules/role-assignment"
-  for_each = { for k, v in var.role_assignments : k => v if var.role_assignment_enabled }
+  source    = "./modules/role-assignment"
+  providers = { modtm = modtm }
+  for_each  = { for k, v in var.role_assignments : k => v if var.role_assignment_enabled }
 
+  location                     = var.location
   role_assignment_definition   = local.role_assignments_definitions[each.key]
   role_assignment_principal_id = each.value.principal_id
   role_assignment_scope        = each.value.resource_group_scope_key != null ? module.resourcegroup[each.value.resource_group_scope_key].resource_group_resource_id : "${local.subscription_resource_id}${each.value.relative_scope}"
@@ -23,9 +25,11 @@ module "roleassignment" {
 # The roleassignments_umi module creates role assignments from the data
 # supplied in the var.user_managed_identities object role_assignments property
 module "roleassignment_umi" {
-  source   = "./modules/role-assignment"
-  for_each = local.user_managed_identity_role_assignments
+  source    = "./modules/role-assignment"
+  providers = { modtm = modtm }
+  for_each  = local.user_managed_identity_role_assignments
 
+  location                     = var.location
   role_assignment_definition   = each.value.definition
   role_assignment_principal_id = each.value.principal_id
   role_assignment_scope        = each.value.scope

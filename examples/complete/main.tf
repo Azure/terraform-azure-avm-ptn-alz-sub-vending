@@ -6,6 +6,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    modtm = {
+      source  = "registry.terraform.io/azure/modtm"
+      version = "~> 0.3"
+    }
     random = {
       source  = "hashicorp/random"
       version = "~> 3.5"
@@ -28,7 +32,8 @@ resource "random_string" "suffix" {
 }
 
 module "sub_vending" {
-  source = "../../"
+  source    = "../../"
+  providers = { modtm = modtm }
 
   location                        = "westeurope"
   enable_telemetry                = var.enable_telemetry
@@ -64,7 +69,8 @@ module "sub_vending" {
 }
 
 module "sub_vending_rg_existing" {
-  source = "../../"
+  source    = "../../"
+  providers = { modtm = modtm }
 
   location                                         = "westeurope"
   enable_telemetry                                 = var.enable_telemetry

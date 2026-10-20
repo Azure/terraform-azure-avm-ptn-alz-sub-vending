@@ -1,4 +1,11 @@
-mock_provider "azapi" {}
+mock_provider "azapi" {
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+
 mock_provider "time" {}
 
 variables {
@@ -22,6 +29,7 @@ run "existing_with_management_group" {
     subscription_alias_enabled                        = false
     subscription_id                                   = "00000000-0000-0000-0000-000000000000"
     subscription_update_existing                      = true
+    location                                          = "eastus"
   }
 
   override_data {
