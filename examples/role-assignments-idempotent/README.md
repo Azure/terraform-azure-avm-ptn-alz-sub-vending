@@ -79,9 +79,9 @@ module "sub_vending" {
           definition               = "Storage Blob Data Contributor"
           resource_group_scope_key = "rg1"
         }
-        owner_sub = {
+        reader_sub = {
           use_random_uuid = true
-          definition      = "Owner"
+          definition      = "Reader"
         }
       }
     }

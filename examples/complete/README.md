@@ -42,13 +42,13 @@ module "sub_vending" {
   source    = "../../"
   providers = { modtm = modtm }
 
-  location                        = "westeurope"
+  location                        = "swedencentral"
   enable_telemetry                = var.enable_telemetry
   resource_group_creation_enabled = true
   resource_groups = {
     rg1 = {
       name     = "rg-${random_string.suffix.result}"
-      location = "westeurope"
+      location = "swedencentral"
     }
   }
   role_assignments = {
@@ -79,7 +79,7 @@ module "sub_vending_rg_existing" {
   source    = "../../"
   providers = { modtm = modtm }
 
-  location                                         = "westeurope"
+  location                                         = "swedencentral"
   enable_telemetry                                 = var.enable_telemetry
   resource_group_creation_enabled                  = false
   subscription_id                                  = data.azurerm_client_config.current.subscription_id
