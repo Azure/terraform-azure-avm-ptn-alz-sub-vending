@@ -22,6 +22,7 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    # tflint-ignore: terraform_unused_required_providers
     modtm = {
       source  = "registry.terraform.io/azure/modtm"
       version = "~> 0.3"
@@ -132,8 +133,7 @@ locals {
 # The Network Manager must have scope over the subscription where VNets are created.
 # When vending new subscriptions, use a management group-scoped Network Manager instead.
 module "sub_vending" {
-  source    = "../../"
-  providers = { modtm = modtm }
+  source = "../../"
 
   location         = azurerm_resource_group.ipam.location
   enable_telemetry = var.enable_telemetry

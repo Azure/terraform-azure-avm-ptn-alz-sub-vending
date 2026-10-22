@@ -10,6 +10,7 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    # tflint-ignore: terraform_unused_required_providers
     modtm = {
       source  = "registry.terraform.io/azure/modtm"
       version = "~> 0.3"
@@ -36,8 +37,7 @@ resource "random_string" "suffix" {
 }
 
 module "sub_vending" {
-  source    = "../../"
-  providers = { modtm = modtm }
+  source = "../../"
 
   location                        = "swedencentral"
   enable_telemetry                = var.enable_telemetry

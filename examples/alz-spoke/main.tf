@@ -2,6 +2,7 @@ terraform {
   required_version = "~> 1.8"
 
   required_providers {
+    # tflint-ignore: terraform_unused_required_providers
     azapi = {
       source  = "Azure/azapi"
       version = "~> 2.4"
@@ -10,6 +11,7 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    # tflint-ignore: terraform_unused_required_providers
     modtm = {
       source  = "registry.terraform.io/azure/modtm"
       version = "~> 0.3"
@@ -80,8 +82,7 @@ locals {
 }
 
 module "sub_vending" {
-  source    = "../../"
-  providers = { modtm = modtm }
+  source = "../../"
 
   location         = azurerm_resource_group.hub.location
   enable_telemetry = var.enable_telemetry
