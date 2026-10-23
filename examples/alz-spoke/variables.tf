@@ -3,6 +3,12 @@ variable "subscription_billing_scope" {
   description = "The billing scope for the subscription."
 }
 
+variable "subscription_management_group_id" {
+  type        = string
+  default     = null
+  description = "The optional management group ID for the new subscription."
+}
+
 variable "enable_telemetry" {
   type        = bool
   default     = true
