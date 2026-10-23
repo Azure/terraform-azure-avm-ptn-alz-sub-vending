@@ -23,7 +23,7 @@ resource "azapi_resource" "this" {
 }
 
 module "route" {
-  source   = "./modules/route"
+  source   = "../route-table-route"
   for_each = var.routes
 
   address_prefix         = each.value.address_prefix
