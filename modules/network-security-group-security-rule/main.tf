@@ -21,7 +21,6 @@ resource "azapi_resource" "this" {
       sourcePortRanges                     = var.source_port_ranges
     }
   }
-  replace_triggers_refs  = []
   response_export_values = []
   retry                  = var.retry
 

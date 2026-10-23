@@ -1,10 +1,20 @@
 # Virtual Network IPAM Pool Tests
 # Tests IPAM pool allocation path for VNets and subnets
 
-mock_provider "azurerm" {}
-mock_provider "azapi" {}
+mock_provider "azapi" {
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+
 mock_provider "modtm" {}
+
+mock_provider "random" {}
+
 mock_provider "time" {}
+mock_provider "terraform" {}
 
 variables {
   location         = "uksouth"
@@ -33,6 +43,13 @@ run "valid_vnet_with_ipam_pools" {
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 1
     error_message = "Expected exactly 1 virtual network to be created"
+  }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }
 
@@ -67,6 +84,13 @@ run "valid_vnet_with_ipam_subnets" {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 1
     error_message = "Expected exactly 1 virtual network to be created"
   }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
+  }
 }
 
 # Test: Traditional address_space still works (backward compatibility)
@@ -93,5 +117,12 @@ run "valid_vnet_with_address_space" {
   assert {
     condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 1
     error_message = "Expected exactly 1 virtual network to be created"
+  }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }

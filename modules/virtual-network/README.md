@@ -12,7 +12,7 @@ Optionally:
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
@@ -20,10 +20,11 @@ See documentation for optional parameters.
 
 ```terraform
 module "virtualnetwork" {
-  source  = "Azure/lz-vending/azurerm/modules/virtualnetwork"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/virtual-network"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   subscription_id = "00000000-0000-0000-0000-000000000000"
+  location        = var.location
   virtual_networks = {
     vnet1 = {
       name                = "myvnet"
@@ -50,12 +51,17 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
+- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
+
 ## Resources
 
 The following resources are used by this module:
 
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.vhubconnection](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.vhubconnection_routing_intent](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs

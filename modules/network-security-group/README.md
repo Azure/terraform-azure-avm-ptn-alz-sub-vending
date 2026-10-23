@@ -11,7 +11,7 @@ Optionally:
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
@@ -19,12 +19,12 @@ See documentation for optional parameters.
 
 ```terraform
 module "networksecuritygroup" {
-  source = "./"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/network-security-group"
+  version = "<version>"
 
-  subscription_id     = "00000000-0000-0000-0000-000000000000"
-  resource_group_name = "test-rg"
-  name                = "test-nsg1"
-  location            = var.location
+  name      = "test-nsg1"
+  location  = var.location
+  parent_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg"
 
   security_rules = {
     "rule01" = {
@@ -66,7 +66,10 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -94,6 +97,16 @@ Type: `string`
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_resource_types"></a> [resource\_types](#input\_resource\_types)
 
@@ -229,7 +242,7 @@ The following Modules are called:
 
 ### <a name="module_security_rule"></a> [security\_rule](#module\_security\_rule)
 
-Source: ./modules/security-rule
+Source: ../network-security-group-security-rule
 
 Version:
 
