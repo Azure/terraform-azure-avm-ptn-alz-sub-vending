@@ -9,17 +9,21 @@ Module is designed to be instantiated many times, once per role assignment.
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+**Breaking change:** direct callers must now supply `location`, including when `enable_telemetry = false`. Choose a region available in your Azure cloud for the telemetry deployment.
+
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
 ```terraform
 module "roleassignment" {
-  source          = "Azure/lz-vending/azurerm/modules/roleassignment"
-  version         = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
-  role_definition = "Owner"
-  scope           = "/subscriptions/00000000-0000-0000-0000-000000000000"
-  principal_id    = "00000000-0000-0000-0000-000000000000"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/role-assignment"
+  version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
+
+  location                     = "westeurope"
+  role_assignment_definition   = "Owner"
+  role_assignment_scope        = "/subscriptions/00000000-0000-0000-0000-000000000000"
+  role_assignment_principal_id = "00000000-0000-0000-0000-000000000000"
 }
 ```
 
@@ -32,19 +36,30 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
+- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
+
 - <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.6)
 
 ## Resources
 
 The following resources are used by this module:
 
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [random_uuid.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
 The following input variables are required:
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
+
+Type: `string`
 
 ### <a name="input_role_assignment_definition"></a> [role\_assignment\_definition](#input\_role\_assignment\_definition)
 
@@ -76,7 +91,9 @@ The following input variables are optional (have default values):
 
 ### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
 
-Description: This variable controls whether or not telemetry is enabled for the module.
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 

@@ -1,7 +1,15 @@
-mock_provider "azapi" {}
+mock_provider "azapi" {
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
 mock_provider "time" {}
+mock_provider "terraform" {}
 
 variables {
+  location                   = "uksouth"
   subscription_alias_enabled = true
   subscription_alias_name    = "test-subscription-alias"
   subscription_billing_scope = "/providers/Microsoft.Billing/billingAccounts/0000000/enrollmentAccounts/000000"
@@ -15,6 +23,12 @@ variables {
 
 run "existing_with_management_group" {
   command = plan
+
+  providers = {
+    azapi     = azapi
+    time      = time
+    terraform = terraform
+  }
 
   variables {
     subscription_management_group_id                  = "00000000-0000-0000-0000-000000000000"

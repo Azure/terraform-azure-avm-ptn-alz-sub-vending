@@ -11,7 +11,7 @@ Optionally:
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
@@ -19,19 +19,21 @@ See documentation for optional parameters.
 
 ```terraform
 module "routetable" {
-  source  = "Azure/lz-vending/azurerm/modules/routetable"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/route-table"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
-  subscription_id = "00000000-0000-0000-0000-000000000000"
-  route_tables = {
+  name      = "myroutetable"
+  location  = var.location
+  parent_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example"
+  routes = {
     rt1 = {
-      name                   = "myroutetable"
-      address_prefix         = ["192.168.0.0/24"]
+      name                   = "private-network"
+      address_prefix         = "192.168.0.0/24"
       next_hop_in_ip_address = "192.168.0.5"
       next_hop_type          = "VirtualAppliance"
     },
     rt2 = {
-      name           = "myroutetable2"
+      name           = "internet"
       address_prefix = "GatewayManager"
       next_hop_type  = "Internet"
     }
@@ -52,7 +54,10 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -84,6 +89,16 @@ The following input variables are optional (have default values):
 ### <a name="input_bgp_route_propagation_enabled"></a> [bgp\_route\_propagation\_enabled](#input\_bgp\_route\_propagation\_enabled)
 
 Description: Whether BGP route propagation is enabled.
+
+Type: `bool`
+
+Default: `true`
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
 
 Type: `bool`
 
@@ -200,7 +215,7 @@ The following Modules are called:
 
 ### <a name="module_route"></a> [route](#module\_route)
 
-Source: ./modules/route
+Source: ../route-table-route
 
 Version:
 

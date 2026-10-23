@@ -9,7 +9,7 @@ Optionally:
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
@@ -17,12 +17,12 @@ See documentation for optional parameters.
 
 ```terraform
 module "networksecuritygroup" {
-  source = "./"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/network-security-group"
+  version = "<version>"
 
-  subscription_id     = "00000000-0000-0000-0000-000000000000"
-  resource_group_name = "test-rg"
-  name                = "test-nsg1"
-  location            = var.location
+  name      = "test-nsg1"
+  location  = var.location
+  parent_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg"
 
   security_rules = {
     "rule01" = {

@@ -12,5 +12,7 @@ module "budget" {
     end_date   = each.value.time_period_end
     start_date = each.value.time_period_start
   }
+  location             = var.location
   budget_notifications = each.value.notifications
+  enable_telemetry     = var.enable_telemetry
 }

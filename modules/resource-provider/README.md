@@ -8,16 +8,20 @@ Registers resource providers and features. Must be performed after all other pro
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+**Breaking change:** direct callers must now supply `location`, including when `enable_telemetry = false`. Choose a region available in your Azure cloud for the telemetry deployment.
+
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
 ```terraform
 module "resourceproviders" {
-  source  = "Azure/lz-vending/azurerm/modules/resourceprovider"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/resource-provider"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
+  location          = "westeurope"
   resource_provider = "Microsoft.PowerBI"
+  subscription_id   = "00000000-0000-0000-0000-000000000000"
   features          = ["DailyPrivateLinkServicesForPowerBI"]
 }
 ```
@@ -35,13 +39,22 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource_action.resource_provider_feature_registration](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
 - [azapi_resource_action.resource_provider_registration](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource_action) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
 
 The following input variables are required:
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
+
+Type: `string`
 
 ### <a name="input_resource_provider"></a> [resource\_provider](#input\_resource\_provider)
 
@@ -58,6 +71,16 @@ Type: `string`
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_features"></a> [features](#input\_features)
 

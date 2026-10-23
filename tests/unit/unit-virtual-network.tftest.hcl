@@ -1,10 +1,20 @@
 # Virtual Network Module Basic Tests
 # Tests basic VNet creation without deploying
 
-mock_provider "azurerm" {}
-mock_provider "azapi" {}
+mock_provider "azapi" {
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+
 mock_provider "modtm" {}
+
+mock_provider "random" {}
+
 mock_provider "time" {}
+mock_provider "terraform" {}
 
 variables {
   location         = "uksouth"
@@ -47,7 +57,6 @@ run "valid_two_vnets" {
     condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "secondary")
     error_message = "Expected 'secondary' virtual network to be present in output"
   }
-
   assert {
     condition = (
       toset(output.virtual_network_address_spaces["primary"]) == toset(["192.168.0.0/24"]) &&
@@ -62,6 +71,13 @@ run "valid_two_vnets" {
       length(output.virtual_network_subnet_address_prefixes["secondary"]) == 0
     )
     error_message = "Expected empty subnet maps for virtual networks without subnets."
+  }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }
 
@@ -104,7 +120,6 @@ run "vnet_with_subnet_address_prefix" {
     condition     = var.virtual_networks["primary"].subnets["singular"].address_prefixes == null
     error_message = "Expected the singular subnet to have null address_prefixes"
   }
-
   assert {
     condition     = toset(keys(output.virtual_network_subnet_address_prefixes["primary"])) == toset(["singular", "plural"])
     error_message = "Expected both singular and plural subnet keys in the address prefixes output."
@@ -126,6 +141,13 @@ run "address_outputs_disabled" {
   assert {
     condition     = length(output.virtual_network_subnet_address_prefixes) == 0
     error_message = "Expected an empty subnet address prefixes map when virtual networking is disabled."
+  }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }
 
@@ -167,5 +189,12 @@ run "subnet_resource_ids_output" {
   assert {
     condition     = contains(keys(output.virtual_network_subnet_resource_ids["primary"]), "subnet1") && contains(keys(output.virtual_network_subnet_resource_ids["primary"]), "subnet2")
     error_message = "Expected 'subnet1' and 'subnet2' keys under 'primary' in virtual_network_subnet_resource_ids output"
+  }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    time      = time
   }
 }
