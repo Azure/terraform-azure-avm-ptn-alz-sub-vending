@@ -14,6 +14,7 @@ mock_provider "modtm" {}
 mock_provider "random" {}
 
 mock_provider "time" {}
+
 mock_provider "terraform" {}
 
 variables {
@@ -123,6 +124,13 @@ run "vnet_with_subnet_address_prefix" {
   assert {
     condition     = toset(keys(output.virtual_network_subnet_address_prefixes["primary"])) == toset(["singular", "plural"])
     error_message = "Expected both singular and plural subnet keys in the address prefixes output."
+  }
+  providers = {
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    terraform = terraform
+    time      = time
   }
 }
 
