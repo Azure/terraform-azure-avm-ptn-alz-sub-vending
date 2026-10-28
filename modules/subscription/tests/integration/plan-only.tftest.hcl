@@ -1,6 +1,10 @@
 # Tests for the subscription module
 # These tests cover subscription alias creation and validation scenarios
 
+variables {
+  location = "westeurope"
+}
+
 run "valid_subscription_alias_create" {
   command = plan
 

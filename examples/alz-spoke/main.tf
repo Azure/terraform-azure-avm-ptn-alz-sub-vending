@@ -99,11 +99,13 @@ module "sub_vending" {
     }
   }
   # subscription variables
-  subscription_alias_enabled                       = true
-  subscription_alias_name                          = local.subscription_name
-  subscription_billing_scope                       = var.subscription_billing_scope
-  subscription_display_name                        = local.subscription_name
-  subscription_register_resource_providers_enabled = true
+  subscription_alias_enabled                        = true
+  subscription_alias_name                           = local.subscription_name
+  subscription_billing_scope                        = var.subscription_billing_scope
+  subscription_display_name                         = local.subscription_name
+  subscription_management_group_association_enabled = var.subscription_management_group_id != null
+  subscription_management_group_id                  = var.subscription_management_group_id
+  subscription_register_resource_providers_enabled  = true
   subscription_tags = {
     created_by = "avm-ptn-alz-sub-vending"
   }

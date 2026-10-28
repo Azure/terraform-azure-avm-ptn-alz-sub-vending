@@ -106,11 +106,13 @@ module "sub_vending" {
     }
   }
   # subscription variables
-  subscription_alias_enabled                       = true
-  subscription_alias_name                          = local.subscription_name
-  subscription_billing_scope                       = var.subscription_billing_scope
-  subscription_display_name                        = local.subscription_name
-  subscription_register_resource_providers_enabled = true
+  subscription_alias_enabled                        = true
+  subscription_alias_name                           = local.subscription_name
+  subscription_billing_scope                        = var.subscription_billing_scope
+  subscription_display_name                         = local.subscription_name
+  subscription_management_group_association_enabled = var.subscription_management_group_id != null
+  subscription_management_group_id                  = var.subscription_management_group_id
+  subscription_register_resource_providers_enabled  = true
   subscription_tags = {
     created_by = "avm-ptn-alz-sub-vending"
   }
@@ -169,6 +171,14 @@ If it is set to false, then no telemetry will be collected.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_subscription_management_group_id"></a> [subscription\_management\_group\_id](#input\_subscription\_management\_group\_id)
+
+Description: The optional management group ID for the new subscription.
+
+Type: `string`
+
+Default: `null`
 
 ## Outputs
 

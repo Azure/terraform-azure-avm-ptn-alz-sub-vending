@@ -14,6 +14,7 @@ mock_provider "modtm" {}
 mock_provider "random" {}
 
 mock_provider "time" {}
+
 mock_provider "terraform" {}
 
 variables {
@@ -56,6 +57,21 @@ run "valid_two_vnets" {
   assert {
     condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "secondary")
     error_message = "Expected 'secondary' virtual network to be present in output"
+  }
+  assert {
+    condition = (
+      toset(output.virtual_network_address_spaces["primary"]) == toset(["192.168.0.0/24"]) &&
+      toset(output.virtual_network_address_spaces["secondary"]) == toset(["192.168.1.0/24"])
+    )
+    error_message = "Expected each virtual network's address spaces to reach the root output."
+  }
+
+  assert {
+    condition = (
+      length(output.virtual_network_subnet_address_prefixes["primary"]) == 0 &&
+      length(output.virtual_network_subnet_address_prefixes["secondary"]) == 0
+    )
+    error_message = "Expected empty subnet maps for virtual networks without subnets."
   }
   providers = {
     terraform = terraform
@@ -104,6 +120,35 @@ run "vnet_with_subnet_address_prefix" {
   assert {
     condition     = var.virtual_networks["primary"].subnets["singular"].address_prefixes == null
     error_message = "Expected the singular subnet to have null address_prefixes"
+  }
+  assert {
+    condition     = toset(keys(output.virtual_network_subnet_address_prefixes["primary"])) == toset(["singular", "plural"])
+    error_message = "Expected both singular and plural subnet keys in the address prefixes output."
+  }
+  providers = {
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    terraform = terraform
+    time      = time
+  }
+}
+
+run "address_outputs_disabled" {
+  command = plan
+
+  variables {
+    virtual_network_enabled = false
+  }
+
+  assert {
+    condition     = length(output.virtual_network_address_spaces) == 0
+    error_message = "Expected an empty address spaces map when virtual networking is disabled."
+  }
+
+  assert {
+    condition     = length(output.virtual_network_subnet_address_prefixes) == 0
+    error_message = "Expected an empty subnet address prefixes map when virtual networking is disabled."
   }
   providers = {
     terraform = terraform
