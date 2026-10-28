@@ -49,3 +49,22 @@ run "preserves_route_instances" {
     error_message = "Route outputs must preserve the parent map keys."
   }
 }
+
+run "preserves_parent_settings_with_separate_routes" {
+  command = plan
+
+  variables {
+    bgp_route_propagation_enabled = false
+    tags                          = { pass = "2" }
+  }
+
+  assert {
+    condition     = try(length(azapi_resource.this.body.properties.routes) == 0, false)
+    error_message = "The parent must provide a routes placeholder for AzAPI request-time preservation."
+  }
+
+  assert {
+    condition     = azapi_resource.this.body.properties.disableBgpRoutePropagation == true && azapi_resource.this.tags == tomap({ pass = "2" })
+    error_message = "Parent tag and BGP changes must remain managed while routes are preserved."
+  }
+}

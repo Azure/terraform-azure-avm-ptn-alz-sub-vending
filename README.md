@@ -28,6 +28,14 @@ Please raise an [issue](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub
 
 ## Breaking changes
 
+### Terraform 1.11 minimum
+
+The root module and the route-table and network-security-group submodules require Terraform 1.11 or later, below 2.0. Upgrade Terraform before selecting this module version if you currently use Terraform 1.10.
+
+Parent route-table and network-security-group updates preserve routes and security rules managed as separate resources, including resources managed outside this module. The parents use AzAPI's write-only `ignore_body_changes` argument to read the live child collections before sending an update. Collection placeholders and collection-only lifecycle rules do not transfer child ownership to the parents. Tags and BGP propagation remain managed normally.
+
+Avoid concurrent parent or child updates from other deployments during an apply; the live read and subsequent update are not atomic.
+
 ### Submodule source migration
 
 The security-rule and route implementations are now direct children of `modules/`. Direct consumers must update their Registry source suffixes when selecting a version containing this change:
@@ -195,7 +203,7 @@ module "lz_vending" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.10)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
@@ -541,7 +549,7 @@ Description: A map defining route tables and their associated routes to be creat
 - `next_hop_type` (required): The next hop type, must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'.
 - `next_hop_in_ip_address` (optional): The next hop IP address for the route. Required if next hop type is 'VirtualAppliance'.
 
-> **Note:** Migration protection is built-in. The module uses `ignore_other_items_in_list = ["properties.routes"]` to preserve existing inline routes.
+> **Note:** Route-table parent updates preserve live routes through AzAPI's `ignore_body_changes = ["properties.routes"]`. Routes remain managed as separate resources, including routes managed outside this module. Tags and BGP propagation remain managed normally.
 
 Type:
 

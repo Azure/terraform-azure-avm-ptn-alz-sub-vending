@@ -9,6 +9,8 @@ Optionally:
 
 ## Notes
 
+Terraform 1.11 or later, below 2.0, is required. Parent updates use AzAPI's write-only `ignore_body_changes` argument to read and preserve the live routes collection, including routes managed outside this module. The empty collection in the parent body is a placeholder, not a declaration of route ownership. Tags and BGP propagation remain managed normally.
+
 See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example

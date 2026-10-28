@@ -26,6 +26,14 @@ Please raise an [issue](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub
 
 ## Breaking changes
 
+### Terraform 1.11 minimum
+
+The root module and the route-table and network-security-group submodules require Terraform 1.11 or later, below 2.0. Upgrade Terraform before selecting this module version if you currently use Terraform 1.10.
+
+Parent route-table and network-security-group updates preserve routes and security rules managed as separate resources, including resources managed outside this module. The parents use AzAPI's write-only `ignore_body_changes` argument to read the live child collections before sending an update. Collection placeholders and collection-only lifecycle rules do not transfer child ownership to the parents. Tags and BGP propagation remain managed normally.
+
+Avoid concurrent parent or child updates from other deployments during an apply; the live read and subsequent update are not atomic.
+
 ### Submodule source migration
 
 The security-rule and route implementations are now direct children of `modules/`. Direct consumers must update their Registry source suffixes when selecting a version containing this change:

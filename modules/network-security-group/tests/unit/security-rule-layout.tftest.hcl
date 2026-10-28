@@ -61,3 +61,21 @@ run "preserves_security_rule_instances" {
     error_message = "Security-rule outputs must preserve the parent map keys."
   }
 }
+
+run "preserves_parent_settings_with_separate_rules" {
+  command = plan
+
+  variables {
+    tags = { pass = "2" }
+  }
+
+  assert {
+    condition     = try(length(azapi_resource.this.body.properties.securityRules) == 0, false)
+    error_message = "The parent must provide a securityRules placeholder for AzAPI request-time preservation."
+  }
+
+  assert {
+    condition     = azapi_resource.this.tags == tomap({ pass = "2" })
+    error_message = "Parent tag changes must remain managed while separate security rules are preserved."
+  }
+}
