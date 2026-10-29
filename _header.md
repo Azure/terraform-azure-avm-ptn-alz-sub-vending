@@ -34,6 +34,8 @@ Parent route-table and network-security-group updates preserve routes and securi
 
 Avoid concurrent parent or child updates from other deployments during an apply; the live read and subsequent update are not atomic.
 
+The parent paths are consumer-configurable with `ignore_body_changes.this` on each route table or network security group item. Changing that list to one without the collection path, or to an empty list, removes protection in the same apply that changes it, and routes or rules not in the parent body are deleted, including those managed by this module.
+
 ### Submodule source migration
 
 The security-rule and route implementations are now direct children of `modules/`. Direct consumers must update their Registry source suffixes when selecting a version containing this change:

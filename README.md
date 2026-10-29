@@ -36,6 +36,8 @@ Parent route-table and network-security-group updates preserve routes and securi
 
 Avoid concurrent parent or child updates from other deployments during an apply; the live read and subsequent update are not atomic.
 
+The parent paths are consumer-configurable with `ignore_body_changes.this` on each route table or network security group item. Changing that list to one without the collection path, or to an empty list, removes protection in the same apply that changes it, and routes or rules not in the parent body are deleted, including those managed by this module.
+
 ### Submodule source migration
 
 The security-rule and route implementations are now direct children of `modules/`. Direct consumers must update their Registry source suffixes when selecting a version containing this change:
@@ -361,7 +363,7 @@ Description: A map of the network security groups to create. The map key must be
 ### Ignore Body Changes
 
 - `ignore_body_changes`: Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates the network security group. Changes take effect only after an apply, and configuration at an ignored path is not sent to Azure. [optional]
-  - `this`: Paths for the network security group. Defaults to `["properties.securityRules"]`, so network security group updates keep the security rules that exist in Azure, including rules managed outside this module. Setting a list replaces the default; include `properties.securityRules` to keep that protection. An empty list disables it. [optional]
+  - `this`: Paths for the network security group. Defaults to `["properties.securityRules"]`, so network security group updates keep the security rules that exist in Azure, including rules managed outside this module. Setting a list replaces the default; include `properties.securityRules` to keep that protection. An empty list disables it, and the apply that changes the setting deletes security rules that are not in the network security group body, including rules managed by this module. [optional]
 
 ### Resource Types
 
@@ -549,7 +551,7 @@ Description: A map defining route tables and their associated routes to be creat
 - `bgp_route_propagation_enabled` (optional): Boolean that controls whether routes learned by BGP are propagated to the route table. Default is `true`.
 - `tags` (optional): A map of key-value pairs for tags associated with the route table.
 - `ignore_body_changes` (optional): Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates the route table. Changes take effect only after an apply, and configuration at an ignored path is not sent to Azure.
-  - `this` (optional): Paths for the route table. Defaults to `["properties.routes"]`, so route-table updates keep the routes that exist in Azure, including routes managed outside this module. Setting a list replaces the default; include `properties.routes` to keep that protection. An empty list disables it.
+  - `this` (optional): Paths for the route table. Defaults to `["properties.routes"]`, so route-table updates keep the routes that exist in Azure, including routes managed outside this module. Setting a list replaces the default; include `properties.routes` to keep that protection. An empty list disables it, and the apply that changes the setting deletes routes that are not in the route table body, including routes managed by this module.
 - `resource_types` (optional): An object to override the ARM resource types (and their API versions) used by the route table submodule.
   - `this` (optional): The resource type for the route table, e.g. `Microsoft.Network/routeTables@2024-05-01`.
   - `route` (optional): The resource type for the routes, e.g. `Microsoft.Network/routeTables/routes@2024-05-01`.
