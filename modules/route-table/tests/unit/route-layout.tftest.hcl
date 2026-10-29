@@ -67,4 +67,54 @@ run "preserves_parent_settings_with_separate_routes" {
     condition     = azapi_resource.this.body.properties.disableBgpRoutePropagation == true && azapi_resource.this.tags == tomap({ pass = "2" })
     error_message = "Parent tag and BGP changes must remain managed while routes are preserved."
   }
+
+  assert {
+    condition     = var.ignore_body_changes.this == tolist(["properties.routes"])
+    error_message = "By default, parent updates must preserve the live routes collection."
+  }
+}
+
+run "root_omitted_override_keeps_default" {
+  command = plan
+
+  variables {
+    ignore_body_changes = {
+      this = null
+    }
+  }
+
+  assert {
+    condition     = var.ignore_body_changes.this == tolist(["properties.routes"])
+    error_message = "A null path list from the root module must keep the default routes protection."
+  }
+}
+
+run "consumer_overrides_parent_ignore_body_changes" {
+  command = plan
+
+  variables {
+    ignore_body_changes = {
+      this = ["properties.routes", "tags"]
+    }
+  }
+
+  assert {
+    condition     = var.ignore_body_changes.this == tolist(["properties.routes", "tags"])
+    error_message = "Consumers must be able to replace the parent ignore_body_changes paths."
+  }
+}
+
+run "consumer_can_clear_parent_ignore_body_changes" {
+  command = plan
+
+  variables {
+    ignore_body_changes = {
+      this = []
+    }
+  }
+
+  assert {
+    condition     = length(var.ignore_body_changes.this) == 0
+    error_message = "Consumers must be able to remove the default parent ignore_body_changes paths."
+  }
 }

@@ -32,7 +32,7 @@ Please raise an [issue](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub
 
 The root module and the route-table and network-security-group submodules require Terraform 1.11 or later, below 2.0. Upgrade Terraform before selecting this module version if you currently use Terraform 1.10.
 
-Parent route-table and network-security-group updates preserve routes and security rules managed as separate resources, including resources managed outside this module. The parents use AzAPI's write-only `ignore_body_changes` argument to read the live child collections before sending an update. Collection placeholders and collection-only lifecycle rules do not transfer child ownership to the parents. Tags and BGP propagation remain managed normally.
+Parent route-table and network-security-group updates preserve routes and security rules managed as separate resources, including resources managed outside this module. By default, each parent sets AzAPI's write-only `ignore_body_changes` argument to its child collection path, so AzAPI reads the live collection before sending an update. Override the path list with each item's `ignore_body_changes.this` input; leave out the collection path only if you want parent updates to remove children that are not in the request body. Collection placeholders and collection-only lifecycle rules do not transfer child ownership to the parents. Tags and BGP propagation remain managed normally.
 
 Avoid concurrent parent or child updates from other deployments during an apply; the live read and subsequent update are not atomic.
 
@@ -358,6 +358,11 @@ Description: A map of the network security groups to create. The map key must be
 
 - `tags`: A map of tags to apply to the virtual network. [optional - default empty]
 
+### Ignore Body Changes
+
+- `ignore_body_changes`: Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates the network security group. Changes take effect only after an apply, and configuration at an ignored path is not sent to Azure. [optional]
+  - `this`: Paths for the network security group. Defaults to `["properties.securityRules"]`, so network security group updates keep the security rules that exist in Azure, including rules managed outside this module. Setting a list replaces the default; include `properties.securityRules` to keep that protection. An empty list disables it. [optional]
+
 ### Resource Types
 
 - `resource_types`: An optional object to override the ARM resource types (and their API versions) used by the network security group submodule. [optional]
@@ -393,6 +398,9 @@ map(object({
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
     tags                         = optional(map(string))
+    ignore_body_changes = optional(object({
+      this = optional(list(string))
+    }), {})
     resource_types = optional(object({
       this          = optional(string)
       security_rule = optional(string)
@@ -540,6 +548,8 @@ Description: A map defining route tables and their associated routes to be creat
 
 - `bgp_route_propagation_enabled` (optional): Boolean that controls whether routes learned by BGP are propagated to the route table. Default is `true`.
 - `tags` (optional): A map of key-value pairs for tags associated with the route table.
+- `ignore_body_changes` (optional): Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates the route table. Changes take effect only after an apply, and configuration at an ignored path is not sent to Azure.
+  - `this` (optional): Paths for the route table. Defaults to `["properties.routes"]`, so route-table updates keep the routes that exist in Azure, including routes managed outside this module. Setting a list replaces the default; include `properties.routes` to keep that protection. An empty list disables it.
 - `resource_types` (optional): An object to override the ARM resource types (and their API versions) used by the route table submodule.
   - `this` (optional): The resource type for the route table, e.g. `Microsoft.Network/routeTables@2024-05-01`.
   - `route` (optional): The resource type for the routes, e.g. `Microsoft.Network/routeTables/routes@2024-05-01`.
@@ -549,7 +559,7 @@ Description: A map defining route tables and their associated routes to be creat
 - `next_hop_type` (required): The next hop type, must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'.
 - `next_hop_in_ip_address` (optional): The next hop IP address for the route. Required if next hop type is 'VirtualAppliance'.
 
-> **Note:** Route-table parent updates preserve live routes through AzAPI's `ignore_body_changes = ["properties.routes"]`. Routes remain managed as separate resources, including routes managed outside this module. Tags and BGP propagation remain managed normally.
+> **Note:** Routes remain managed as separate resources. By default, route-table updates keep the routes that exist in Azure, including routes managed outside this module, through `ignore_body_changes.this`. Tags and BGP propagation remain managed normally.
 
 Type:
 
@@ -561,6 +571,9 @@ map(object({
     resource_group_name_existing  = optional(string)
     bgp_route_propagation_enabled = optional(bool, true)
     tags                          = optional(map(string))
+    ignore_body_changes = optional(object({
+      this = optional(list(string))
+    }), {})
     resource_types = optional(object({
       this  = optional(string)
       route = optional(string)

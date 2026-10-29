@@ -9,7 +9,7 @@ resource "azapi_resource" "this" {
       routes                     = []
     }
   }
-  ignore_body_changes = ["properties.routes"]
+  ignore_body_changes = length(var.ignore_body_changes.this) > 0 ? var.ignore_body_changes.this : null
   retry               = var.retry
   tags                = var.tags
 

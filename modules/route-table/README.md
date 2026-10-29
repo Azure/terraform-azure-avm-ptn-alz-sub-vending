@@ -11,7 +11,7 @@ Optionally:
 
 ## Notes
 
-Terraform 1.11 or later, below 2.0, is required. Parent updates use AzAPI's write-only `ignore_body_changes` argument to read and preserve the live routes collection, including routes managed outside this module. The empty collection in the parent body is a placeholder, not a declaration of route ownership. Tags and BGP propagation remain managed normally.
+Terraform 1.11 or later, below 2.0, is required. By default, parent updates set AzAPI's write-only `ignore_body_changes` argument to `["properties.routes"]`, which reads and preserves the live routes collection, including routes managed outside this module. Override the list with `ignore_body_changes.this`. The empty collection in the parent body is a placeholder, not a declaration of route ownership. Tags and BGP propagation remain managed normally.
 
 See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
@@ -105,6 +105,24 @@ If it is set to false, then no telemetry will be collected.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_ignore_body_changes"></a> [ignore\_body\_changes](#input\_ignore\_body\_changes)
+
+Description: (Optional) Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates each resource. Changes to this value take effect only after an apply. Configuration at an ignored path is not sent to Azure until the path is removed.
+
+- `this` - (Optional) Paths for the route table. Defaults to `["properties.routes"]`, so route-table updates keep the routes that exist in Azure, including routes managed outside this module. Setting a list replaces the default; include `properties.routes` to keep that protection. An empty list disables it, and route-table updates then remove routes that are not in the request body.
+
+Non-empty values require Terraform 1.11 or later.
+
+Type:
+
+```hcl
+object({
+    this = optional(list(string), ["properties.routes"])
+  })
+```
+
+Default: `{}`
 
 ### <a name="input_resource_types"></a> [resource\_types](#input\_resource\_types)
 

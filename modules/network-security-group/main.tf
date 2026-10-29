@@ -8,7 +8,7 @@ resource "azapi_resource" "this" {
       securityRules = []
     }
   }
-  ignore_body_changes = ["properties.securityRules"]
+  ignore_body_changes = length(var.ignore_body_changes.this) > 0 ? var.ignore_body_changes.this : null
   retry               = var.retry
   tags                = var.tags
 
