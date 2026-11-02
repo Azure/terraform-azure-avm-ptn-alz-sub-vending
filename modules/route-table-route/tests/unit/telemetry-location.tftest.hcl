@@ -8,15 +8,18 @@ mock_provider "azapi" {
 mock_provider "terraform" {}
 
 variables {
-  address_prefix   = "10.0.0.0/8"
-  enable_telemetry = false
-  name             = "private-network"
-  next_hop_type    = "VnetLocal"
-  parent_id        = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example/providers/Microsoft.Network/routeTables/example"
+  address_prefix = "10.0.0.0/8"
+  name           = "private-network"
+  next_hop_type  = "VnetLocal"
+  parent_id      = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example/providers/Microsoft.Network/routeTables/example"
 }
 
 run "omitting_location_with_telemetry_disabled_keeps_route" {
   command = plan
+
+  variables {
+    enable_telemetry = false
+  }
 
   assert {
     condition     = azapi_resource.this.body.properties.addressPrefix == "10.0.0.0/8" && length(azapi_resource.telemetry) == 0 && length(terraform_data.telemetry) == 0
@@ -28,7 +31,8 @@ run "null_location_with_telemetry_disabled" {
   command = plan
 
   variables {
-    location = null
+    enable_telemetry = false
+    location         = null
   }
 
   assert {
@@ -37,12 +41,8 @@ run "null_location_with_telemetry_disabled" {
   }
 }
 
-run "omitting_location_with_telemetry_enabled_is_rejected" {
+run "omitting_location_with_default_telemetry_is_rejected" {
   command = plan
-
-  variables {
-    enable_telemetry = true
-  }
 
   expect_failures = [var.location]
 }

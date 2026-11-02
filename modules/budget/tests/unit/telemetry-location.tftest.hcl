@@ -16,11 +16,14 @@ variables {
     start_date = "2026-01-01T00:00:00Z"
     end_date   = "2027-01-01T00:00:00Z"
   }
-  enable_telemetry = false
 }
 
 run "omitting_location_with_telemetry_disabled_keeps_budget" {
   command = plan
+
+  variables {
+    enable_telemetry = false
+  }
 
   assert {
     condition     = azapi_resource.budget.body.properties.amount == 100 && length(azapi_resource.telemetry) == 0 && length(terraform_data.telemetry) == 0
@@ -32,7 +35,8 @@ run "null_location_with_telemetry_disabled" {
   command = plan
 
   variables {
-    location = null
+    enable_telemetry = false
+    location         = null
   }
 
   assert {
@@ -41,12 +45,8 @@ run "null_location_with_telemetry_disabled" {
   }
 }
 
-run "omitting_location_with_telemetry_enabled_is_rejected" {
+run "omitting_location_with_default_telemetry_is_rejected" {
   command = plan
-
-  variables {
-    enable_telemetry = true
-  }
 
   expect_failures = [var.location]
 }

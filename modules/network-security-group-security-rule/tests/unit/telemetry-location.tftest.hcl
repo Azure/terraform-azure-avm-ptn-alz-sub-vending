@@ -10,7 +10,6 @@ mock_provider "terraform" {}
 variables {
   access                     = "Allow"
   direction                  = "Inbound"
-  enable_telemetry           = false
   name                       = "allow-https"
   parent_id                  = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example/providers/Microsoft.Network/networkSecurityGroups/example"
   priority                   = 100
@@ -24,6 +23,10 @@ variables {
 run "omitting_location_with_telemetry_disabled_keeps_security_rule" {
   command = plan
 
+  variables {
+    enable_telemetry = false
+  }
+
   assert {
     condition     = azapi_resource.this.body.properties.destinationPortRange == "443" && length(azapi_resource.telemetry) == 0 && length(terraform_data.telemetry) == 0
     error_message = "A security rule must plan without a location or telemetry deployment when telemetry is disabled."
@@ -34,7 +37,8 @@ run "null_location_with_telemetry_disabled" {
   command = plan
 
   variables {
-    location = null
+    enable_telemetry = false
+    location         = null
   }
 
   assert {
@@ -43,12 +47,8 @@ run "null_location_with_telemetry_disabled" {
   }
 }
 
-run "omitting_location_with_telemetry_enabled_is_rejected" {
+run "omitting_location_with_default_telemetry_is_rejected" {
   command = plan
-
-  variables {
-    enable_telemetry = true
-  }
 
   expect_failures = [var.location]
 }

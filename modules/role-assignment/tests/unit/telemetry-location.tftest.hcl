@@ -19,7 +19,6 @@ mock_provider "random" {}
 mock_provider "terraform" {}
 
 variables {
-  enable_telemetry             = false
   role_assignment_definition   = "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7"
   role_assignment_principal_id = "00000000-0000-0000-0000-000000000000"
   role_assignment_scope        = "/subscriptions/00000000-0000-0000-0000-000000000000"
@@ -27,6 +26,10 @@ variables {
 
 run "omitting_location_with_telemetry_disabled_keeps_role_assignment" {
   command = plan
+
+  variables {
+    enable_telemetry = false
+  }
 
   assert {
     condition     = azapi_resource.this.body.properties.principalId == "00000000-0000-0000-0000-000000000000" && length(azapi_resource.telemetry) == 0 && length(terraform_data.telemetry) == 0
@@ -38,7 +41,8 @@ run "null_location_with_telemetry_disabled" {
   command = plan
 
   variables {
-    location = null
+    enable_telemetry = false
+    location         = null
   }
 
   assert {
@@ -47,12 +51,8 @@ run "null_location_with_telemetry_disabled" {
   }
 }
 
-run "omitting_location_with_telemetry_enabled_is_rejected" {
+run "omitting_location_with_default_telemetry_is_rejected" {
   command = plan
-
-  variables {
-    enable_telemetry = true
-  }
 
   expect_failures = [var.location]
 }
