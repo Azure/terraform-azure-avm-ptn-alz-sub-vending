@@ -52,12 +52,6 @@ Description: (Required) The destination CIDR to which the route applies.
 
 Type: `string`
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The Azure region for this module's resources or telemetry deployment.
-
-Type: `string`
-
 ### <a name="input_name"></a> [name](#input\_name)
 
 Description: (Required) The name of the route.
@@ -89,6 +83,14 @@ If it is set to false, then no telemetry will be collected.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
+
+Type: `string`
+
+Default: `null`
 
 ### <a name="input_next_hop_in_ip_address"></a> [next\_hop\_in\_ip\_address](#input\_next\_hop\_in\_ip\_address)
 
