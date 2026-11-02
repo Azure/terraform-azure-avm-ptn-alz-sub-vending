@@ -26,7 +26,6 @@ module "security_rule" {
 
   access                                     = each.value.access
   direction                                  = each.value.direction
-  location                                   = var.location
   name                                       = each.value.name
   parent_id                                  = azapi_resource.this.id
   priority                                   = each.value.priority
@@ -38,6 +37,7 @@ module "security_rule" {
   destination_port_range                     = each.value.destination_port_range
   destination_port_ranges                    = each.value.destination_port_ranges
   enable_telemetry                           = var.enable_telemetry
+  location                                   = var.location
   resource_types                             = { this = var.resource_types.security_rule }
   retry                                      = var.retry
   source_address_prefix                      = each.value.source_address_prefix
