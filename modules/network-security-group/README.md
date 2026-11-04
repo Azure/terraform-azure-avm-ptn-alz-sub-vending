@@ -11,6 +11,8 @@ Optionally:
 
 ## Notes
 
+Terraform 1.11 or later, below 2.0, is required. By default, parent updates set AzAPI's write-only `ignore_body_changes` argument to `["properties.securityRules"]`, which reads and preserves the live security-rules collection, including rules managed outside this module. Override the list with `ignore_body_changes.this`. The empty collection in the parent body is a placeholder, not a declaration of rule ownership. Tags remain managed normally.
+
 See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
@@ -58,7 +60,7 @@ module "networksecuritygroup" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.10)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
@@ -107,6 +109,24 @@ If it is set to false, then no telemetry will be collected.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_ignore_body_changes"></a> [ignore\_body\_changes](#input\_ignore\_body\_changes)
+
+Description: (Optional) Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates each resource. Changes to this value take effect only after an apply. Configuration at an ignored path is not sent to Azure until the path is removed.
+
+- `this` - (Optional) Paths for the network security group. Defaults to `["properties.securityRules"]`, so network security group updates keep the security rules that exist in Azure, including rules managed outside this module. Setting a list replaces the default; include `properties.securityRules` to keep that protection. An empty list disables it, and network security group updates then remove security rules that are not in the request body. The apply that changes this setting performs that removal, so a module-managed rule is deleted in the same apply and then shows as drift. Paths that do not match the network security group body, such as a misspelled `properties.securityRule`, silently protect nothing.
+
+Non-empty values require Terraform 1.11 or later.
+
+Type:
+
+```hcl
+object({
+    this = optional(list(string), ["properties.securityRules"])
+  })
+```
+
+Default: `{}`
 
 ### <a name="input_resource_types"></a> [resource\_types](#input\_resource\_types)
 

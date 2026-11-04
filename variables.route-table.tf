@@ -12,6 +12,9 @@ variable "route_tables" {
     resource_group_name_existing  = optional(string)
     bgp_route_propagation_enabled = optional(bool, true)
     tags                          = optional(map(string))
+    ignore_body_changes = optional(object({
+      this = optional(list(string))
+    }), {})
     resource_types = optional(object({
       this  = optional(string)
       route = optional(string)
@@ -37,6 +40,8 @@ A map defining route tables and their associated routes to be created:
 
 - `bgp_route_propagation_enabled` (optional): Boolean that controls whether routes learned by BGP are propagated to the route table. Default is `true`.
 - `tags` (optional): A map of key-value pairs for tags associated with the route table.
+- `ignore_body_changes` (optional): Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates the route table. Changes take effect only after an apply, and configuration at an ignored path is not sent to Azure.
+  - `this` (optional): Paths for the route table. Defaults to `["properties.routes"]`, so route-table updates keep the routes that exist in Azure, including routes managed outside this module. Setting a list replaces the default; include `properties.routes` to keep that protection. An empty list disables it, and the apply that changes the setting deletes routes that are not in the route table body, including routes managed by this module.
 - `resource_types` (optional): An object to override the ARM resource types (and their API versions) used by the route table submodule.
   - `this` (optional): The resource type for the route table, e.g. `Microsoft.Network/routeTables@2024-05-01`.
   - `route` (optional): The resource type for the routes, e.g. `Microsoft.Network/routeTables/routes@2024-05-01`.
@@ -46,7 +51,7 @@ A map defining route tables and their associated routes to be created:
 - `next_hop_type` (required): The next hop type, must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'.
 - `next_hop_in_ip_address` (optional): The next hop IP address for the route. Required if next hop type is 'VirtualAppliance'.
 
-> **Note:** Migration protection is built-in. The module uses `ignore_other_items_in_list = ["properties.routes"]` to preserve existing inline routes.
+> **Note:** Routes remain managed as separate resources. By default, route-table updates keep the routes that exist in Azure, including routes managed outside this module, through `ignore_body_changes.this`. Tags and BGP propagation remain managed normally.
 DESCRIPTION
   nullable    = false
 }

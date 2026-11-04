@@ -44,6 +44,21 @@ DESCRIPTION
   nullable    = false
 }
 
+variable "ignore_body_changes" {
+  type = object({
+    this = optional(list(string), ["properties.routes"])
+  })
+  default     = {}
+  description = <<DESCRIPTION
+(Optional) Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates each resource. Changes to this value take effect only after an apply. Configuration at an ignored path is not sent to Azure until the path is removed.
+
+- `this` - (Optional) Paths for the route table. Defaults to `["properties.routes"]`, so route-table updates keep the routes that exist in Azure, including routes managed outside this module. Setting a list replaces the default; include `properties.routes` to keep that protection. An empty list disables it, and route-table updates then remove routes that are not in the request body. The apply that changes this setting performs that removal, so a module-managed route is deleted in the same apply and then shows as drift. Paths that do not match the route table body, such as a misspelled `properties.route`, silently protect nothing.
+
+Non-empty values require Terraform 1.11 or later.
+DESCRIPTION
+  nullable    = false
+}
+
 variable "resource_types" {
   type = object({
     this  = optional(string, "Microsoft.Network/routeTables@2024-05-01")
