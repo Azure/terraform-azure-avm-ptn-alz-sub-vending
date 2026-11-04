@@ -9,9 +9,13 @@ mock_provider "azapi" {
     }
   }
 }
+
 mock_provider "modtm" {}
+
 mock_provider "random" {}
+
 mock_provider "time" {}
+
 mock_provider "terraform" {}
 
 variables {
@@ -171,6 +175,12 @@ run "internal_module_keeps_value" {
     condition     = contains(var.virtual_networks["spoke"].subnets["workload"].ignore_body_changes, "properties.routeTable")
     error_message = "Internal virtual-network module type dropped ignore_body_changes."
   }
+  providers = {
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    terraform = terraform
+  }
 }
 
 # 5. Terraform-owned route table without the setting still works (no regression).
@@ -234,6 +244,13 @@ run "conflict_route_table_and_ignore_rejected" {
   }
 
   expect_failures = [var.virtual_networks]
+  providers = {
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    terraform = terraform
+    time      = time
+  }
 }
 
 # 7. Empty path is rejected.
@@ -259,4 +276,11 @@ run "empty_path_rejected" {
   }
 
   expect_failures = [var.virtual_networks]
+  providers = {
+    azapi     = azapi
+    modtm     = modtm
+    random    = random
+    terraform = terraform
+    time      = time
+  }
 }

@@ -235,6 +235,7 @@ map(object({
         service_endpoint_policies = optional(map(object({
           id = string
         })))
+        ignore_body_changes = optional(list(string), [])
         delegations = optional(list(
           object(
             {
@@ -355,7 +356,7 @@ Version: 0.14.1
 
 Source: Azure/avm-res-network-virtualnetwork/azurerm
 
-Version: 0.20.0
+Version: 0.21.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
