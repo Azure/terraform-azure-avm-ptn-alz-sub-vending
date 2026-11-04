@@ -51,6 +51,7 @@ variable "virtual_networks" {
         service_endpoint_policies = optional(map(object({
           id = string
         })))
+        ignore_body_changes = optional(list(string), [])
         delegations = optional(list(
           object(
             {
@@ -172,6 +173,7 @@ A map of the virtual networks to create. The map key must be known at the plan s
     - `name` - The name of the delegation.
     - `service_delegation` - An object with the following fields:
       - `name` - The name of the service delegation.
+  - `ignore_body_changes` - (Optional) A list of subnet request-body paths (dot notation) whose changes Terraform ignores after creation, so an external controller can own them. Use `["properties.routeTable"]` when Azure Virtual Network Manager (AVNM) routing or an Azure Policy (DINE) attaches route tables to the subnet, and leave `route_table` unset for that subnet. Applies to IPAM and non-IPAM subnets. A non-empty value requires Terraform >= 1.11 and takes effect after the next `apply`. Defaults to `[]` (Terraform manages every property).
 
 
 ### Hub network peering values
@@ -248,5 +250,26 @@ DESCRIPTION
       ]
     ]))
     error_message = "Each subnet must specify exactly one of 'address_prefix', 'address_prefixes', or 'ipam_pools'."
+  }
+  # validate a subnet does not both manage and ignore its route table association
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.virtual_networks : [
+        for sk, sv in v.subnets :
+        !(sv.route_table != null && contains(sv.ignore_body_changes, "properties.routeTable"))
+      ]
+    ]))
+    error_message = "A subnet cannot set 'route_table' and also list 'properties.routeTable' in 'ignore_body_changes'. Leave 'route_table' unset when an external controller such as AVNM owns the association."
+  }
+  # validate ignore_body_changes entries are non-empty paths
+  validation {
+    condition = alltrue(flatten([
+      for k, v in var.virtual_networks : [
+        for sk, sv in v.subnets : [
+          for p in sv.ignore_body_changes : length(trimspace(p)) > 0
+        ]
+      ]
+    ]))
+    error_message = "Every subnet 'ignore_body_changes' entry must be a non-empty body path, for example \"properties.routeTable\"."
   }
 }
