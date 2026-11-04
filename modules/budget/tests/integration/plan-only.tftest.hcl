@@ -1,5 +1,9 @@
 # Tests for the budget module
 
+variables {
+  location = "westeurope"
+}
+
 run "budget_scope_subscription" {
   command = plan
 

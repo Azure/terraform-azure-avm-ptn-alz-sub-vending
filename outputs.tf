@@ -73,9 +73,19 @@ DESCRIPTION
   value       = local.umi_tenant_ids
 }
 
+output "virtual_network_address_spaces" {
+  description = "Virtual network address spaces, including IPAM-allocated ranges, keyed by the virtual_networks input map. Returns an empty map when virtual_network_enabled is false."
+  value       = local.virtual_network_address_spaces
+}
+
 output "virtual_network_resource_ids" {
   description = "A map of virtual network resource ids, keyed by the var.virtual_networks input map. Only populated if the virtualnetwork submodule is enabled."
   value       = local.virtual_network_resource_ids
+}
+
+output "virtual_network_subnet_address_prefixes" {
+  description = "Subnet address prefixes, including IPAM-allocated ranges, keyed first by virtual network key and then by subnet key. Returns an empty map when virtual_network_enabled is false."
+  value       = local.virtual_network_subnet_address_prefixes
 }
 
 output "virtual_network_subnet_resource_ids" {
