@@ -317,9 +317,17 @@ Default: `true`
 
 The following outputs are exported:
 
+### <a name="output_address_spaces"></a> [address\_spaces](#output\_address\_spaces)
+
+Description: Virtual network address spaces, including IPAM-allocated ranges, keyed by the virtual\_networks input map.
+
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The created virtual network resource IDs, expressed as a map.
+
+### <a name="output_subnet_address_prefixes"></a> [subnet\_address\_prefixes](#output\_subnet\_address\_prefixes)
+
+Description: Subnet address prefixes, including IPAM-allocated ranges, keyed first by virtual network key and then by subnet key.
 
 ### <a name="output_subnet_resource_ids"></a> [subnet\_resource\_ids](#output\_subnet\_resource\_ids)
 

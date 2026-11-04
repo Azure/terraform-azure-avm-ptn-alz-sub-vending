@@ -193,9 +193,17 @@ Default: `true`
 
 The following outputs are exported:
 
+### <a name="output_virtual_network_address_spaces"></a> [virtual\_network\_address\_spaces](#output\_virtual\_network\_address\_spaces)
+
+Description: The IPAM-allocated address spaces of the created virtual networks.
+
 ### <a name="output_virtual_network_resource_ids"></a> [virtual\_network\_resource\_ids](#output\_virtual\_network\_resource\_ids)
 
 Description: The resource IDs of the created virtual networks.
+
+### <a name="output_virtual_network_subnet_address_prefixes"></a> [virtual\_network\_subnet\_address\_prefixes](#output\_virtual\_network\_subnet\_address\_prefixes)
+
+Description: The IPAM-allocated subnet address prefixes, keyed by virtual network and subnet.
 
 ## Modules
 
