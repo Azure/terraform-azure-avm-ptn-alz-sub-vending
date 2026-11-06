@@ -2,7 +2,7 @@
 
 ## Overview
 
-Registers resource providers and features. Must be performed after all other provisioning is complete.
+Registers resource providers and features. Registration is asynchronous, so resources that need a provider should retry `MissingSubscriptionRegistration`.
 
 ## Notes
 

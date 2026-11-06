@@ -12,5 +12,6 @@ module "usermanagedidentity" {
   federated_credentials_advanced        = each.value.federated_credentials_advanced
   federated_credentials_github          = each.value.federated_credentials_github
   federated_credentials_terraform_cloud = each.value.federated_credentials_terraform_cloud
+  retry                                 = local.retry
   tags                                  = each.value.tags
 }

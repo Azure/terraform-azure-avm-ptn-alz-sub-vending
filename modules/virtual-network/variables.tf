@@ -391,3 +391,20 @@ If it is set to false, then no telemetry will be collected.
 DESCRIPTION
   nullable    = false
 }
+
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number)
+    max_interval_seconds = optional(number)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Retry configuration applied to every `azapi` resource managed by this module.
+The virtual network and peering modules always retry on `ReferencedResourceNotProvisioned` in addition to these patterns.
+
+- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
+- `interval_seconds`     - (Optional) Initial interval between retries in seconds. Defaults to `10` for the virtual network and peering modules.
+- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds. Defaults to `180` for the virtual network and peering modules.
+DESCRIPTION
+}

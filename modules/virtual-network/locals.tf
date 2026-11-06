@@ -1,6 +1,13 @@
 locals {
   # subscription_resource_id is the ARM resource ID of the supplied subscription id.
   subscription_resource_id = "/subscriptions/${var.subscription_id}"
+  # upstream_retry keeps the AVM virtual network module's own default pattern next to the supplied ones,
+  # because setting `retry` on that module replaces its defaults.
+  upstream_retry = {
+    error_message_regex  = distinct(concat(["ReferencedResourceNotProvisioned"], var.retry == null ? [] : coalesce(var.retry.error_message_regex, [])))
+    interval_seconds     = var.retry == null ? 10 : coalesce(var.retry.interval_seconds, 10)
+    max_interval_seconds = var.retry == null ? 180 : coalesce(var.retry.max_interval_seconds, 180)
+  }
 }
 
 locals {

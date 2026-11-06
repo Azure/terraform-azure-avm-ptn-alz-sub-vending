@@ -10,9 +10,9 @@ module "roleassignment" {
   enable_telemetry             = var.enable_telemetry
   location                     = var.location
   retry = {
-    error_message_regex = [
-      "RoleAssignmentScopeNotAssignableToRoleDefinition"
-    ]
+    error_message_regex = distinct(concat([
+      "RoleAssignmentScopeNotAssignableToRoleDefinition",
+    ], var.retry.error_message_regex))
   }
   role_assignment_condition                 = each.value.condition
   role_assignment_condition_version         = each.value.condition_version
@@ -33,9 +33,9 @@ module "roleassignment_umi" {
   enable_telemetry             = var.enable_telemetry
   location                     = var.location
   retry = {
-    error_message_regex = [
+    error_message_regex = distinct(concat([
       "PrincipalNotFound",
-    ]
+    ], var.retry.error_message_regex))
   }
   role_assignment_condition                 = each.value.condition
   role_assignment_condition_version         = each.value.condition_version

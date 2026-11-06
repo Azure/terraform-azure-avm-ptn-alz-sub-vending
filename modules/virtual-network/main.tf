@@ -24,7 +24,8 @@ module "virtual_networks" {
   flow_timeout_in_minutes = each.value.flow_timeout_in_minutes
   ipam_pools              = each.value.ipam_pools
   name                    = each.value.name
-  subnets                 = each.value.subnets
+  retry                   = local.upstream_retry
+  subnets                 = { for subnet_k, subnet_v in each.value.subnets : subnet_k => merge(subnet_v, { retry = local.upstream_retry }) }
   tags                    = each.value.tags
 }
 
@@ -47,6 +48,7 @@ module "peering_hub_outbound" {
   local_peered_address_spaces   = [for address_prefix in each.value.outbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
   local_peered_subnets          = [for subnet_name in each.value.outbound.options.local_peered_subnets : { subnet_name = subnet_name }]
   peer_complete_vnets           = each.value.outbound.options.peer_complete_vnets
+  retry                         = local.upstream_retry
   use_remote_gateways           = each.value.outbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -71,6 +73,7 @@ module "peering_hub_inbound" {
   local_peered_address_spaces   = [for address_prefix in each.value.inbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
   local_peered_subnets          = [for subnet_name in each.value.inbound.options.local_peered_subnets : { subnet_name = subnet_name }]
   peer_complete_vnets           = each.value.inbound.options.peer_complete_vnets
+  retry                         = local.upstream_retry
   use_remote_gateways           = each.value.inbound.options.use_remote_gateways
 
   depends_on = [module.virtual_networks]
@@ -90,6 +93,7 @@ module "peering_mesh" {
   allow_gateway_transit        = false
   allow_virtual_network_access = true
   create_reverse_peering       = false
+  retry                        = local.upstream_retry
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]
@@ -105,6 +109,7 @@ resource "azapi_resource" "vhubconnection" {
   body = {
     properties = local.vhubconnection_body_properties[each.key]
   }
+  retry = var.retry
 
   depends_on = [module.virtual_networks]
 }
@@ -121,6 +126,7 @@ resource "azapi_resource" "vhubconnection_routing_intent" {
   body = {
     properties = local.vhubconnection_body_properties[each.key]
   }
+  retry = var.retry
 
   lifecycle {
     ignore_changes = [

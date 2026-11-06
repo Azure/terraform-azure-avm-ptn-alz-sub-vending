@@ -1,4 +1,6 @@
 locals {
+  # retry is null when no patterns are supplied, because the azapi retry block requires at least one pattern.
+  retry = length(var.retry.error_message_regex) == 0 ? null : var.retry
   role_assignments_definitions = {
     for k, v in var.role_assignments : k => strcontains(lower(v.definition), lower("/providers/microsoft.authorization/roledefinitions/")) ? "${local.subscription_resource_id}${v.definition}" : v.definition
   }
