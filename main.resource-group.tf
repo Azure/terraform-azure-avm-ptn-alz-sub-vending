@@ -9,6 +9,7 @@ module "resourcegroup" {
   enable_telemetry    = var.enable_telemetry
   lock_enabled        = each.value.lock_enabled
   lock_name           = each.value.lock_name
+  retry               = local.retry
   tags                = each.value.tags
 }
 

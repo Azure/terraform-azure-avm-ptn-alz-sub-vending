@@ -15,4 +15,5 @@ module "budget" {
   budget_notifications = each.value.notifications
   enable_telemetry     = var.enable_telemetry
   location             = var.location
+  retry                = local.retry
 }

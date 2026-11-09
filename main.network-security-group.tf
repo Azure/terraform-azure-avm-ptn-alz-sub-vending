@@ -13,6 +13,7 @@ module "networksecuritygroup" {
   )
   enable_telemetry = var.enable_telemetry
   resource_types   = each.value.resource_types
+  retry            = local.retry
   security_rules   = each.value.security_rules
   tags             = each.value.tags
 }

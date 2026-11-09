@@ -119,3 +119,19 @@ variable "location" {
     error_message = "The location must not be null when telemetry is enabled."
   }
 }
+
+variable "retry" {
+  type = object({
+    error_message_regex  = optional(list(string))
+    interval_seconds     = optional(number)
+    max_interval_seconds = optional(number)
+  })
+  default     = null
+  description = <<DESCRIPTION
+Retry configuration applied to every `azapi` resource managed by this module.
+
+- `error_message_regex`  - (Optional) Regex patterns matching error messages that trigger a retry.
+- `interval_seconds`     - (Optional) Initial interval between retries in seconds.
+- `max_interval_seconds` - (Optional) Maximum interval between retries in seconds.
+DESCRIPTION
+}
