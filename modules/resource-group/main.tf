@@ -3,7 +3,6 @@ resource "azapi_resource" "rg" {
   name      = var.resource_group_name
   parent_id = "/subscriptions/${var.subscription_id}"
   type      = "Microsoft.Resources/resourceGroups@2021-04-01"
-  retry     = var.retry
   tags      = var.tags
 }
 
@@ -18,7 +17,6 @@ resource "azapi_resource" "rg_lock" {
       level = "CanNotDelete"
     }
   }
-  retry = var.retry
 
   depends_on = [
     azapi_resource.rg,

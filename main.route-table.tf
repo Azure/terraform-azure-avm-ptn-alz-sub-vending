@@ -10,7 +10,6 @@ module "routetable" {
   bgp_route_propagation_enabled = each.value.bgp_route_propagation_enabled
   enable_telemetry              = var.enable_telemetry
   resource_types                = each.value.resource_types
-  retry                         = local.retry
   routes                        = each.value.routes
   tags                          = each.value.tags
 }

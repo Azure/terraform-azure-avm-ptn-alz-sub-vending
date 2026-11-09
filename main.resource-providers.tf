@@ -9,6 +9,11 @@ module "resourceproviders" {
   features          = each.value
 
   depends_on = [
+    module.resourcegroup,
+    module.roleassignment,
+    module.roleassignment_umi,
     module.subscription,
+    module.usermanagedidentity,
+    module.virtualnetwork,
   ]
 }

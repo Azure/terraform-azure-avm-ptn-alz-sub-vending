@@ -14,5 +14,4 @@ resource "azapi_resource" "budget" {
       }
     }
   }
-  retry = var.retry
 }
