@@ -4,7 +4,7 @@ resource "random_uuid" "this" {
 
 module "role_definitions" {
   source  = "Azure/avm-utl-roledefinitions/azure"
-  version = "0.1.0"
+  version = "0.3.0"
 
   enable_telemetry      = var.enable_telemetry
   role_definition_scope = var.role_assignment_scope
