@@ -994,6 +994,7 @@ Description: A map of the virtual networks to create. The map key must be known 
     - `name` - The name of the delegation.
     - `service_delegation` - An object with the following fields:
       - `name` - The name of the service delegation.
+  - `ignore_body_changes` - (Optional) A list of subnet request-body paths (dot notation) whose changes Terraform ignores after creation, so an external controller can own them. Use `["properties.routeTable"]` when Azure Virtual Network Manager (AVNM) routing or an Azure Policy (DINE) attaches route tables to the subnet, and leave `route_table` unset for that subnet. Applies to IPAM and non-IPAM subnets. A non-empty value requires Terraform >= 1.11 and takes effect after the next `apply`. Defaults to `[]` (Terraform manages every property).
 
 ### Hub network peering values
 
@@ -1095,6 +1096,7 @@ map(object({
         service_endpoint_policies = optional(map(object({
           id = string
         })))
+        ignore_body_changes = optional(list(string), [])
         delegations = optional(list(
           object(
             {

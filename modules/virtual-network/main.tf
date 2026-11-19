@@ -5,9 +5,11 @@
 # the VNet module via AzAPI list identity keyed on `service`. v0.20.0 is the first release that
 # restores the names-only `service_endpoints` input (VNet PR #130), which fixes ALZ #554 / #4017;
 # versions v0.15.0 through v0.19.0 silently dropped the attribute during object type conversion.
+# v0.21.0 adds the per-subnet `ignore_body_changes` input (VNet PR #142), which lets an external
+# controller such as AVNM own `properties.routeTable` without Terraform removing it (ALZ #4330).
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.20.0"
+  version  = "0.21.0"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
