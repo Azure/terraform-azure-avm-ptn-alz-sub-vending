@@ -41,6 +41,21 @@ DESCRIPTION
   nullable    = false
 }
 
+variable "ignore_body_changes" {
+  type = object({
+    this = optional(list(string), ["properties.securityRules"])
+  })
+  default     = {}
+  description = <<DESCRIPTION
+(Optional) Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates each resource. Changes to this value take effect only after an apply. Configuration at an ignored path is not sent to Azure until the path is removed.
+
+- `this` - (Optional) Paths for the network security group. Defaults to `["properties.securityRules"]`, so network security group updates keep the security rules that exist in Azure, including rules managed outside this module. Setting a list replaces the default; include `properties.securityRules` to keep that protection. An empty list disables it, and network security group updates then remove security rules that are not in the request body. The apply that changes this setting performs that removal, so a module-managed rule is deleted in the same apply and then shows as drift. Paths that do not match the network security group body, such as a misspelled `properties.securityRule`, silently protect nothing.
+
+Non-empty values require Terraform 1.11 or later.
+DESCRIPTION
+  nullable    = false
+}
+
 variable "resource_types" {
   type = object({
     this          = optional(string, "Microsoft.Network/networkSecurityGroups@2024-05-01")
