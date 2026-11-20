@@ -26,6 +26,22 @@ This is currently split logically into the following capabilities:
 We would like feedback on what's missing in the module.
 Please raise an [issue](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending/issues) if you have any suggestions.
 
+## Resource provider registration
+
+The resources this module creates rely on the AzAPI provider to register their resource providers. When a create returns `MissingSubscriptionRegistration`, AzAPI registers the provider and retries the create.
+
+Keep AzAPI provider registration on. If it is off, creating a virtual network, network security group, route table or managed identity in a new subscription fails with `MissingSubscriptionRegistration`. It is off when the `azapi` provider block sets `skip_provider_registration = true`, or when the block leaves it unset and `ARM_SKIP_PROVIDER_REGISTRATION=true` is in the environment.
+
+If you set `ARM_SKIP_PROVIDER_REGISTRATION=true` for the AzureRM provider, set `skip_provider_registration = false` in the `azapi` provider block. The block value takes precedence over the environment variable.
+
+```terraform
+provider "azapi" {
+  skip_provider_registration = false
+}
+```
+
+The module's own registration, turned on by `subscription_register_resource_providers_enabled`, runs after its resource groups, role assignments, managed identities and virtual networks. It is for the workloads you deploy into the subscription later.
+
 ## Breaking changes
 
 ### Terraform 1.11 minimum
@@ -721,6 +737,8 @@ Leave the value empty to not register any resource provider features.
 
 The default values are taken from [Hashicorp's AzureRM provider](https://github.com/hashicorp/terraform-provider-azurerm/blob/main/internal/resourceproviders/required.go).
 
+The resource providers in this map are for the workloads you deploy into the subscription, not for the resources this module creates. See `subscription_register_resource_providers_enabled`.
+
 Type: `map(set(string))`
 
 Default:
@@ -796,6 +814,9 @@ Default:
 
 Description: Whether to register resource providers for the subscription.  
 Use `var.subscription_register_resource_providers_and_features` to customize registration.
+
+Registration runs after the module's resource groups, role assignments, managed identities and virtual networks. It is for the workloads you deploy into the subscription.  
+Keep AzAPI provider registration on, because the resources this module creates rely on it. If `ARM_SKIP_PROVIDER_REGISTRATION=true` is set for AzureRM, set `skip_provider_registration = false` in the `azapi` provider block.
 
 Type: `bool`
 
