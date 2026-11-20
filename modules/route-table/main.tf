@@ -6,10 +6,12 @@ resource "azapi_resource" "this" {
   body = {
     properties = {
       disableBgpRoutePropagation = !var.bgp_route_propagation_enabled
+      routes                     = []
     }
   }
-  retry = var.retry
-  tags  = var.tags
+  ignore_body_changes = length(var.ignore_body_changes.this) > 0 ? var.ignore_body_changes.this : null
+  retry               = var.retry
+  tags                = var.tags
 
   dynamic "timeouts" {
     for_each = var.timeouts == null ? [] : [var.timeouts]
@@ -19,6 +21,10 @@ resource "azapi_resource" "this" {
       update = timeouts.value.update
       delete = timeouts.value.delete
     }
+  }
+
+  lifecycle {
+    ignore_changes = [body.properties.routes]
   }
 }
 
