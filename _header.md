@@ -24,6 +24,12 @@ This is currently split logically into the following capabilities:
 We would like feedback on what's missing in the module.
 Please raise an [issue](https://github.com/Azure/terraform-azurerm-lz-vending/issues) if you have any suggestions.
 
+## Upgrading from ModTM telemetry
+
+Telemetry is enabled by default and creates empty Azure deployments in the active AzAPI provider subscription, which can differ from the vended subscription. The deployment identity needs `Microsoft.Resources/deployments/read`, `Microsoft.Resources/deployments/write`, and `Microsoft.Resources/deployments/delete` there. Set `enable_telemetry = false` if those permissions are unavailable or to opt out across the module and its children.
+
+Upgrades forget legacy ModTM telemetry and telemetry UUIDs without destroying them. Terraform may still need the old providers for the first initialization against existing state. Back up state and inspect the upgrade plan for unexpected replacements before applying.
+
 ## Example
 
 The below example created a landing zone subscription with two virtual networks.

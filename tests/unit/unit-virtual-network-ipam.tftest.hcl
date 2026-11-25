@@ -1,9 +1,8 @@
 # Virtual Network IPAM Pool Tests
 # Tests IPAM pool allocation path for VNets and subnets
 
-mock_provider "azurerm" {}
 mock_provider "azapi" {}
-mock_provider "modtm" {}
+mock_provider "random" {}
 mock_provider "time" {}
 
 variables {

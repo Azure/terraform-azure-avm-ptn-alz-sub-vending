@@ -1,9 +1,14 @@
 # Virtual Network Module Basic Tests
 # Tests basic VNet creation without deploying
 
-mock_provider "azurerm" {}
-mock_provider "azapi" {}
-mock_provider "modtm" {}
+mock_provider "azapi" {
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
+}
+mock_provider "random" {}
 mock_provider "time" {}
 
 variables {
@@ -16,18 +21,23 @@ run "valid_two_vnets" {
   command = plan
 
   variables {
+    enable_telemetry        = true
     virtual_network_enabled = true
     virtual_networks = {
       primary = {
         name                         = "primary-vnet"
         address_space                = ["192.168.0.0/24"]
+        hub_network_resource_id      = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/hub-rg/providers/Microsoft.Network/virtualNetworks/hub-vnet"
+        hub_peering_enabled          = true
         location                     = "westeurope"
+        mesh_peering_enabled         = true
         resource_group_name_existing = "primary-rg"
       }
       secondary = {
         name                         = "secondary-vnet"
         address_space                = ["192.168.1.0/24"]
         location                     = "northeurope"
+        mesh_peering_enabled         = true
         resource_group_name_existing = "secondary-rg"
       }
     }

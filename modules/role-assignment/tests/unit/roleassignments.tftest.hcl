@@ -24,6 +24,8 @@ mock_provider "azapi" {
   }
 }
 
+mock_provider "random" {}
+
 variables {
   role_assignment_principal_id = "00000000-0000-0000-0000-000000000000"
   role_assignment_scope        = "/subscriptions/00000000-0000-0000-0000-000000000000"

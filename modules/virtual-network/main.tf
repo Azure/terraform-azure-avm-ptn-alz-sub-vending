@@ -7,7 +7,7 @@
 # versions v0.15.0 through v0.19.0 silently dropped the attribute during object type conversion.
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.22.2"
+  version  = "0.23.0"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
@@ -32,7 +32,7 @@ module "virtual_networks" {
 # to create the outboud peering from the spoke to the hub network when specified
 module "peering_hub_outbound" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.22.2"
+  version  = "0.23.0"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_fromhub }
 
   parent_id                    = each.value["outbound"].this_resource_id
@@ -41,6 +41,8 @@ module "peering_hub_outbound" {
   allow_gateway_transit        = each.value.outbound.options.allow_gateway_transit
   allow_virtual_network_access = each.value.outbound.options.allow_virtual_network_access
   create_reverse_peering       = false
+  enable_telemetry             = var.enable_telemetry
+  location                     = var.location
   remote_virtual_network_id    = each.value["outbound"].remote_resource_id
   use_remote_gateways          = each.value.outbound.options.use_remote_gateways
 
@@ -51,7 +53,7 @@ module "peering_hub_outbound" {
 # to create the inbound peering from the hub network to the spoke network when specified
 module "peering_hub_inbound" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.22.2"
+  version  = "0.23.0"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_tohub }
 
   parent_id                    = each.value["inbound"].this_resource_id
@@ -60,6 +62,8 @@ module "peering_hub_inbound" {
   allow_gateway_transit        = each.value.inbound.options.allow_gateway_transit
   allow_virtual_network_access = each.value.inbound.options.allow_virtual_network_access
   create_reverse_peering       = false
+  enable_telemetry             = var.enable_telemetry
+  location                     = var.location
   remote_virtual_network_id    = each.value["inbound"].remote_resource_id
   use_remote_gateways          = each.value.inbound.options.use_remote_gateways
 
@@ -70,7 +74,7 @@ module "peering_hub_inbound" {
 # to create the peering from the local and remote virtual networks as specified
 module "peering_mesh" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.22.2"
+  version  = "0.23.0"
   for_each = { for i in local.virtual_networks_mesh_peering_list : "${i.source_key}-${i.destination_key}" => i }
 
   parent_id                    = each.value.this_resource_id
@@ -79,6 +83,8 @@ module "peering_mesh" {
   allow_gateway_transit        = false
   allow_virtual_network_access = true
   create_reverse_peering       = false
+  enable_telemetry             = var.enable_telemetry
+  location                     = var.location
   remote_virtual_network_id    = each.value.remote_resource_id
   use_remote_gateways          = false
 
