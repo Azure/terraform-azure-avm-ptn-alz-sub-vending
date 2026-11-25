@@ -30,13 +30,13 @@ resource "random_string" "suffix" {
 module "sub_vending" {
   source = "../../"
 
-  location                        = "westeurope"
-  enable_telemetry                = false
+  location                        = "northeurope"
+  enable_telemetry                = var.enable_telemetry
   resource_group_creation_enabled = true
   resource_groups = {
     rg1 = {
       name     = "rg-${random_string.suffix.result}"
-      location = "westeurope"
+      location = "northeurope"
     }
   }
   role_assignments = {
@@ -66,8 +66,8 @@ module "sub_vending" {
 module "sub_vending_rg_existing" {
   source = "../../"
 
-  location                                         = "westeurope"
-  enable_telemetry                                 = false
+  location                                         = "northeurope"
+  enable_telemetry                                 = var.enable_telemetry
   resource_group_creation_enabled                  = false
   subscription_id                                  = data.azurerm_client_config.current.subscription_id
   subscription_register_resource_providers_enabled = true

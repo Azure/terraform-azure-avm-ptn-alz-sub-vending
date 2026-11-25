@@ -42,6 +42,7 @@ variable "virtual_networks" {
     subnets = optional(map(object(
       {
         name             = string
+        address_prefix   = optional(string)
         address_prefixes = optional(list(string))
         ipam_pools = optional(list(object({
           pool_id       = string
@@ -158,8 +159,9 @@ DNS. [optional - default empty list]
 
 - `subnets` - (Optional) A map of subnets to create in the virtual network. The value is an object with the following fields:
   - `name` - The name of the subnet.
-  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
-  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefixes`.
+  - `address_prefix` - A single IPv4 address prefix to use for the subnet in CIDR format. Mutually exclusive with `address_prefixes` and `ipam_pools`. [optional]
+  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `address_prefix` and `ipam_pools`. [optional - required if `address_prefix` and `ipam_pools` are not set]
+  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefix` and `address_prefixes`.
     - `pool_id` - The resource ID of the IPAM pool.
     - `prefix_length` - (Optional) The prefix length to allocate from the pool.
   - `nat_gateway` - (Optional) An object with the following fields:
@@ -291,15 +293,15 @@ DESCRIPTION
     ]))
     error_message = "Virtual network subnet name must consist of a-z, A-Z, 0-9, -, _, and . (period) and be between 2 and 64 characters in length."
   }
-  # validate each subnet has either address_prefixes or ipam_pools, but not both
+  # validate each subnet specifies exactly one of address_prefix, address_prefixes, or ipam_pools
   validation {
     condition = alltrue(flatten([
       for k, v in var.virtual_networks : [
         for subnet in v.subnets :
-        (subnet.address_prefixes != null && subnet.ipam_pools == null) || (subnet.address_prefixes == null && subnet.ipam_pools != null)
+        length([for exists in [subnet.address_prefix != null, subnet.address_prefixes != null, subnet.ipam_pools != null] : exists if exists]) == 1
       ]
     ]))
-    error_message = "Each subnet must specify either 'address_prefixes' or 'ipam_pools', but not both."
+    error_message = "Each subnet must specify exactly one of 'address_prefix', 'address_prefixes', or 'ipam_pools'."
   }
   # validate subnet address prefixes is not zero length when specified
   validation {

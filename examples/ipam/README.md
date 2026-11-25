@@ -130,7 +130,8 @@ locals {
 module "sub_vending" {
   source = "../../"
 
-  location = azurerm_resource_group.ipam.location
+  location         = azurerm_resource_group.ipam.location
+  enable_telemetry = var.enable_telemetry
   # Use the current subscription (NM is scoped here)
   subscription_id = data.azurerm_client_config.current.subscription_id
   # virtual network variables with IPAM
@@ -169,15 +170,33 @@ No required inputs.
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
+
+Type: `bool`
+
+Default: `true`
 
 ## Outputs
 
 The following outputs are exported:
 
+### <a name="output_virtual_network_address_spaces"></a> [virtual\_network\_address\_spaces](#output\_virtual\_network\_address\_spaces)
+
+Description: The IPAM-allocated address spaces of the created virtual networks.
+
 ### <a name="output_virtual_network_resource_ids"></a> [virtual\_network\_resource\_ids](#output\_virtual\_network\_resource\_ids)
 
 Description: The resource IDs of the created virtual networks.
+
+### <a name="output_virtual_network_subnet_address_prefixes"></a> [virtual\_network\_subnet\_address\_prefixes](#output\_virtual\_network\_subnet\_address\_prefixes)
+
+Description: The IPAM-allocated subnet address prefixes, keyed by virtual network and subnet.
 
 ## Modules
 

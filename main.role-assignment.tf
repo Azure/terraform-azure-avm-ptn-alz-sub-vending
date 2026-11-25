@@ -8,6 +8,7 @@ module "roleassignment" {
   role_assignment_principal_id = each.value.principal_id
   role_assignment_scope        = each.value.resource_group_scope_key != null ? module.resourcegroup[each.value.resource_group_scope_key].resource_group_resource_id : "${local.subscription_resource_id}${each.value.relative_scope}"
   enable_telemetry             = var.enable_telemetry
+  location                     = var.location
   retry = {
     error_message_regex = [
       "RoleAssignmentScopeNotAssignableToRoleDefinition"
@@ -30,6 +31,7 @@ module "roleassignment_umi" {
   role_assignment_principal_id = each.value.principal_id
   role_assignment_scope        = each.value.scope
   enable_telemetry             = var.enable_telemetry
+  location                     = var.location
   retry = {
     error_message_regex = [
       "PrincipalNotFound",

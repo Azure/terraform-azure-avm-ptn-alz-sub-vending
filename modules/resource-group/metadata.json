@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "Landing zone resource group submodule",
+  "moduleDescription": "Creates the supplied resource group in the specified location and subscription.",
+  "canonicalType": "lz/sub-vending/resource-group",
+  "telemetryIdPrefix": "46d3xtrf.ptn.7309eaf"
+}

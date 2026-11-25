@@ -8,8 +8,12 @@ mock_provider "azapi" {
     }
   }
 }
+
 mock_provider "random" {}
+
 mock_provider "time" {}
+
+mock_provider "terraform" {}
 
 variables {
   location         = "uksouth"
@@ -56,5 +60,152 @@ run "valid_two_vnets" {
   assert {
     condition     = contains(keys(module.virtualnetwork[0].virtual_network_resource_ids), "secondary")
     error_message = "Expected 'secondary' virtual network to be present in output"
+  }
+  assert {
+    condition = (
+      toset(output.virtual_network_address_spaces["primary"]) == toset(["192.168.0.0/24"]) &&
+      toset(output.virtual_network_address_spaces["secondary"]) == toset(["192.168.1.0/24"])
+    )
+    error_message = "Expected each virtual network's address spaces to reach the root output."
+  }
+
+  assert {
+    condition = (
+      length(output.virtual_network_subnet_address_prefixes["primary"]) == 0 &&
+      length(output.virtual_network_subnet_address_prefixes["secondary"]) == 0
+    )
+    error_message = "Expected empty subnet maps for virtual networks without subnets."
+  }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+
+    random = random
+    time   = time
+  }
+}
+
+run "vnet_with_subnet_address_prefix" {
+  command = plan
+
+  variables {
+    virtual_network_enabled = true
+    virtual_networks = {
+      primary = {
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
+        resource_group_name_existing = "primary-rg"
+        subnets = {
+          singular = {
+            name           = "snet-singular"
+            address_prefix = "192.168.0.0/26"
+          }
+          plural = {
+            name             = "snet-plural"
+            address_prefixes = ["192.168.0.64/26"]
+          }
+        }
+      }
+    }
+  }
+
+  assert {
+    condition     = length(keys(module.virtualnetwork[0].virtual_network_resource_ids)) == 1
+    error_message = "Expected exactly 1 virtual network to be created"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].subnets["singular"].address_prefix == "192.168.0.0/26"
+    error_message = "Expected the singular subnet to use address_prefix"
+  }
+
+  assert {
+    condition     = var.virtual_networks["primary"].subnets["singular"].address_prefixes == null
+    error_message = "Expected the singular subnet to have null address_prefixes"
+  }
+  assert {
+    condition     = toset(keys(output.virtual_network_subnet_address_prefixes["primary"])) == toset(["singular", "plural"])
+    error_message = "Expected both singular and plural subnet keys in the address prefixes output."
+  }
+  providers = {
+    azapi = azapi
+
+    random    = random
+    terraform = terraform
+    time      = time
+  }
+}
+
+run "address_outputs_disabled" {
+  command = plan
+
+  variables {
+    virtual_network_enabled = false
+  }
+
+  assert {
+    condition     = length(output.virtual_network_address_spaces) == 0
+    error_message = "Expected an empty address spaces map when virtual networking is disabled."
+  }
+
+  assert {
+    condition     = length(output.virtual_network_subnet_address_prefixes) == 0
+    error_message = "Expected an empty subnet address prefixes map when virtual networking is disabled."
+  }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+
+    random = random
+    time   = time
+  }
+}
+
+run "subnet_resource_ids_output" {
+  command = plan
+
+  variables {
+    virtual_network_enabled = true
+    virtual_networks = {
+      primary = {
+        name                         = "primary-vnet"
+        address_space                = ["192.168.0.0/24"]
+        location                     = "westeurope"
+        resource_group_name_existing = "primary-rg"
+        subnets = {
+          subnet1 = {
+            name             = "subnet1"
+            address_prefixes = ["192.168.0.0/26"]
+          }
+          subnet2 = {
+            name             = "subnet2"
+            address_prefixes = ["192.168.0.64/26"]
+          }
+        }
+      }
+    }
+  }
+
+  assert {
+    condition     = contains(keys(output.virtual_network_subnet_resource_ids), "primary")
+    error_message = "Expected 'primary' vnet key in virtual_network_subnet_resource_ids output"
+  }
+
+  assert {
+    condition     = length(keys(output.virtual_network_subnet_resource_ids["primary"])) == 2
+    error_message = "Expected 2 subnets under 'primary', got ${length(keys(output.virtual_network_subnet_resource_ids["primary"]))}"
+  }
+
+  assert {
+    condition     = contains(keys(output.virtual_network_subnet_resource_ids["primary"]), "subnet1") && contains(keys(output.virtual_network_subnet_resource_ids["primary"]), "subnet2")
+    error_message = "Expected 'subnet1' and 'subnet2' keys under 'primary' in virtual_network_subnet_resource_ids output"
+  }
+  providers = {
+    terraform = terraform
+    azapi     = azapi
+
+    random = random
+    time   = time
   }
 }

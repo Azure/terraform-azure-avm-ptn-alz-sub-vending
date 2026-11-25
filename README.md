@@ -24,13 +24,65 @@ This is currently split logically into the following capabilities:
 > When creating virtual network peerings, be aware of the [limit of peerings per virtual network](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits?toc=%2Fazure%2Fvirtual-network%2Ftoc.json#azure-resource-manager-virtual-networking-limits).
 
 We would like feedback on what's missing in the module.
-Please raise an [issue](https://github.com/Azure/terraform-azurerm-lz-vending/issues) if you have any suggestions.
+Please raise an [issue](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending/issues) if you have any suggestions.
 
-## Upgrading from ModTM telemetry
+## Resource provider registration
+
+The resources this module creates rely on the AzAPI provider to register their resource providers. When a create returns `MissingSubscriptionRegistration`, AzAPI registers the provider and retries the create.
+
+Keep AzAPI provider registration on. If it is off, creating a virtual network, network security group, route table or managed identity in a new subscription fails with `MissingSubscriptionRegistration`. It is off when the `azapi` provider block sets `skip_provider_registration = true`, or when the block leaves it unset and `ARM_SKIP_PROVIDER_REGISTRATION=true` is in the environment.
+
+If you set `ARM_SKIP_PROVIDER_REGISTRATION=true` for the AzureRM provider, set `skip_provider_registration = false` in the `azapi` provider block. The block value takes precedence over the environment variable.
+
+```terraform
+provider "azapi" {
+  skip_provider_registration = false
+}
+```
+
+The module's own registration, turned on by `subscription_register_resource_providers_enabled`, runs after its resource groups, role assignments, managed identities and virtual networks. It is for the workloads you deploy into the subscription later.
+
+## Breaking changes
+
+### Subscription-scoped telemetry
 
 Telemetry is enabled by default and creates empty Azure deployments in the active AzAPI provider subscription, which can differ from the vended subscription. The deployment identity needs `Microsoft.Resources/deployments/read`, `Microsoft.Resources/deployments/write`, and `Microsoft.Resources/deployments/delete` there. Set `enable_telemetry = false` if those permissions are unavailable or to opt out across the module and its children.
 
 Upgrades forget legacy ModTM telemetry and telemetry UUIDs without destroying them. Terraform may still need the old providers for the first initialization against existing state. Back up state and inspect the upgrade plan for unexpected replacements before applying.
+
+### Terraform 1.11 minimum
+
+The root module and the route-table and network-security-group submodules require Terraform 1.11 or later, below 2.0. Upgrade Terraform before selecting this module version if you currently use Terraform 1.10.
+
+Parent route-table and network-security-group updates preserve routes and security rules managed as separate resources, including resources managed outside this module. By default, each parent sets AzAPI's write-only `ignore_body_changes` argument to its child collection path, so AzAPI reads the live collection before sending an update. Override the path list with each item's `ignore_body_changes.this` input; leave out the collection path only if you want parent updates to remove children that are not in the request body. Collection placeholders and collection-only lifecycle rules do not transfer child ownership to the parents. Tags and BGP propagation remain managed normally.
+
+Avoid concurrent parent or child updates from other deployments during an apply; the live read and subsequent update are not atomic.
+
+The parent paths are consumer-configurable with `ignore_body_changes.this` on each route table or network security group item. Changing that list to one without the collection path, or to an empty list, removes protection in the same apply that changes it, and routes or rules not in the parent body are deleted, including those managed by this module.
+
+### Submodule source migration
+
+The security-rule and route implementations are now direct children of `modules/`. Direct consumers must update their Registry source suffixes when selecting a version containing this change:
+
+| Previous source suffix | New source suffix |
+| --- | --- |
+| `//modules/network-security-group/modules/security-rule` | `//modules/network-security-group-security-rule` |
+| `//modules/route-table/modules/route` | `//modules/route-table-route` |
+
+Use `Azure/avm-ptn-alz-sub-vending/azure` before either suffix. Root module consumers do not need to change their source. Retain existing module block names and instance keys; this source relocation does not change the module or resource labels used in Terraform state addresses.
+
+### Telemetry location for direct submodule callers
+
+When telemetry is enabled, direct callers of the following submodules must supply a non-null `location` string:
+
+- `//modules/budget`
+- `//modules/resource-provider`
+- `//modules/role-assignment`
+- `//modules/subscription`
+- `//modules/network-security-group-security-rule`
+- `//modules/route-table-route`
+
+Pass a region available in your Azure cloud, for example `location = "westeurope"`. The region is used for the subscription-scoped telemetry deployment, including for global or scope-based business resources. When `enable_telemetry = false`, you can omit `location`. Root module callers already supply `location`, which is forwarded to these children.
 
 ## Example
 
@@ -175,7 +227,7 @@ module "lz_vending" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.10)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
@@ -328,6 +380,11 @@ Description: A map of the network security groups to create. The map key must be
 
 - `tags`: A map of tags to apply to the virtual network. [optional - default empty]
 
+### Ignore Body Changes
+
+- `ignore_body_changes`: Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates the network security group. Changes take effect only after an apply, and configuration at an ignored path is not sent to Azure. [optional]
+  - `this`: Paths for the network security group. Defaults to `["properties.securityRules"]`, so network security group updates keep the security rules that exist in Azure, including rules managed outside this module. Setting a list replaces the default; include `properties.securityRules` to keep that protection. An empty list disables it, and the apply that changes the setting deletes security rules that are not in the network security group body, including rules managed by this module. [optional]
+
 ### Resource Types
 
 - `resource_types`: An optional object to override the ARM resource types (and their API versions) used by the network security group submodule. [optional]
@@ -363,6 +420,9 @@ map(object({
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
     tags                         = optional(map(string))
+    ignore_body_changes = optional(object({
+      this = optional(list(string))
+    }), {})
     resource_types = optional(object({
       this          = optional(string)
       security_rule = optional(string)
@@ -510,6 +570,8 @@ Description: A map defining route tables and their associated routes to be creat
 
 - `bgp_route_propagation_enabled` (optional): Boolean that controls whether routes learned by BGP are propagated to the route table. Default is `true`.
 - `tags` (optional): A map of key-value pairs for tags associated with the route table.
+- `ignore_body_changes` (optional): Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates the route table. Changes take effect only after an apply, and configuration at an ignored path is not sent to Azure.
+  - `this` (optional): Paths for the route table. Defaults to `["properties.routes"]`, so route-table updates keep the routes that exist in Azure, including routes managed outside this module. Setting a list replaces the default; include `properties.routes` to keep that protection. An empty list disables it, and the apply that changes the setting deletes routes that are not in the route table body, including routes managed by this module.
 - `resource_types` (optional): An object to override the ARM resource types (and their API versions) used by the route table submodule.
   - `this` (optional): The resource type for the route table, e.g. `Microsoft.Network/routeTables@2024-05-01`.
   - `route` (optional): The resource type for the routes, e.g. `Microsoft.Network/routeTables/routes@2024-05-01`.
@@ -519,7 +581,7 @@ Description: A map defining route tables and their associated routes to be creat
 - `next_hop_type` (required): The next hop type, must be one of: 'Internet', 'None', 'VirtualAppliance', 'VirtualNetworkGateway', 'VnetLocal'.
 - `next_hop_in_ip_address` (optional): The next hop IP address for the route. Required if next hop type is 'VirtualAppliance'.
 
-> **Note:** Migration protection is built-in. The module uses `ignore_other_items_in_list = ["properties.routes"]` to preserve existing inline routes.
+> **Note:** Routes remain managed as separate resources. By default, route-table updates keep the routes that exist in Azure, including routes managed outside this module, through `ignore_body_changes.this`. Tags and BGP propagation remain managed normally.
 
 Type:
 
@@ -531,6 +593,9 @@ map(object({
     resource_group_name_existing  = optional(string)
     bgp_route_propagation_enabled = optional(bool, true)
     tags                          = optional(map(string))
+    ignore_body_changes = optional(object({
+      this = optional(list(string))
+    }), {})
     resource_types = optional(object({
       this  = optional(string)
       route = optional(string)
@@ -676,6 +741,8 @@ Leave the value empty to not register any resource provider features.
 
 The default values are taken from [Hashicorp's AzureRM provider](https://github.com/hashicorp/terraform-provider-azurerm/blob/main/internal/resourceproviders/required.go).
 
+The resource providers in this map are for the workloads you deploy into the subscription, not for the resources this module creates. See `subscription_register_resource_providers_enabled`.
+
 Type: `map(set(string))`
 
 Default:
@@ -751,6 +818,9 @@ Default:
 
 Description: Whether to register resource providers for the subscription.  
 Use `var.subscription_register_resource_providers_and_features` to customize registration.
+
+Registration runs after the module's resource groups, role assignments, managed identities and virtual networks. It is for the workloads you deploy into the subscription.  
+Keep AzAPI provider registration on, because the resources this module creates rely on it. If `ARM_SKIP_PROVIDER_REGISTRATION=true` is set for AzureRM, set `skip_provider_registration = false` in the `azapi` provider block.
 
 Type: `bool`
 
@@ -949,8 +1019,9 @@ Description: A map of the virtual networks to create. The map key must be known 
 
 - `subnets` - (Optional) A map of subnets to create in the virtual network. The value is an object with the following fields:
   - `name` - The name of the subnet.
-  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
-  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefixes`.
+  - `address_prefix` - A single IPv4 address prefix to use for the subnet in CIDR format. Mutually exclusive with `address_prefixes` and `ipam_pools`. [optional]
+  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `address_prefix` and `ipam_pools`. [optional - required if `address_prefix` and `ipam_pools` are not set]
+  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefix` and `address_prefixes`.
     - `pool_id` - The resource ID of the IPAM pool.
     - `prefix_length` - (Optional) The prefix length to allocate from the pool.
   - `nat_gateway` - (Optional) An object with the following fields:
@@ -1048,6 +1119,7 @@ map(object({
     subnets = optional(map(object(
       {
         name             = string
+        address_prefix   = optional(string)
         address_prefixes = optional(list(string))
         ipam_pools = optional(list(object({
           pool_id       = string
@@ -1209,9 +1281,21 @@ Value will be null if `var.umi_enabled` is false.
 Description: The tenant id of the user managed identity.  
 Value will be null if `var.umi_enabled` is false.
 
+### <a name="output_virtual_network_address_spaces"></a> [virtual\_network\_address\_spaces](#output\_virtual\_network\_address\_spaces)
+
+Description: Virtual network address spaces, including IPAM-allocated ranges, keyed by the virtual\_networks input map. Returns an empty map when virtual\_network\_enabled is false.
+
 ### <a name="output_virtual_network_resource_ids"></a> [virtual\_network\_resource\_ids](#output\_virtual\_network\_resource\_ids)
 
 Description: A map of virtual network resource ids, keyed by the var.virtual\_networks input map. Only populated if the virtualnetwork submodule is enabled.
+
+### <a name="output_virtual_network_subnet_address_prefixes"></a> [virtual\_network\_subnet\_address\_prefixes](#output\_virtual\_network\_subnet\_address\_prefixes)
+
+Description: Subnet address prefixes, including IPAM-allocated ranges, keyed first by virtual network key and then by subnet key. Returns an empty map when virtual\_network\_enabled is false.
+
+### <a name="output_virtual_network_subnet_resource_ids"></a> [virtual\_network\_subnet\_resource\_ids](#output\_virtual\_network\_subnet\_resource\_ids)
+
+Description: A map of subnet resource ids per virtual network, keyed by the var.virtual\_networks input map. Only populated if the virtualnetwork submodule is enabled.
 
 ## Modules
 
@@ -1280,5 +1364,9 @@ Version:
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
 
-The software may collect information about you and your use of the software and send it to Microsoft. Microsoft may use this information to provide services and improve our products and services. You may turn off the telemetry as described in the repository. There are also some features in the software that may enable you and Microsoft to collect data from users of your applications. If you use these features, you must comply with applicable law, including providing appropriate notices to users of your applications together with a copy of Microsoft’s privacy statement. Our privacy statement is located at <https://go.microsoft.com/fwlink/?LinkID=824704>. You can learn more about data collection and use in the help documentation and our privacy statement. Your use of the software operates as your consent to these practices.
+The software may collect information about you and your use of the software and send it to Microsoft. Microsoft may use this information to provide services and improve our products and services. You may turn off the telemetry as described in the [repository](https://aka.ms/avm/telemetry). There are also some features in the software that may enable you and Microsoft to collect data from users of your applications. If you use these features, you must comply with applicable law, including providing appropriate notices to users of your applications together with a copy of Microsoft's privacy statement. Our privacy statement is located at <https://go.microsoft.com/fwlink/?LinkID=824704>. You can learn more about data collection and use in the help documentation and our privacy statement. Your use of the software operates as your consent to these practices.
+
+## Trademarks
+
+**Trademarks** This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party's policies.
 <!-- END_TF_DOCS -->

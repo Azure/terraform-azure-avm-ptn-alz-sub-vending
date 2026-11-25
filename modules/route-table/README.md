@@ -11,7 +11,9 @@ Optionally:
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+Terraform 1.11 or later, below 2.0, is required. By default, parent updates set AzAPI's write-only `ignore_body_changes` argument to `["properties.routes"]`, which reads and preserves the live routes collection, including routes managed outside this module. Override the list with `ignore_body_changes.this`. The empty collection in the parent body is a placeholder, not a declaration of route ownership. Tags and BGP propagation remain managed normally.
+
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
@@ -19,19 +21,21 @@ See documentation for optional parameters.
 
 ```terraform
 module "routetable" {
-  source  = "Azure/lz-vending/azurerm/modules/routetable"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/route-table"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
-  subscription_id = "00000000-0000-0000-0000-000000000000"
-  route_tables = {
+  name      = "myroutetable"
+  location  = var.location
+  parent_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example"
+  routes = {
     rt1 = {
-      name                   = "myroutetable"
-      address_prefix         = ["192.168.0.0/24"]
+      name                   = "private-network"
+      address_prefix         = "192.168.0.0/24"
       next_hop_in_ip_address = "192.168.0.5"
       next_hop_type          = "VirtualAppliance"
     },
     rt2 = {
-      name           = "myroutetable2"
+      name           = "internet"
       address_prefix = "GatewayManager"
       next_hop_type  = "Internet"
     }
@@ -44,15 +48,18 @@ module "routetable" {
 
 The following requirements are needed by this module:
 
-- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.10)
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.11)
 
-- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.5)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
 ## Resources
 
 The following resources are used by this module:
 
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -88,6 +95,34 @@ Description: Whether BGP route propagation is enabled.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
+
+Type: `bool`
+
+Default: `true`
+
+### <a name="input_ignore_body_changes"></a> [ignore\_body\_changes](#input\_ignore\_body\_changes)
+
+Description: (Optional) Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates each resource. Changes to this value take effect only after an apply. Configuration at an ignored path is not sent to Azure until the path is removed.
+
+- `this` - (Optional) Paths for the route table. Defaults to `["properties.routes"]`, so route-table updates keep the routes that exist in Azure, including routes managed outside this module. Setting a list replaces the default; include `properties.routes` to keep that protection. An empty list disables it, and route-table updates then remove routes that are not in the request body. The apply that changes this setting performs that removal, so a module-managed route is deleted in the same apply and then shows as drift. Paths that do not match the route table body, such as a misspelled `properties.route`, silently protect nothing.
+
+Non-empty values require Terraform 1.11 or later.
+
+Type:
+
+```hcl
+object({
+    this = optional(list(string), ["properties.routes"])
+  })
+```
+
+Default: `{}`
 
 ### <a name="input_resource_types"></a> [resource\_types](#input\_resource\_types)
 
@@ -200,7 +235,7 @@ The following Modules are called:
 
 ### <a name="module_route"></a> [route](#module\_route)
 
-Source: ./modules/route
+Source: ../route-table-route
 
 Version:
 

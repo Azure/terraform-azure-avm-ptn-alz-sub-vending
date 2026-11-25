@@ -14,6 +14,7 @@ locals {
       bgp_route_propagation_enabled = rt_v.bgp_route_propagation_enabled
       tags                          = rt_v.tags
       routes                        = rt_v.routes
+      ignore_body_changes           = rt_v.ignore_body_changes
       resource_types                = rt_v.resource_types
     }
   }
@@ -75,7 +76,10 @@ locals {
   } : {}
   # virtual_networks_merged is a map of virtual networks created, if the module has been enabled.
   # This is used in the outputs.tf file to return the virtual network resource ids.
+  virtual_network_address_spaces                                       = var.virtual_network_enabled ? module.virtualnetwork[0].address_spaces : {}
   virtual_network_resource_ids                                         = var.virtual_network_enabled ? module.virtualnetwork[0].virtual_network_resource_ids : {}
+  virtual_network_subnet_address_prefixes                              = var.virtual_network_enabled ? module.virtualnetwork[0].subnet_address_prefixes : {}
+  virtual_network_subnet_resource_ids                                  = var.virtual_network_enabled ? module.virtualnetwork[0].subnet_resource_ids : {}
   virtual_network_subnet_network_security_group_available_resource_ids = { for nsg_k, nsg_v in module.networksecuritygroup : nsg_k => nsg_v.resource_id }
   virtual_network_subnet_route_table_available_resource_ids            = { for rt_k, rt_v in module.routetable : rt_k => rt_v.resource_id }
   # This virtual_networks varialbe is used internally to consume the mapped subnet properties for dependencies on resources such as
@@ -102,6 +106,7 @@ locals {
 
       subnets = { for subnet_k, subnet_v in vnet_v.subnets : subnet_k => {
         name                                          = subnet_v.name
+        address_prefix                                = subnet_v.address_prefix
         address_prefixes                              = subnet_v.address_prefixes
         ipam_pools                                    = subnet_v.ipam_pools
         nat_gateway                                   = subnet_v.nat_gateway

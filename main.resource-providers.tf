@@ -4,7 +4,9 @@ module "resourceproviders" {
 
   resource_provider = each.key
   subscription_id   = local.subscription_id
+  enable_telemetry  = var.enable_telemetry
   features          = each.value
+  location          = var.location
 
   depends_on = [
     module.resourcegroup,

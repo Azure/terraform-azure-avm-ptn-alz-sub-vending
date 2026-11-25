@@ -22,13 +22,65 @@ This is currently split logically into the following capabilities:
 > When creating virtual network peerings, be aware of the [limit of peerings per virtual network](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-subscription-service-limits?toc=%2Fazure%2Fvirtual-network%2Ftoc.json#azure-resource-manager-virtual-networking-limits).
 
 We would like feedback on what's missing in the module.
-Please raise an [issue](https://github.com/Azure/terraform-azurerm-lz-vending/issues) if you have any suggestions.
+Please raise an [issue](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending/issues) if you have any suggestions.
 
-## Upgrading from ModTM telemetry
+## Resource provider registration
+
+The resources this module creates rely on the AzAPI provider to register their resource providers. When a create returns `MissingSubscriptionRegistration`, AzAPI registers the provider and retries the create.
+
+Keep AzAPI provider registration on. If it is off, creating a virtual network, network security group, route table or managed identity in a new subscription fails with `MissingSubscriptionRegistration`. It is off when the `azapi` provider block sets `skip_provider_registration = true`, or when the block leaves it unset and `ARM_SKIP_PROVIDER_REGISTRATION=true` is in the environment.
+
+If you set `ARM_SKIP_PROVIDER_REGISTRATION=true` for the AzureRM provider, set `skip_provider_registration = false` in the `azapi` provider block. The block value takes precedence over the environment variable.
+
+```terraform
+provider "azapi" {
+  skip_provider_registration = false
+}
+```
+
+The module's own registration, turned on by `subscription_register_resource_providers_enabled`, runs after its resource groups, role assignments, managed identities and virtual networks. It is for the workloads you deploy into the subscription later.
+
+## Breaking changes
+
+### Subscription-scoped telemetry
 
 Telemetry is enabled by default and creates empty Azure deployments in the active AzAPI provider subscription, which can differ from the vended subscription. The deployment identity needs `Microsoft.Resources/deployments/read`, `Microsoft.Resources/deployments/write`, and `Microsoft.Resources/deployments/delete` there. Set `enable_telemetry = false` if those permissions are unavailable or to opt out across the module and its children.
 
 Upgrades forget legacy ModTM telemetry and telemetry UUIDs without destroying them. Terraform may still need the old providers for the first initialization against existing state. Back up state and inspect the upgrade plan for unexpected replacements before applying.
+
+### Terraform 1.11 minimum
+
+The root module and the route-table and network-security-group submodules require Terraform 1.11 or later, below 2.0. Upgrade Terraform before selecting this module version if you currently use Terraform 1.10.
+
+Parent route-table and network-security-group updates preserve routes and security rules managed as separate resources, including resources managed outside this module. By default, each parent sets AzAPI's write-only `ignore_body_changes` argument to its child collection path, so AzAPI reads the live collection before sending an update. Override the path list with each item's `ignore_body_changes.this` input; leave out the collection path only if you want parent updates to remove children that are not in the request body. Collection placeholders and collection-only lifecycle rules do not transfer child ownership to the parents. Tags and BGP propagation remain managed normally.
+
+Avoid concurrent parent or child updates from other deployments during an apply; the live read and subsequent update are not atomic.
+
+The parent paths are consumer-configurable with `ignore_body_changes.this` on each route table or network security group item. Changing that list to one without the collection path, or to an empty list, removes protection in the same apply that changes it, and routes or rules not in the parent body are deleted, including those managed by this module.
+
+### Submodule source migration
+
+The security-rule and route implementations are now direct children of `modules/`. Direct consumers must update their Registry source suffixes when selecting a version containing this change:
+
+| Previous source suffix | New source suffix |
+| --- | --- |
+| `//modules/network-security-group/modules/security-rule` | `//modules/network-security-group-security-rule` |
+| `//modules/route-table/modules/route` | `//modules/route-table-route` |
+
+Use `Azure/avm-ptn-alz-sub-vending/azure` before either suffix. Root module consumers do not need to change their source. Retain existing module block names and instance keys; this source relocation does not change the module or resource labels used in Terraform state addresses.
+
+### Telemetry location for direct submodule callers
+
+When telemetry is enabled, direct callers of the following submodules must supply a non-null `location` string:
+
+- `//modules/budget`
+- `//modules/resource-provider`
+- `//modules/role-assignment`
+- `//modules/subscription`
+- `//modules/network-security-group-security-rule`
+- `//modules/route-table-route`
+
+Pass a region available in your Azure cloud, for example `location = "westeurope"`. The region is used for the subscription-scoped telemetry deployment, including for global or scope-based business resources. When `enable_telemetry = false`, you can omit `location`. Root module callers already supply `location`, which is forwarded to these children.
 
 ## Example
 

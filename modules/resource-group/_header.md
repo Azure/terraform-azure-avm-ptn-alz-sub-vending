@@ -8,7 +8,7 @@ Useful in a subscription vending scenario to pre-create the `NetworkWatcherRG` s
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
@@ -16,11 +16,11 @@ See documentation for optional parameters.
 
 ```terraform
 module "resourcegroups" {
-  source  = "Azure/lz-vending/azurerm/modules/resourcegroups"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/resource-group"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
-  subscription_id = "00000000-0000-0000-0000-000000000000"
-  location        = "eastus"
-  name            = "rg-test"
+  subscription_id     = "00000000-0000-0000-0000-000000000000"
+  location            = "eastus"
+  resource_group_name = "rg-test"
 }
 ```

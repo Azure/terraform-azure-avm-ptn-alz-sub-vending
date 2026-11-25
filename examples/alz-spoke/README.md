@@ -9,6 +9,7 @@ terraform {
   required_version = "~> 1.8"
 
   required_providers {
+    # tflint-ignore: terraform_unused_required_providers
     azapi = {
       source  = "Azure/azapi"
       version = "~> 2.4"
@@ -85,7 +86,8 @@ locals {
 module "sub_vending" {
   source = "../../"
 
-  location = azurerm_resource_group.hub.location
+  location         = azurerm_resource_group.hub.location
+  enable_telemetry = var.enable_telemetry
   # resource groups
   resource_group_creation_enabled = true
   resource_groups                 = local.resource_groups
@@ -99,11 +101,13 @@ module "sub_vending" {
     }
   }
   # subscription variables
-  subscription_alias_enabled                       = true
-  subscription_alias_name                          = local.subscription_name
-  subscription_billing_scope                       = var.subscription_billing_scope
-  subscription_display_name                        = local.subscription_name
-  subscription_register_resource_providers_enabled = true
+  subscription_alias_enabled                        = true
+  subscription_alias_name                           = local.subscription_name
+  subscription_billing_scope                        = var.subscription_billing_scope
+  subscription_display_name                         = local.subscription_name
+  subscription_management_group_association_enabled = var.subscription_management_group_id != null
+  subscription_management_group_id                  = var.subscription_management_group_id
+  subscription_register_resource_providers_enabled  = true
   subscription_tags = {
     created_by = "avm-ptn-alz-sub-vending"
   }
@@ -149,7 +153,25 @@ Type: `string`
 
 ## Optional Inputs
 
-No optional inputs.
+The following input variables are optional (have default values):
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
+
+Type: `bool`
+
+Default: `true`
+
+### <a name="input_subscription_management_group_id"></a> [subscription\_management\_group\_id](#input\_subscription\_management\_group\_id)
+
+Description: The optional management group ID for the new subscription.
+
+Type: `string`
+
+Default: `null`
 
 ## Outputs
 

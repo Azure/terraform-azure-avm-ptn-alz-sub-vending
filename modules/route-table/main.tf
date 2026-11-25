@@ -6,10 +6,12 @@ resource "azapi_resource" "this" {
   body = {
     properties = {
       disableBgpRoutePropagation = !var.bgp_route_propagation_enabled
+      routes                     = []
     }
   }
-  retry = var.retry
-  tags  = var.tags
+  ignore_body_changes = length(var.ignore_body_changes.this) > 0 ? var.ignore_body_changes.this : null
+  retry               = var.retry
+  tags                = var.tags
 
   dynamic "timeouts" {
     for_each = var.timeouts == null ? [] : [var.timeouts]
@@ -20,16 +22,22 @@ resource "azapi_resource" "this" {
       delete = timeouts.value.delete
     }
   }
+
+  lifecycle {
+    ignore_changes = [body.properties.routes]
+  }
 }
 
 module "route" {
-  source   = "./modules/route"
+  source   = "../route-table-route"
   for_each = var.routes
 
   address_prefix         = each.value.address_prefix
   name                   = each.value.name
   next_hop_type          = each.value.next_hop_type
   parent_id              = azapi_resource.this.id
+  enable_telemetry       = var.enable_telemetry
+  location               = var.location
   next_hop_in_ip_address = each.value.next_hop_in_ip_address
   resource_types         = { this = var.resource_types.route }
   retry                  = var.retry

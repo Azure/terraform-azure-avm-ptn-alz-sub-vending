@@ -6,6 +6,7 @@ module "resourcegroup" {
   location            = coalesce(each.value.location, var.location)
   resource_group_name = each.value.name
   subscription_id     = local.subscription_id
+  enable_telemetry    = var.enable_telemetry
   lock_enabled        = each.value.lock_enabled
   lock_name           = each.value.lock_name
   tags                = each.value.tags

@@ -11,6 +11,9 @@ variable "network_security_groups" {
     resource_group_key           = optional(string)
     resource_group_name_existing = optional(string)
     tags                         = optional(map(string))
+    ignore_body_changes = optional(object({
+      this = optional(list(string))
+    }), {})
     resource_types = optional(object({
       this          = optional(string)
       security_rule = optional(string)
@@ -54,6 +57,11 @@ A map of the network security groups to create. The map key must be known at the
 ### Tags
 
 - `tags`: A map of tags to apply to the virtual network. [optional - default empty]
+
+### Ignore Body Changes
+
+- `ignore_body_changes`: Body paths, in dot notation, that AzAPI reads from Azure and keeps unchanged when it updates the network security group. Changes take effect only after an apply, and configuration at an ignored path is not sent to Azure. [optional]
+  - `this`: Paths for the network security group. Defaults to `["properties.securityRules"]`, so network security group updates keep the security rules that exist in Azure, including rules managed outside this module. Setting a list replaces the default; include `properties.securityRules` to keep that protection. An empty list disables it, and the apply that changes the setting deletes security rules that are not in the network security group body, including rules managed by this module. [optional]
 
 ### Resource Types
 

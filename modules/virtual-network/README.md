@@ -12,7 +12,7 @@ Optionally:
 
 ## Notes
 
-See [README.md](https://github.com/Azure/terraform-azurerm-lz-vending#readme) in the parent module for more information.
+See [README.md](https://github.com/Azure/terraform-azure-avm-ptn-alz-sub-vending#readme) in the parent module for more information.
 
 ## Example
 
@@ -20,10 +20,11 @@ See documentation for optional parameters.
 
 ```terraform
 module "virtualnetwork" {
-  source  = "Azure/lz-vending/azurerm/modules/virtualnetwork"
+  source  = "Azure/avm-ptn-alz-sub-vending/azure//modules/virtual-network"
   version = "<version>" # change this to your desired version, https://www.terraform.io/language/expressions/version-constraints
 
   subscription_id = "00000000-0000-0000-0000-000000000000"
+  location        = var.location
   virtual_networks = {
     vnet1 = {
       name                = "myvnet"
@@ -54,8 +55,11 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.vhubconnection](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.vhubconnection_routing_intent](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -109,8 +113,9 @@ DNS. [optional - default empty list]
 
 - `subnets` - (Optional) A map of subnets to create in the virtual network. The value is an object with the following fields:
   - `name` - The name of the subnet.
-  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `ipam_pools`. [optional - required if `ipam_pools` is not set]
-  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefixes`.
+  - `address_prefix` - A single IPv4 address prefix to use for the subnet in CIDR format. Mutually exclusive with `address_prefixes` and `ipam_pools`. [optional]
+  - `address_prefixes` - The IPv4 address prefixes to use for the subnet in CIDR format. Mutually exclusive with `address_prefix` and `ipam_pools`. [optional - required if `address_prefix` and `ipam_pools` are not set]
+  - `ipam_pools` - (Optional) A list of IPAM pool objects for dynamic subnet address allocation. Mutually exclusive with `address_prefix` and `address_prefixes`.
     - `pool_id` - The resource ID of the IPAM pool.
     - `prefix_length` - (Optional) The prefix length to allocate from the pool.
   - `nat_gateway` - (Optional) An object with the following fields:
@@ -206,6 +211,7 @@ map(object({
     subnets = optional(map(object(
       {
         name             = string
+        address_prefix   = optional(string)
         address_prefixes = optional(list(string))
         ipam_pools = optional(list(object({
           pool_id       = string
@@ -309,9 +315,21 @@ Default: `true`
 
 The following outputs are exported:
 
+### <a name="output_address_spaces"></a> [address\_spaces](#output\_address\_spaces)
+
+Description: Virtual network address spaces, including IPAM-allocated ranges, keyed by the virtual\_networks input map.
+
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The created virtual network resource IDs, expressed as a map.
+
+### <a name="output_subnet_address_prefixes"></a> [subnet\_address\_prefixes](#output\_subnet\_address\_prefixes)
+
+Description: Subnet address prefixes, including IPAM-allocated ranges, keyed first by virtual network key and then by subnet key.
+
+### <a name="output_subnet_resource_ids"></a> [subnet\_resource\_ids](#output\_subnet\_resource\_ids)
+
+Description: Subnet resource IDs per VNet key, expressed as a map.
 
 ### <a name="output_virtual_network_resource_ids"></a> [virtual\_network\_resource\_ids](#output\_virtual\_network\_resource\_ids)
 

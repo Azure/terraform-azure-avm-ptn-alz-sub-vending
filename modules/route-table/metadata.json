@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "Landing zone route table submodule",
+  "moduleDescription": "Creates route tables in the supplied subscription, with optional routes.",
+  "canonicalType": "lz/sub-vending/route-table",
+  "telemetryIdPrefix": "46d3xtrf.ptn.3357ade"
+}
