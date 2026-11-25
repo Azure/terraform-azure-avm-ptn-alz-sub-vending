@@ -50,12 +50,6 @@ The following resources are used by this module:
 
 The following input variables are required:
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The Azure region for this module's resources or telemetry deployment.
-
-Type: `string`
-
 ### <a name="input_resource_provider"></a> [resource\_provider](#input\_resource\_provider)
 
 Description: The resource provider namespace, e.g. `Microsoft.Compute`.
@@ -89,6 +83,14 @@ Description: The resource provider features to register, e.g. [`MyFeature`]
 Type: `set(string)`
 
 Default: `[]`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
+
+Type: `string`
+
+Default: `null`
 
 ## Outputs
 
