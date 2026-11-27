@@ -9,11 +9,10 @@ mock_provider "azapi" {
   }
 }
 
-mock_provider "modtm" {}
-
 mock_provider "random" {}
 
 mock_provider "time" {}
+
 mock_provider "terraform" {}
 
 variables {
@@ -47,9 +46,9 @@ run "valid_vnet_with_ipam_pools" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
-    time      = time
+
+    random = random
+    time   = time
   }
 }
 
@@ -121,9 +120,9 @@ run "valid_vnet_with_ipam_subnets" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
-    time      = time
+
+    random = random
+    time   = time
   }
 }
 
@@ -182,8 +181,8 @@ run "valid_vnet_with_address_space" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
-    time      = time
+
+    random = random
+    time   = time
   }
 }

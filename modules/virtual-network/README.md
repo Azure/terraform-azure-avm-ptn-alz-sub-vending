@@ -51,8 +51,6 @@ The following requirements are needed by this module:
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
 
-- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
-
 ## Resources
 
 The following resources are used by this module:
@@ -345,25 +343,25 @@ The following Modules are called:
 
 Source: Azure/avm-res-network-virtualnetwork/azurerm//modules/peering
 
-Version: 0.14.1
+Version: 0.23.0
 
 ### <a name="module_peering_hub_outbound"></a> [peering\_hub\_outbound](#module\_peering\_hub\_outbound)
 
 Source: Azure/avm-res-network-virtualnetwork/azurerm//modules/peering
 
-Version: 0.14.1
+Version: 0.23.0
 
 ### <a name="module_peering_mesh"></a> [peering\_mesh](#module\_peering\_mesh)
 
 Source: Azure/avm-res-network-virtualnetwork/azurerm//modules/peering
 
-Version: 0.14.1
+Version: 0.23.0
 
 ### <a name="module_virtual_networks"></a> [virtual\_networks](#module\_virtual\_networks)
 
 Source: Azure/avm-res-network-virtualnetwork/azurerm
 
-Version: 0.20.0
+Version: 0.23.0
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection

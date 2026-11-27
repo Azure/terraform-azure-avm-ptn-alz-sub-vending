@@ -29,9 +29,8 @@ mock_provider "azapi" {
   }
 }
 
-mock_provider "modtm" {}
-
 mock_provider "random" {}
+
 mock_provider "terraform" {}
 
 variables {
@@ -66,8 +65,8 @@ run "simple_role_name_valid" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
+
+    random = random
   }
 }
 
@@ -95,8 +94,8 @@ run "simple_role_definition_id_valid" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
+
+    random = random
   }
 }
 
@@ -114,8 +113,8 @@ run "scope_invalid" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
+
+    random = random
   }
 }
 
@@ -144,8 +143,8 @@ run "condition_valid_v2" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
+
+    random = random
   }
 }
 
@@ -174,8 +173,8 @@ run "condition_valid_v1" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
+
+    random = random
   }
 }
 
@@ -194,7 +193,7 @@ run "condition_invalid" {
   providers = {
     terraform = terraform
     azapi     = azapi
-    modtm     = modtm
-    random    = random
+
+    random = random
   }
 }

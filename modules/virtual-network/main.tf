@@ -7,7 +7,7 @@
 # versions v0.15.0 through v0.19.0 silently dropped the attribute during object type conversion.
 module "virtual_networks" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version  = "0.20.0"
+  version  = "0.23.0"
   for_each = var.virtual_networks
 
   location      = coalesce(each.value.location, var.location)
@@ -32,7 +32,7 @@ module "virtual_networks" {
 # to create the outboud peering from the spoke to the hub network when specified
 module "peering_hub_outbound" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.14.1"
+  version  = "0.23.0"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_fromhub }
 
   name                          = each.value.outbound.name
@@ -44,8 +44,10 @@ module "peering_hub_outbound" {
   create_reverse_peering        = false
   do_not_verify_remote_gateways = each.value.outbound.options.do_not_verify_remote_gateways
   enable_only_ipv6_peering      = each.value.outbound.options.enable_only_ipv6_peering
+  enable_telemetry              = var.enable_telemetry
   local_peered_address_spaces   = [for address_prefix in each.value.outbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
   local_peered_subnets          = [for subnet_name in each.value.outbound.options.local_peered_subnets : { subnet_name = subnet_name }]
+  location                      = var.location
   peer_complete_vnets           = each.value.outbound.options.peer_complete_vnets
   use_remote_gateways           = each.value.outbound.options.use_remote_gateways
 
@@ -56,7 +58,7 @@ module "peering_hub_outbound" {
 # to create the inbound peering from the hub network to the spoke network when specified
 module "peering_hub_inbound" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.14.1"
+  version  = "0.23.0"
   for_each = { for k, v in local.hub_peering_map : k => v if v.peering_direction != local.peering_direction_tohub }
 
   name                          = each.value.inbound.name
@@ -68,8 +70,10 @@ module "peering_hub_inbound" {
   create_reverse_peering        = false
   do_not_verify_remote_gateways = each.value.inbound.options.do_not_verify_remote_gateways
   enable_only_ipv6_peering      = each.value.inbound.options.enable_only_ipv6_peering
+  enable_telemetry              = var.enable_telemetry
   local_peered_address_spaces   = [for address_prefix in each.value.inbound.options.local_peered_address_spaces : { address_prefix = address_prefix }]
   local_peered_subnets          = [for subnet_name in each.value.inbound.options.local_peered_subnets : { subnet_name = subnet_name }]
+  location                      = var.location
   peer_complete_vnets           = each.value.inbound.options.peer_complete_vnets
   use_remote_gateways           = each.value.inbound.options.use_remote_gateways
 
@@ -80,7 +84,7 @@ module "peering_hub_inbound" {
 # to create the peering from the local and remote virtual networks as specified
 module "peering_mesh" {
   source   = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version  = "0.14.1"
+  version  = "0.23.0"
   for_each = { for i in local.virtual_networks_mesh_peering_list : "${i.source_key}-${i.destination_key}" => i }
 
   name                         = each.value.name
@@ -90,6 +94,8 @@ module "peering_mesh" {
   allow_gateway_transit        = false
   allow_virtual_network_access = true
   create_reverse_peering       = false
+  enable_telemetry             = var.enable_telemetry
+  location                     = var.location
   use_remote_gateways          = false
 
   depends_on = [module.virtual_networks]

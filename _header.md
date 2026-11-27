@@ -42,6 +42,12 @@ The module's own registration, turned on by `subscription_register_resource_prov
 
 ## Breaking changes
 
+### Subscription-scoped telemetry
+
+Telemetry is enabled by default and creates empty Azure deployments in the active AzAPI provider subscription, which can differ from the vended subscription. The deployment identity needs `Microsoft.Resources/deployments/read`, `Microsoft.Resources/deployments/write`, and `Microsoft.Resources/deployments/delete` there. Set `enable_telemetry = false` if those permissions are unavailable or to opt out across the module and its children.
+
+Upgrades forget legacy ModTM telemetry and telemetry UUIDs without destroying them. Terraform may still need the old providers for the first initialization against existing state. Back up state and inspect the upgrade plan for unexpected replacements before applying.
+
 ### Terraform 1.11 minimum
 
 The root module and the route-table and network-security-group submodules require Terraform 1.11 or later, below 2.0. Upgrade Terraform before selecting this module version if you currently use Terraform 1.10.
@@ -63,9 +69,9 @@ The security-rule and route implementations are now direct children of `modules/
 
 Use `Azure/avm-ptn-alz-sub-vending/azure` before either suffix. Root module consumers do not need to change their source. Retain existing module block names and instance keys; this source relocation does not change the module or resource labels used in Terraform state addresses.
 
-### Required location for direct submodule callers
+### Telemetry location for direct submodule callers
 
-Direct callers of the following previously location-free submodules must now supply a non-null `location` string:
+When telemetry is enabled, direct callers of the following submodules must supply a non-null `location` string:
 
 - `//modules/budget`
 - `//modules/resource-provider`
@@ -74,7 +80,7 @@ Direct callers of the following previously location-free submodules must now sup
 - `//modules/network-security-group-security-rule`
 - `//modules/route-table-route`
 
-Pass a region available in your Azure cloud, for example `location = "westeurope"`. This input is required even when `enable_telemetry = false`; disabling telemetry does not remove Terraform's required-argument contract. With telemetry enabled, the region is used for the subscription-scoped telemetry deployment, including for global or scope-based business resources. Root module callers already supply `location`, which is forwarded to these children.
+Pass a region available in your Azure cloud, for example `location = "westeurope"`. The region is used for the subscription-scoped telemetry deployment, including for global or scope-based business resources. When `enable_telemetry = false`, you can omit `location`. Root module callers already supply `location`, which is forwarded to these children.
 
 ## Example
 
